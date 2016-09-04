@@ -216,6 +216,21 @@ class Arlo(object):
     def BatchDeleteRecordings(self, recording_metadata):
         return self.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':recording_metadata}, 'BatchDeleteRecordings')
 
+    def GetRecording(self, url, chunk_size=4096): 
+        video = ''
+        r = requests.get(url, stream=True)
+        r.raise_for_status()
+
+        for chunk in r.iter_content(chunk_size): 
+            if chunk: 
+                video += chunk 
+        return video
+
+    def StreamRecording(self, url, chunk_size=4096):
+        r = requests.get(url, stream=True)
+        r.raise_for_status()
+        for chunk in r.iter_content(chunk_size):
+            yield chunk
     #{
     #  "to":"XXXXXXXXXXXXX",
     #  "from":"XXX-XXXXXXX_web",
@@ -236,20 +251,3 @@ class Arlo(object):
 		yield stream
         else:
             raise Exception('StartStream returned False', body)
-
-    def GetRecording(self, url, chunk_size=4096): 
-        video = ''
-        r = requests.get(url, stream=True)
-        r.raise_for_status()
-
-        for chunk in r.iter_content(chunk_size): 
-            if chunk: 
-                video += chunk 
-
-        return video
-
-    def StreamRecording(self, url, chunk_size=4096):
-        r = requests.get(url, stream=True)
-        r.raise_for_status()
-        for chunk in r.iter_content(chunk_size):
-            yield chunk
