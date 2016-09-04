@@ -52,6 +52,8 @@ class Arlo(object):
         else:
             raise Exception(caller+' failed', body)
 
+    ##
+    # This call returns the following:
     #{
     #  "userId":"XXX-XXXXXXX",
     #  "email":"user@example.com",
@@ -65,6 +67,7 @@ class Arlo(object):
     #  "policyUpdate":false,
     #  "validEmail":true
     #}
+    ##
     def Login(self, username, password): 
         self.username = username
         self.password = password
@@ -76,6 +79,7 @@ class Arlo(object):
 	return body
 
     ##
+    # The following are examples of the json you would need to pass in the body of the Notify() call to interact with Arlo:
     #
     # Set System Mode (Armed, Disarmed) - {"from":"XXX-XXXXXXX_web","to":"XXXXXXXXXXXXX","action":"set","resource":"modes","transId":"web!XXXXXXXX.XXXXXXXXXXXXXXXXXXXX","publishResponse":true,"properties":{"active":"mode0"}}
     # Set System Mode (Calendar) - {"from":"XXX-XXXXXXX_web","to":"XXXXXXXXXXXXX","action":"set","resource":"schedule","transId":"web!XXXXXXXX.XXXXXXXXXXXXXXXXXXXX","publishResponse":true,"properties":{"active":true}}
@@ -105,7 +109,6 @@ class Arlo(object):
     #   powerSaveMode (int) - PowerSaver Mode (3 = Best Video, 2 = Optimized, 1 = Best Battery Life) 
     #   motionSetupModeEnabled (bool) - Motion Detection Setup Enabled/Disabled 
     #   motionSetupModeSensitivity (int 0-100) - Motion Detection Sensitivity
-    #
     ##
     def Notify(self, device_id, body):
 	return self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+device_id, body, 'Notify')
@@ -125,6 +128,8 @@ class Arlo(object):
     def GetFriends(self):
 	return self.get('https://arlo.netgear.com/hmsweb/users/friends', 'GetFriends')
 
+    ##
+    # This call returns the following:
     #{
     #   "id":"XXX-XXXXXXX_20160823042047",
     #   "name":"Home",
@@ -147,6 +152,7 @@ class Arlo(object):
     #      "XXXXXXXXXX"
     #   ]
     #}
+    ##
     def GetLocations(self):
 	return self.get('https://arlo.netgear.com/hmsweb/users/locations', 'GetLocations')
 
@@ -159,6 +165,13 @@ class Arlo(object):
     def UpdateProfile(self, first_name, last_name):
         return self.put('https://arlo.netgear.com/hmsweb/users/profile', {'firstName': first_name, 'lastName': last_name}, 'UpdateProfile')
 
+    def UpdatePassword(self, password):
+        r = self.post('https://arlo.netgear.com/hmsweb/users/changePassword', {'currentPassword':self.password,'newPassword':password}, 'ChangePassword')
+        self.password = password
+        return r
+
+    ##
+    # This is an example of the json you would pass in the body to UpdateFriends():
     #{
     #  "firstName":"Some",
     #  "lastName":"Body",
@@ -172,21 +185,33 @@ class Arlo(object):
     #  "email":"user@example.com",
     #  "id":"XXX-XXXXXXX"
     #}
+    ##
     def UpdateFriends(self, body):
         return self.put('https://arlo.netgear.com/hmsweb/users/friends', body, 'UpdateFriends') 
-
-    def UpdatePassword(self, password):
-        r = self.post('https://arlo.netgear.com/hmsweb/users/changePassword', {'currentPassword':self.password,'newPassword':password}, 'ChangePassword')
-        self.password = password
-        return r
 
     def UpdateDeviceName(self, parent_id, device_id, name):
         return self.put('https://arlo.netgear.com/hmsweb/users/devices/renameDevice', {'deviceId':device_id, 'deviceName':name, 'parentId':parent_id}, 'UpdateDeviceName')
 
+    ##
+    # This is an example of the json you would pass in the body to UpdateDisplayOrder() of your devices in the UI. 
+    #
+    # XXXXXXXXXXXXX is the device id of each camera. You can get this from GetDevices(). 
+    #{
+    #  "devices":{
+    #    "XXXXXXXXXXXXX":1,
+    #    "XXXXXXXXXXXXX":2,
+    #    "XXXXXXXXXXXXX":3
+    #  }
+    #}
+    ##
     def UpdateDisplayOrder(self, body):
-        #{"devices":{"XXXXXXXXXXXXX":1,"XXXXXXXXXXXXX":2,"XXXXXXXXXXXXX":3}}
         return self.post('https://arlo.netgear.com/hmsweb/users/devices/displayOrder', body, 'UpdateDisplayOrder')
 
+    ##
+    # This call returns the following:
+    # presignedContentUrl is a link to the actual video in Amazon AWS.
+    # presignedThumbnailUrl is a link to the thumbnail .jpg of the actual video in Amazon AWS.
+    #
     #[
     # {
     #  "mediaDurationSecond": 30, 
@@ -207,30 +232,69 @@ class Arlo(object):
     #  "mediaDuration": "00:00:30"
     # }
     #]
+    ##
     def GetLibrary(self, from_date, to_date):
         return self.post('https://arlo.netgear.com/hmsweb/users/library', {'dateFrom':from_date, 'dateTo':to_date}, 'GetRecordings')
 
+    ##
+    # Delete a single video recording from Arlo.
+    #
+    # All of the date info and device id you need to pass into this method are given in the results of the GetLibrary() call.
+    #
+    ##
     def DeleteRecording(self, created_date, utc_created_date, device_id):
         return self.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':[{'createdDate':created_date,'utcCreatedDate':utc_created_date,'deviceId':device_id}]}, 'DeleteRecording')
 
+    ##
+    # Delete a batch of video recordings from Arlo.
+    #
+    # The GetLibrary() call response json can be passed directly to this method if you'd like to delete the same list of videos you queried for.
+    # If you want to delete some other batch of videos, then you need to send an array of objects representing each video you want to delete.
+    #
+    #[  
+    #  {  
+    #    "createdDate":"20160904",
+    #    "utcCreatedDate":1473010280395,
+    #    "deviceId":"XXXXXXXXXXXXX"
+    #  },
+    #  {  
+    #    "createdDate":"20160904",
+    #    "utcCreatedDate":1473010280395,
+    #    "deviceId":"XXXXXXXXXXXXX"
+    #  }
+    #]
+    ##
     def BatchDeleteRecordings(self, recording_metadata):
         return self.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':recording_metadata}, 'BatchDeleteRecordings')
 
+    ##
+    # Returns the whole video from the presignedContentUrl. 
+    #
+    # Obviously, this function is generic and could be used to download anything. :)
+    ##
     def GetRecording(self, url, chunk_size=4096): 
         video = ''
         r = requests.get(url, stream=True)
         r.raise_for_status()
 
         for chunk in r.iter_content(chunk_size): 
-            if chunk: 
-                video += chunk 
+            if chunk: video += chunk 
         return video
 
+    ##
+    # Returns a generator that is the chunked video stream from the presignedContentUrl. 
+    #
+    # Obviously, this function is generic and could be used to download anything. :)
+    ##
     def StreamRecording(self, url, chunk_size=4096):
         r = requests.get(url, stream=True)
         r.raise_for_status()
         for chunk in r.iter_content(chunk_size):
             yield chunk
+    ##
+    # This function returns a generator that is a chunked live video stream.
+    #
+    # To initiate a stream pass the following:
     #{
     #  "to":"XXXXXXXXXXXXX",
     #  "from":"XXX-XXXXXXX_web",
@@ -242,12 +306,16 @@ class Arlo(object):
     #      "activityState":"startPositionStream"
     #  }
     #}
+    # The request to /users/devices/startStream returns:
+    #{
+    #  "data":{
+    #    "url":"rtmps://vzwow09-z2-prod.vz.netgear.com:80/vzmodulelive?egressToken=b1b4b675_ac03_4182_9844_043e02a44f71&userAgent=web&cameraId=48B4597VD8FF5_1473010750131"
+    #  },
+    #  "success":true
+    #}
+    # which is the url of the video stream, which this function then uses to call StreamRecording().
+    ##
     def StartStream(self, body):
-	r = requests.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', json=body, headers=self.headers)
-	r.raise_for_status()
-        body = r.json()
-        if body['success'] == True:
-            for stream in self.StreamRecording(body['data']['url']):
-		yield stream
-        else:
-            raise Exception('StartStream returned False', body)
+	body = self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', body, 'StartStream')
+        for chunk in self.StreamRecording(body['url']):
+	    yield chunk 
