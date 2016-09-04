@@ -49,7 +49,7 @@ for recording in library:
 	# Or:
 	#
 	# Get video as a chunked stream; this function returns a generator.
-	stream = arlo.StreamRecording(recording['presignedContentUrl']):
+	stream = arlo.StreamRecording(recording['presignedContentUrl'])
 	with open(recording['name']+'.mp4', 'w') as f:
     	for chunk in stream:
         	f.write(chunk)
