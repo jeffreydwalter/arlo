@@ -1,5 +1,5 @@
 # arlo
-##Python module for interacting with the Netgear Arlo camera system.
+> Python module for interacting with Netgear's Arlo camera system.
 
 This just a personal utility that I created out of necessity. It is by no means complete, although it does expose quite a bit of the Arlo interface in an easy to use Python pacakge.
 
