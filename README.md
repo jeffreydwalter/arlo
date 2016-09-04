@@ -13,7 +13,6 @@ To get started, just do:
 
 ```
 $ git clone https://github.com/jeffreydwalter/arlo.git
-
 ```
 
 Once you have the repository cloned, you can import and use it, like so:
@@ -72,8 +71,8 @@ except Exception as e:
 - [x] README
 - [x] First pass at Arlo API in Python 
 - [x] Basic code example 
-- [] Unit tests
-- [] Add missing APIs
-- [] Turn this into a proper pip package.
-- [] Add better documentation
-- [] Have a cold beer?
+- [ ] Unit tests
+- [ ] Add missing APIs
+- [ ] Turn this into a proper pip package.
+- [ ] Add better documentation
+- [ ] Have a cold beer?
