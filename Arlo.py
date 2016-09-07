@@ -135,7 +135,7 @@ class Arlo(object):
     def Calendar(self, device_id, xcloud_id):
         return self.Notify(device_id, xcloud_id, {"from":self.user_id+"_web","to":device_id,"action":"set","resource":"schedule","publishResponse":"true","properties":{"active":"true"}})
 
-    def SetCustomMode(self, device_id, xcloud_id, mode):
+    def CustomMode(self, device_id, xcloud_id, mode):
         return self.Notify(device_id, xcloud_id, {"from":self.user_id+"_web","to":device_id,"action":"set","resource":"modes","publishResponse":"true","properties":{"active":mode}})
 
     def DeleteMode(self, device_id, xcloud_id, mode):
