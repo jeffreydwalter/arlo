@@ -22,8 +22,12 @@ class Arlo(object):
 	self.headers = {}
         self.Login(username, password)
 
-    def get(self, url, caller):
+    def get(self, url, caller, headers=None):
+	orig_headers = self.headers.copy()
+	if headers is not None:
+	    self.headers.update(headers)
         r = requests.get(url, headers=self.headers)
+	self.headers = orig_headers
         r.raise_for_status()
         body = r.json()
         if body['success'] == True:
@@ -32,8 +36,12 @@ class Arlo(object):
         else:
             raise Exception(caller+' failed', body)
 
-    def post(self, url, body, caller):
+    def post(self, url, body, caller, headers=None):
+	orig_headers = self.headers.copy()
+	if headers is not None:
+	    self.headers.update(headers)
 	r = requests.post(url, json=body, headers=self.headers)
+	self.headers = orig_headers
 	r.raise_for_status()
         body = r.json()
         if body['success'] == True:
@@ -42,8 +50,12 @@ class Arlo(object):
         else:
             raise Exception(caller+' failed', body)
 
-    def put(self, url, body, caller):
+    def put(self, url, body, caller, headers=None):
+	orig_headers = self.headers.copy()
+	if headers is not None:
+	    self.headers.update(headers)
 	r = requests.put(url, json=body, headers=self.headers)
+	self.headers = orig_headers
 	r.raise_for_status()
         body = r.json()
         if body['success'] == True:
@@ -76,6 +88,7 @@ class Arlo(object):
 	self.headers = {
 	    'Authorization': body['token']
 	}
+        self.user_id = body['userId']
 	return body
 
     ##
@@ -110,8 +123,26 @@ class Arlo(object):
     #   motionSetupModeEnabled (bool) - Motion Detection Setup Enabled/Disabled 
     #   motionSetupModeSensitivity (int 0-100) - Motion Detection Sensitivity
     ##
-    def Notify(self, device_id, body):
-	return self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+device_id, body, 'Notify')
+    def Notify(self, device_id, xcloud_id, body):
+	return self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+device_id, body, 'Notify', headers={"xCloudId":xcloud_id})
+
+    def Arm(self, device_id, xcloud_id):
+        return self.Notify(device_id, xcloud_id, {"from":self.user_id+"_web","to":device_id,"action":"set","resource":"modes","publishResponse":"true","properties":{"active":"mode1"}})
+
+    def Disarm(self, device_id, xcloud_id):
+        return self.Notify(device_id, xcloud_id, {"from":self.user_id+"_web","to":device_id,"action":"set","resource":"modes","publishResponse":"true","properties":{"active":"mode0"}})
+
+    def Calendar(self, device_id, xcloud_id):
+        return self.Notify(device_id, xcloud_id, {"from":self.user_id+"_web","to":device_id,"action":"set","resource":"schedule","publishResponse":"true","properties":{"active":"true"}})
+
+    def CustomMode(self, device_id, xcloud_id, mode):
+        return self.Notify(device_id, xcloud_id, {"from":self.user_id+"_web","to":device_id,"action":"set","resource":"modes","publishResponse":"true","properties":{"active":mode}})
+
+    def DeleteMode(self, device_id, xcloud_id, mode):
+        return self.Notify(device_id, xcloud_id, {"from":self.user_id+"_web","to":device_id,"action":"delete","resource":"modes/"+mode,"publishResponse":"true"})
+
+    def ToggleCamera(self, device_id, xcloud_id, active=True):
+        return self.Notify(device_id, xcloud_id, {"from":self.user_id+"_web","to":device_id,"action":"set","resource":"cameras/"+device_id,"publishResponse":"true","properties":{"privacyActive":active}})
 
     def Reset(self):
         return self.get('https://arlo.netgear.com/hmsweb/users/library/reset', 'Reset')
@@ -156,7 +187,11 @@ class Arlo(object):
     def GetLocations(self):
 	return self.get('https://arlo.netgear.com/hmsweb/users/locations', 'GetLocations')
 
-    def GetDevices(self):
+    ##
+    # This method returns an array that contains the basestation, cameras, etc. and their metadata.
+    #
+    ## 
+    def GetDevices(self, device_type=None): 
         return self.get('https://arlo.netgear.com/hmsweb/users/devices', 'GetDevices')
 
     def GetLibraryMetaData(self, from_date, to_date):

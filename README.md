@@ -68,6 +68,29 @@ except Exception as e:
     print e
 ```
 
+Here's an example of arming/disarming Arlo.
+
+```python
+USERNAME = 'user@example.com'
+PASSWORD = 'supersecretpassword'
+
+try:
+	arlo = Arlo(USERNAME, PASSWORD)
+	# At this point you're logged into Arlo.
+
+	# Get the list of devices and filter on device type to only get the basestation.
+	devices = [ device for device in arlo.GetDevices() if device['deviceType'] == 'basestation']
+
+	# Arm Arlo.
+	arlo.Arm(devices[0]['deviceId'], devices[0]['xCloudId'])
+	# Or
+	# Disarm Arlo.
+	# arlo.Disarm(devices[0]['deviceId'], devices[0]['xCloudId'])
+
+except Exception as e:
+    print e
+```
+
 ## Todo:
 - [x] LICENSE
 - [x] README
