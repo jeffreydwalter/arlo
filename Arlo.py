@@ -22,12 +22,9 @@ class Arlo(object):
 	self.headers = {}
         self.Login(username, password)
 
-    def get(self, url, caller, headers=None):
-	orig_headers = self.headers.copy()
-	if headers is not None:
-	    self.headers.update(headers)
-        r = requests.get(url, headers=self.headers)
-	self.headers = orig_headers
+    def get(self, url, caller, headers={}):
+	headers.update(self.headers)
+        r = requests.get(url, headers=headers)
         r.raise_for_status()
         body = r.json()
         if body['success'] == True:
@@ -36,12 +33,9 @@ class Arlo(object):
         else:
             raise Exception(caller+' failed', body)
 
-    def post(self, url, body, caller, headers=None):
-	orig_headers = self.headers.copy()
-	if headers is not None:
-	    self.headers.update(headers)
-	r = requests.post(url, json=body, headers=self.headers)
-	self.headers = orig_headers
+    def post(self, url, body, caller, headers={}):
+	headers.update(self.headers)
+	r = requests.post(url, json=body, headers=headers)
 	r.raise_for_status()
         body = r.json()
         if body['success'] == True:
@@ -50,12 +44,9 @@ class Arlo(object):
         else:
             raise Exception(caller+' failed', body)
 
-    def put(self, url, body, caller, headers=None):
-	orig_headers = self.headers.copy()
-	if headers is not None:
-	    self.headers.update(headers)
-	r = requests.put(url, json=body, headers=self.headers)
-	self.headers = orig_headers
+    def put(self, url, body, caller, headers={}):
+	headers.update(self.headers)
+	r = requests.put(url, json=body, headers=headers)
 	r.raise_for_status()
         body = r.json()
         if body['success'] == True:

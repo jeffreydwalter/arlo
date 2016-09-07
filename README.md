@@ -71,6 +71,8 @@ except Exception as e:
 Here's an example of arming/disarming Arlo.
 
 ```python
+from Arlo.Arlo import Arlo
+
 USERNAME = 'user@example.com'
 PASSWORD = 'supersecretpassword'
 
