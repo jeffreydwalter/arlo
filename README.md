@@ -81,7 +81,7 @@ try:
 	# At this point you're logged into Arlo.
 
 	# Get the list of devices and filter on device type to only get the basestation.
-	basestation = [ device for device in arlo.GetDevices() if device['deviceType'] == 'basestation']
+	basestation = [ device for device in arlo.GetDevices() if device['deviceType'] == 'basestation' ]
 
 	# Arm Arlo.
 	arlo.Arm(basestation[0]['deviceId'], basestation[0]['xCloudId'])
