@@ -61,8 +61,9 @@ try:
 	# Delete all of the videos you just downloaded from the Arlo library.
 	# Notice that you can pass the "library" object we got back from the GetLibrary() call.
 	result = arlo.BatchDeleteRecordings(library)
-	if result['success'] == True:
-		print 'Batch deletion of videos completed successfully.'
+
+	# If we made it here without an exception, then the videos were successfully deleted.
+	print 'Batch deletion of videos completed successfully.'
 
 except Exception as e:
     print e
