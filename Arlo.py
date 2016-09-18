@@ -14,16 +14,18 @@
 # limitations under the License.
 ##
 
+# 14 Sep 2016, Len Shustek: Added Logout()
+
 import json
 import requests
 
 class Arlo(object):
     def __init__(self, username, password):
-	self.headers = {}
+        self.headers = {}
         self.Login(username, password)
 
     def get(self, url, caller, headers={}):
-	headers.update(self.headers)
+        headers.update(self.headers)
         r = requests.get(url, headers=headers)
         r.raise_for_status()
         body = r.json()
@@ -34,9 +36,9 @@ class Arlo(object):
             raise Exception(caller+' failed', body)
 
     def post(self, url, body, caller, headers={}):
-	headers.update(self.headers)
-	r = requests.post(url, json=body, headers=headers)
-	r.raise_for_status()
+        headers.update(self.headers)
+        r = requests.post(url, json=body, headers=headers)
+        r.raise_for_status()
         body = r.json()
         if body['success'] == True:
             if 'data' in body:
@@ -45,9 +47,9 @@ class Arlo(object):
             raise Exception(caller+' failed', body)
 
     def put(self, url, body, caller, headers={}):
-	headers.update(self.headers)
-	r = requests.put(url, json=body, headers=headers)
-	r.raise_for_status()
+        headers.update(self.headers)
+        r = requests.put(url, json=body, headers=headers)
+        r.raise_for_status()
         body = r.json()
         if body['success'] == True:
             if 'data' in body:
@@ -76,11 +78,14 @@ class Arlo(object):
         self.password = password
 
         body = self.post('https://arlo.netgear.com/hmsweb/login', {'email': self.username, 'password': self.password}, 'Login')
-	self.headers = {
-	    'Authorization': body['token']
-	}
+        self.headers = {
+            'Authorization': body['token']
+        }
         self.user_id = body['userId']
-	return body
+        return body
+
+    def Logout(self):
+        return self.put('https://arlo.netgear.com/hmsweb/logout', {}, 'Logout')
 
     ##
     # The following are examples of the json you would need to pass in the body of the Notify() call to interact with Arlo:
@@ -115,7 +120,7 @@ class Arlo(object):
     #   motionSetupModeSensitivity (int 0-100) - Motion Detection Sensitivity
     ##
     def Notify(self, device_id, xcloud_id, body):
-	return self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+device_id, body, 'Notify', headers={"xCloudId":xcloud_id})
+        return self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+device_id, body, 'Notify', headers={"xCloudId":xcloud_id})
 
     def Arm(self, device_id, xcloud_id):
         return self.Notify(device_id, xcloud_id, {"from":self.user_id+"_web","to":device_id,"action":"set","resource":"modes","publishResponse":"true","properties":{"active":"mode1"}})
@@ -145,10 +150,10 @@ class Arlo(object):
         return self.get('https://arlo.netgear.com/hmsweb/users/payment/offers', 'GetPaymentOffers')
 
     def GetProfile(self):
-	return self.get('https://arlo.netgear.com/hmsweb/users/profile', 'GetProfile')
+        return self.get('https://arlo.netgear.com/hmsweb/users/profile', 'GetProfile')
 
     def GetFriends(self):
-	return self.get('https://arlo.netgear.com/hmsweb/users/friends', 'GetFriends')
+        return self.get('https://arlo.netgear.com/hmsweb/users/friends', 'GetFriends')
 
     ##
     # This call returns the following:
@@ -176,7 +181,7 @@ class Arlo(object):
     #}
     ##
     def GetLocations(self):
-	return self.get('https://arlo.netgear.com/hmsweb/users/locations', 'GetLocations')
+        return self.get('https://arlo.netgear.com/hmsweb/users/locations', 'GetLocations')
 
     ##
     # This method returns an array that contains the basestation, cameras, etc. and their metadata.
@@ -342,6 +347,6 @@ class Arlo(object):
     # which is the url of the video stream, which this function then uses to call StreamRecording().
     ##
     def StartStream(self, body):
-	body = self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', body, 'StartStream')
+        body = self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', body, 'StartStream')
         for chunk in self.StreamRecording(body['url']):
-	    yield chunk 
+            yield chunk 
