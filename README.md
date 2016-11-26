@@ -18,7 +18,8 @@ $ git clone https://github.com/jeffreydwalter/arlo.git
 Once you have the repository cloned, you can import and use it, like so:
 
 ```python
-from Arlo.Arlo import Arlo
+from datetime import timedelta, date
+from Arlo import Arlo
 
 USERNAME = 'user@example.com'
 PASSWORD = 'supersecretpassword'
