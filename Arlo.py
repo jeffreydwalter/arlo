@@ -495,30 +495,12 @@ class Arlo(object):
 		for chunk in r.iter_content(chunk_size):
 			yield chunk
 	##
-	# This function returns a generator that is a chunked live video stream.
+	# This function returns a json object containing the rtmps url to the requested video stream.
+    # You will need the to install a library to handle streaming of this protocol: https://pypi.python.org/pypi/python-librtmp
 	#
-	# To initiate a stream pass the following:
-	#{
-	#  "to":"XXXXXXXXXXXXX",
-	#  "from":"XXX-XXXXXXX_web",
-	#  "resource":"cameras/XXXXXXXXXXXXX",
-	#  "action":"set",
-	#  "publishResponse":true,
-	#  "transId":"web!XXXXXXXX.XXXXXXXXXXXXXXXXXXXX",
-	#  "properties":{
-	#	  "activityState":"startPositionStream"
-	#  }
-	#}
 	# The request to /users/devices/startStream returns:
-	#{
-	#  "data":{
-	#	"url":"rtmps://vzwow09-z2-prod.vz.netgear.com:80/vzmodulelive?egressToken=b1b4b675_ac03_4182_9844_043e02a44f71&userAgent=web&cameraId=48B4597VD8FF5_1473010750131"
-	#  },
-	#  "success":true
-	#}
-	# which is the url of the video stream, which this function then uses to call StreamRecording().
+	#{ "url":"rtmps://vzwow09-z2-prod.vz.netgear.com:80/vzmodulelive?egressToken=b1b4b675_ac03_4182_9844_043e02a44f71&userAgent=web&cameraId=48B4597VD8FF5_1473010750131" }
+	#
 	##
-	def StartStream(self, body):
-		body = self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', body, 'StartStream')
-		for chunk in self.StreamRecording(body['url']):
-			yield chunk
+    def GetStreamUrl(self, device_id, xcloud_id): 
+        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":device_id,"from":self.user_id+"_web","resource":"cameras/"+device_id,"action":"set","publishResponse":"true","transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":device_id}}, 'StartStream', headers={"xCloudId":xcloud_id})
