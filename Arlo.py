@@ -496,11 +496,11 @@ class Arlo(object):
 			yield chunk
 	##
 	# This function returns a json object containing the rtmps url to the requested video stream.
-    # You will need the to install a library to handle streaming of this protocol: https://pypi.python.org/pypi/python-librtmp
+        # You will need the to install a library to handle streaming of this protocol: https://pypi.python.org/pypi/python-librtmp
 	#
 	# The request to /users/devices/startStream returns:
 	#{ "url":"rtmps://vzwow09-z2-prod.vz.netgear.com:80/vzmodulelive?egressToken=b1b4b675_ac03_4182_9844_043e02a44f71&userAgent=web&cameraId=48B4597VD8FF5_1473010750131" }
 	#
 	##
-    def GetStreamUrl(self, device_id, xcloud_id): 
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":device_id,"from":self.user_id+"_web","resource":"cameras/"+device_id,"action":"set","publishResponse":"true","transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":device_id}}, 'StartStream', headers={"xCloudId":xcloud_id})
+        def GetStreamUrl(self, device_id, xcloud_id): 
+            return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":device_id,"from":self.user_id+"_web","resource":"cameras/"+device_id,"action":"set","publishResponse":"true","transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":device_id}}, 'StartStream', headers={"xCloudId":xcloud_id})
