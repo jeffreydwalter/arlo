@@ -202,8 +202,8 @@ class Arlo(object):
 						message = json.loads(event.data)
 						# Only queue messages that start with our transaction id prefix.
 						if message['transId'].startswith(Arlo.TRANSID_PREFIX):
-							self.event_streams[device_id].queue.put(message)
-				elif 'status' in response and response['status'] == 'connected':
+							self.event_streams[device_id].queue.put(message)	
+				elif device_id in self.event_streams and 'status' in response and response['status'] == 'connected':
 					self.event_streams[device_id].Connect()
 
 		if device_id not in self.event_streams or not self.event_streams[device_id].connected:
