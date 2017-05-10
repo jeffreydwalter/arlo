@@ -30,12 +30,14 @@ import time
 
 class EventStream(object):
 	def __init__(self, method, args):
+                self.Disconnect()
+		self.Unregister()
 		self.queue = Queue.Queue()
 		self.thread = threading.Thread(name="EventStream", target=method, args=(args))
 		self.thread.setDaemon(True)
-		self.thread.start()
-		self.Disconnect()
-		self.Unregister()
+
+        def Start(self):
+    		self.thread.start()
 
 	def Connect(self):
 		self.connected = True
@@ -154,7 +156,7 @@ class Arlo(object):
 		self.username = username
 		self.password = password
 
-		body = self.post('https://arlo.netgear.com/hmsweb/login', {'email': self.username, 'password': self.password}, 'Login')
+		body = self.post('https://arlo.netgear.com/hmsweb/login/v2', {'email': self.username, 'password': self.password}, 'Login')
 		self.headers = {
 			'DNT':'1',
 			'Host': 'arlo.netgear.com',
@@ -209,6 +211,7 @@ class Arlo(object):
 		if device_id not in self.event_streams or not self.event_streams[device_id].connected:
 			event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.headers['Authorization'], cookies=self.cookies)
 			self.event_streams[device_id] = EventStream(QueueEvents, args=(self, event_stream,))
+			self.event_streams[device_id].Start()
 			while not self.event_streams[device_id].connected:
 				time.sleep(1)
 
@@ -220,7 +223,7 @@ class Arlo(object):
 	##
 	def Unsubscribe(self, device_id):
 		if device_id in self.event_streams and self.event_streams[device_id].connected:
-			print self.get('https://arlo.netgear.com/hmsweb/client/unsubscribe', 'Unsubscribe')
+			self.get('https://arlo.netgear.com/hmsweb/client/unsubscribe', 'Unsubscribe')
 			self.event_stream[device_id].remove()
 
 	##
@@ -267,7 +270,7 @@ class Arlo(object):
 		body['from'] = self.user_id+'_web'
 		body['to'] = device_id
 
-		self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+device_id, body, 'Notify', headers={"xCloudId":xcloud_id})
+		self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+device_id, body, 'Notify', headers={"xcloudId":xcloud_id})
 		return body['transId']
 
 	def NotifyAndGetResponse(self, device_id, xcloud_id, body):
@@ -302,6 +305,9 @@ class Arlo(object):
 
 	def Calendar(self, device_id, xcloud_id):
 		return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"set","resource":"schedule","publishResponse":"true","properties":{"active":"true"}})
+
+        def GetCalendar(self, device_id, xcloud_id):
+	        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"get","resource":"schedule","publishResponse":"false"})
 
 	def CustomMode(self, device_id, xcloud_id, mode):
 		return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":"true","properties":{"active":mode}})
@@ -503,4 +509,4 @@ class Arlo(object):
 	#
 	##
         def GetStreamUrl(self, device_id, xcloud_id): 
-            return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":device_id,"from":self.user_id+"_web","resource":"cameras/"+device_id,"action":"set","publishResponse":"true","transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":device_id}}, 'StartStream', headers={"xCloudId":xcloud_id})
+            return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":device_id,"from":self.user_id+"_web","resource":"cameras/"+device_id,"action":"set","publishResponse":"true","transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":device_id}}, 'StartStream', headers={"xcloudId":xcloud_id})
