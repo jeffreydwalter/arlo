@@ -14,6 +14,8 @@ To get started, just do:
 ```
 $ git clone https://github.com/jeffreydwalter/arlo.git
 ```
+**NOTE: arlo.netgear.com requires TLS 1.2 for their API. So, if you're getting ssl errors, it's most likely related to your version of openssl. You must upgrade your openssl library.
+If you're running this library on OSX or macOS, they ship with openssl v0.9.x which does not support TLS 1.2. You should follow the instructions found here https://comeroutewithme.com/2016/03/13/python-osx-openssl-issue/ to upgrade your openssl library.**
 
 Once you have the repository cloned, you can import and use it, like so:
 
