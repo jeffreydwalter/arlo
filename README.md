@@ -9,6 +9,9 @@ As such, this package does not come with unit tests (feel free to add them) or g
 
 **Please, feel free to contribute to this repo.**
 
+** Or, buy Jeff a beer!**
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=R77B7UXMLA6ML&lc=US&item_name=Jeff%20Needs%20Beer&item_number=buyjeffabeer&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
+
 To get started, just do:
 
 ```
