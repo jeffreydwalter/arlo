@@ -7,13 +7,15 @@ As such, this package does not come with unit tests (feel free to add them) or g
 
 *I'm not a Python developer by trade and I don't plan on doing much more work on this library outside of fixing any bugs I find or adding any APIs I discover I need.*
 
-**Please, feel free to contribute to this repo.**
+**Please, feel free to contribute to this repo or, buy Jeff a beer!** [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=R77B7UXMLA6ML&lc=US&item_name=Jeff%20Needs%20Beer&item_number=buyjeffabeer&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
 To get started, just do:
 
 ```
 $ git clone https://github.com/jeffreydwalter/arlo.git
 ```
+**NOTE: arlo.netgear.com requires TLS 1.2 for their API. So, if you're getting ssl errors, it's most likely related to your version of openssl. You must upgrade your openssl library.
+If you're running this library on OSX or macOS, they ship with openssl v0.9.x which does not support TLS 1.2. You should follow the instructions found here https://comeroutewithme.com/2016/03/13/python-osx-openssl-issue/ to upgrade your openssl library.**
 
 Once you have the repository cloned, you can import and use it, like so:
 
