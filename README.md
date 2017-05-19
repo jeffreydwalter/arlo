@@ -83,6 +83,7 @@ try:
 	# At this point you're logged into Arlo.
 
 	# Get the list of devices and filter on device type to only get the basestation.
+	# This will return an array which includes all of the basestation's associated metadata.
 	basestation = [ device for device in arlo.GetDevices() if device['deviceType'] == 'basestation' ]
 
 	# Arm Arlo.
@@ -95,6 +96,29 @@ except Exception as e:
     print e
 ```
 
+Here's an example of toggling an Arlo camera. 
+
+```python
+from Arlo.Arlo import Arlo
+
+USERNAME = 'user@example.com'
+PASSWORD = 'supersecretpassword'
+
+try:
+	arlo = Arlo(USERNAME, PASSWORD)
+
+	# Get the list of devices and filter on device type to only get the cameras.
+	# This will return an array of cameras, including all of the cameras' associated metadata.
+	devices = [ device for device in arlo.GetDevices() if device['deviceType'] == 'camera']
+	# Turn camera on.
+	print arlo.ToggleCamera(devices[0]['deviceId'], devices[0]['xCloudId'], True))
+	# Turn camera off.
+	print arlo.ToggleCamera(devices[0]['deviceId'], devices[0]['xCloudId'], False))
+
+except Exception as e:
+    print e
+
+```
 ## Todo:
 - [x] LICENSE
 - [x] README
