@@ -15,14 +15,14 @@
 ##
 
 # 14 Sep 2016, Len Shustek: Added Logout()
+# 17 Jul 2017, Andreas Jakl: Port to Python 3
 
-from __future__ import division
 
 import datetime
 #import logging
 import json
 import math
-import Queue
+import queue
 import random
 import requests
 import sseclient
@@ -35,7 +35,7 @@ class EventStream(object):
 	def __init__(self, method, args):
 		self.Disconnect()
 		self.Unregister()
-		self.queue = Queue.Queue()
+		self.queue = queue.queue()
 		self.thread = threading.Thread(name="EventStream", target=method, args=(args))
 		self.thread.setDaemon(True)
 
@@ -183,7 +183,7 @@ class Arlo(object):
  	# when subsequent calls to /notify are made.
 	#
 	# Since this interface is asyncronous, and this is a quick and dirty hack to get this working, I'm using a thread
-	# to listen to the EventStream. This thread puts events into a Queue. Some polling is required (see NotifyAndGetResponse()) because
+	# to listen to the EventStream. This thread puts events into a queue. Some polling is required (see NotifyAndGetResponse()) because
 	# the event messages aren't guaranteed to be delivered in any specific order, but I wanted to maintain a synchronous style API.
 	#
 	# You generally shouldn't need to call Subscribe() directly, although I'm leaving it "public" for now.
@@ -197,7 +197,7 @@ class Arlo(object):
 				self.event_streams[device_id].Register()
 				return event
 
-		def QueueEvents(self, event_stream):
+		def queueEvents(self, event_stream):
 			for event in event_stream:
 				response = json.loads(event.data)
 				if device_id in self.event_streams and self.event_streams[device_id].connected:
@@ -211,7 +211,7 @@ class Arlo(object):
 
 		if device_id not in self.event_streams or not self.event_streams[device_id].connected:
 			event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.headers['Authorization'], cookies=self.cookies)
-			self.event_streams[device_id] = EventStream(QueueEvents, args=(self, event_stream,))
+			self.event_streams[device_id] = EventStream(queueEvents, args=(self, event_stream,))
 			self.event_streams[device_id].Start()
 			while not self.event_streams[device_id].connected:
 				time.sleep(1)
