@@ -1,7 +1,7 @@
 # arlo
 > Python module for interacting with Netgear's Arlo camera system.
 
-Forked version of the original script by Jeff, also available on [GitHub(https://github.com/jeffreydwalter/arlo)].
+Forked version of the original script by Jeff, also available on GitHub: https://github.com/jeffreydwalter/arlo.
 
 Further instructions are available on my blog: https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/
 
