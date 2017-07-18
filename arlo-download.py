@@ -16,7 +16,7 @@ try:
 	seven_days_ago = (date.today()-timedelta(days=7)).strftime("%Y%m%d")
 
 	# Get all of the recordings for a date range.
-	library = arlo.GetLibrary(today, today)
+	library = arlo.GetLibrary(seven_days_ago, today)
 
 	# Iterate through the recordings in the library.
 	for recording in library:
@@ -26,7 +26,6 @@ try:
 		videofilename = datetime.datetime.fromtimestamp(int(recording['name'])//1000).strftime('%Y-%m-%d %H-%M-%S') + ' ' + recording['uniqueId']
 		with open('videos/'+videofilename+'.mp4', 'w') as f:
 			for chunk in stream:
-				#f.write(chunk)
 				f.buffer.write(chunk)
 			f.close()
 
