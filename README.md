@@ -22,6 +22,7 @@ Once you have the repository cloned, you can import and use it, like so:
 ```python
 from datetime import timedelta, date
 from Arlo import Arlo
+import datetime
 
 USERNAME = 'user@example.com'
 PASSWORD = 'supersecretpassword'
@@ -41,35 +42,36 @@ try:
 	# Iterate through the recordings in the library.
 	for recording in library:
 
+		videofilename = datetime.datetime.fromtimestamp(int(recording['name'])//1000).strftime('%Y-%m-%d %H-%M-%S') + ' ' + recording['uniqueId']
 		##
 		# The videos produced by Arlo are pretty small, even in their longest, best quality settings,
 		# but you should probably prefer the chunked stream (see below). 
 		###    
 		#    # Download the whole video into memory as a single chunk.
 		#    video = arlo.GetRecording(recording['presignedContentUrl'])
-		#	 with open(recording['name']+'.mp4', 'w') as f:
+		#	 with open(videofilename+'.mp4', 'w') as f:
 		#        f.write(stream)
 		#        f.close()
 		# Or:
 		#
 		# Get video as a chunked stream; this function returns a generator.
 		stream = arlo.StreamRecording(recording['presignedContentUrl'])
-		with open(recording['name']+'.mp4', 'w') as f:
+		with open(videofilename+'.mp4', 'w') as f:
 			for chunk in stream:
-				f.write(chunk)
+				f.buffer.write(chunk)
 			f.close()
 
-		print 'Downloaded video '+recording['name']+' from '+recording['createdDate']+'.'
+		print ('Downloaded video '+videofilename+' from '+recording['createdDate']+'.')
 
 	# Delete all of the videos you just downloaded from the Arlo library.
 	# Notice that you can pass the "library" object we got back from the GetLibrary() call.
 	result = arlo.BatchDeleteRecordings(library)
 
 	# If we made it here without an exception, then the videos were successfully deleted.
-	print 'Batch deletion of videos completed successfully.'
+	print ('Batch deletion of videos completed successfully.')
 
 except Exception as e:
-    print e
+    print (e)
 ```
 
 Here's an example of arming/disarming Arlo.
@@ -95,7 +97,7 @@ try:
 	# arlo.Disarm(basestation[0]['deviceId'], basestation[0]['xCloudId'])
 
 except Exception as e:
-    print e
+    print (e)
 ```
 
 Here's an example of toggling an Arlo camera. 
@@ -118,7 +120,7 @@ try:
 	print arlo.ToggleCamera(devices[0]['deviceId'], devices[0]['xCloudId'], False))
 
 except Exception as e:
-    print e
+    print (e)
 
 ```
 ## Todo:
