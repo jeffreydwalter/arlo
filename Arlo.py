@@ -197,7 +197,7 @@ class Arlo(object):
 				self.event_streams[device_id].Register()
 				return event
 
-		def queueEvents(self, event_stream):
+		def QueueEvents(self, event_stream):
 			for event in event_stream:
 				response = json.loads(event.data)
 				if device_id in self.event_streams and self.event_streams[device_id].connected:
@@ -211,7 +211,7 @@ class Arlo(object):
 
 		if device_id not in self.event_streams or not self.event_streams[device_id].connected:
 			event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.headers['Authorization'], cookies=self.cookies)
-			self.event_streams[device_id] = EventStream(queueEvents, args=(self, event_stream,))
+			self.event_streams[device_id] = EventStream(QueueEvents, args=(self, event_stream,))
 			self.event_streams[device_id].Start()
 			while not self.event_streams[device_id].connected:
 				time.sleep(1)
