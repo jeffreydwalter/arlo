@@ -1,12 +1,6 @@
 # arlo
 > Python module for interacting with Netgear's Arlo camera system.
 
-Forked version of the original script by Jeff, also available on GitHub: https://github.com/jeffreydwalter/arlo.
-
-Further instructions are available on my blog: https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/
-
-# Original Documentation
-
 This just a personal utility that I created out of necessity. It is by no means complete, although it does expose quite a bit of the Arlo interface in an easy to use Python pacakge.
 
 As such, this package does not come with unit tests (feel free to add them) or guarantees.
@@ -48,21 +42,21 @@ try:
 	# Iterate through the recordings in the library.
 	for recording in library:
 
-		videofilename = datetime.datetime.fromtimestamp(int(recording['name'])//1000).strftime('%Y-%m-%d %H-%M-%S') + ' ' + recording['uniqueId']
+		videofilename = datetime.datetime.fromtimestamp(int(recording['name'])//1000).strftime('%Y-%m-%d %H-%M-%S') + ' ' + recording['uniqueId'] + '.mp4'
 		##
 		# The videos produced by Arlo are pretty small, even in their longest, best quality settings,
 		# but you should probably prefer the chunked stream (see below). 
 		###    
 		#    # Download the whole video into memory as a single chunk.
 		#    video = arlo.GetRecording(recording['presignedContentUrl'])
-		#	 with open(videofilename+'.mp4', 'w') as f:
+		#	 with open('videos/'+videofilename, 'w') as f:
 		#        f.write(stream)
 		#        f.close()
 		# Or:
 		#
 		# Get video as a chunked stream; this function returns a generator.
 		stream = arlo.StreamRecording(recording['presignedContentUrl'])
-		with open(videofilename+'.mp4', 'w') as f:
+		with open('videos/'+videofilename, 'w') as f:
 			for chunk in stream:
 				f.buffer.write(chunk)
 			f.close()
@@ -121,9 +115,9 @@ try:
 	# This will return an array of cameras, including all of the cameras' associated metadata.
 	devices = [ device for device in arlo.GetDevices() if device['deviceType'] == 'camera']
 	# Turn camera on.
-	print arlo.ToggleCamera(devices[0]['deviceId'], devices[0]['xCloudId'], True))
+	print (arlo.ToggleCamera(devices[0]['deviceId'], devices[0]['xCloudId'], True)))
 	# Turn camera off.
-	print arlo.ToggleCamera(devices[0]['deviceId'], devices[0]['xCloudId'], False))
+	print (arlo.ToggleCamera(devices[0]['deviceId'], devices[0]['xCloudId'], False)))
 
 except Exception as e:
     print (e)

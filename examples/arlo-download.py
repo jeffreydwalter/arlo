@@ -23,8 +23,8 @@ try:
 
 		# Get video as a chunked stream; this function returns a generator.
 		stream = arlo.StreamRecording(recording['presignedContentUrl'])
-		videofilename = datetime.datetime.fromtimestamp(int(recording['name'])//1000).strftime('%Y-%m-%d %H-%M-%S') + ' ' + recording['uniqueId']
-		with open('videos/'+videofilename+'.mp4', 'w') as f:
+		videofilename = datetime.datetime.fromtimestamp(int(recording['name'])//1000).strftime('%Y-%m-%d %H-%M-%S') + ' ' + recording['uniqueId'] + '.mp4'
+		with open('videos/'+videofilename, 'w') as f:
 			for chunk in stream:
 				f.buffer.write(chunk)
 			f.close()
