@@ -22,12 +22,16 @@ import datetime
 #import logging
 import json
 import math
-import queue
 import random
 import requests
 import sseclient
 import threading
 import time
+import sys
+if sys.version[0] == '2':
+    import Queue as queue
+else:
+    import queue as queue
 
 #logging.basicConfig(level=logging.DEBUG,format='[%(levelname)s] (%(threadName)-10s) %(message)s',)
 
