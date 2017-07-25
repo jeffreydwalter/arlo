@@ -1,4 +1,4 @@
-# arlo
+# arlo ![](https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-blue.svg)
 > Python module for interacting with Netgear's Arlo camera system.
 
 This just a personal utility that I created out of necessity. It is by no means complete, although it does expose quite a bit of the Arlo interface in an easy to use Python pacakge.
