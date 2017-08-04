@@ -23,6 +23,7 @@ Once you have the repository cloned, you can import and use it, like so:
 from datetime import timedelta, date
 from Arlo import Arlo
 import datetime
+import sys
 
 USERNAME = 'user@example.com'
 PASSWORD = 'supersecretpassword'
@@ -58,7 +59,11 @@ try:
 		stream = arlo.StreamRecording(recording['presignedContentUrl'])
 		with open('videos/'+videofilename, 'w') as f:
 			for chunk in stream:
-				f.buffer.write(chunk)
+				# Support both Python 2.7 and 3.
+				if sys.version[0] == '2':
+					f.write(chunk)
+				else:
+					f.buffer.write(chunk)
 			f.close()
 
 		print ('Downloaded video '+videofilename+' from '+recording['createdDate']+'.')
