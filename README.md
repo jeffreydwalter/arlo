@@ -158,13 +158,13 @@ try:
     # This will return an array which includes all of the cameras and their associated metadata.
     cameras = [ device for device in devices if device['deviceType'] == 'camera' ]
 
-	# Starting recording with a camera.
+    # Starting recording with a camera.
     arlo.StartRecording(basestation[0]['deviceId'], cameras[0]['deviceId'], basestation[0]['xCloudId'], cameras[0]['olsonTimeZone']);
 
-	# Wait for 4 seconds while the camera records. (There are probably better ways to do this, but you get the idea.)
+    # Wait for 4 seconds while the camera records. (There are probably better ways to do this, but you get the idea.)
     time.sleep(4)
 
-	# Stop recording.
+    # Stop recording.
     arlo.StopRecording(basestation[0]['deviceId'], cameras[0]['deviceId'], basestation[0]['xCloudId'], cameras[0]['olsonTimeZone']);
 
     # Take the snapshot.
