@@ -1,3 +1,2 @@
-json
 requests
-sseclient-py
+sseclient
