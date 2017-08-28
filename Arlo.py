@@ -522,14 +522,14 @@ class Arlo(object):
     ##
     def DownloadRecording(self, url, to):
         stream = arlo.StreamRecording(url)
-		with open(to, 'w') as f:
-			for chunk in stream:
-				# Support both Python 2.7 and 3.
-				if sys.version[0] == '2':
-					f.write(chunk)
-				else:
-					f.buffer.write(chunk)
-			f.close()
+        with open(to, 'w') as f:
+            for chunk in stream:
+                # Support both Python 2.7 and 3.
+                if sys.version[0] == '2':
+                    f.write(chunk)
+                else:
+                    f.buffer.write(chunk)
+        f.close()
     ##
     # This function returns a json object containing the rtmps url to the requested video stream.
     # You will need the to install a library to handle streaming of this protocol: https://pypi.python.org/pypi/python-librtmp
