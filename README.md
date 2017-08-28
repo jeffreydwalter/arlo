@@ -177,14 +177,3 @@ try:
 except Exception as e:
     print (e)
 ```
-
-## Todo:
-- [x] LICENSE
-- [x] README
-- [x] First pass at Arlo API in Python 
-- [x] Basic code example 
-- [ ] Unit tests
-- [ ] Add missing APIs
-- [ ] Turn this into a proper pip package.
-- [ ] Add better documentation
-- [ ] Have a cold beer?
