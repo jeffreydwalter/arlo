@@ -412,8 +412,8 @@ class Arlo(object):
     def UpdateFriends(self, body):
         return self.put('https://arlo.netgear.com/hmsweb/users/friends', body, 'UpdateFriends')
 
-    def UpdateDeviceName(self, parent_id, device_id, name):
-        return self.put('https://arlo.netgear.com/hmsweb/users/devices/renameDevice', {'deviceId':device_id, 'deviceName':name, 'parentId':parent_id}, 'UpdateDeviceName')
+    def UpdateDeviceName(self, basestation_id, device_id, name):
+        return self.put('https://arlo.netgear.com/hmsweb/users/devices/renameDevice', {'deviceId':device_id, 'deviceName':name, 'parentId':basestation_id}, 'UpdateDeviceName')
 
     ##
     # This is an example of the json you would pass in the body to UpdateDisplayOrder() of your devices in the UI.
@@ -538,32 +538,32 @@ class Arlo(object):
     #{ "url":"rtmps://vzwow09-z2-prod.vz.netgear.com:80/vzmodulelive?egressToken=b1b4b675_ac03_4182_9844_043e02a44f71&userAgent=web&cameraId=48B4597VD8FF5_1473010750131" }
     #
     ##
-    def GetStreamUrl(self, device_id, xcloud_id):
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":device_id,"from":self.user_id+"_web","resource":"cameras/"+device_id,"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":device_id}}, 'StartStream', headers={"xcloudId":xcloud_id})
+    def GetStreamUrl(self, basestation_id, device_id, xcloud_id):
+        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":basestation_id,"from":self.user_id+"_web","resource":"cameras/"+device_id,"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":device_id}}, 'StartStream', headers={"xcloudId":xcloud_id})
 
     ##
     # This function causes the camera to record a snapshot.
     #
     # You can get the timezone from GetDevices().
     ##
-    def TakeSnapshot(self, parent_id, device_id, xcloud_id, timezone):
-        self.GetStreamUrl(device_id, xcloud_id)
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/takeSnapshot', {'xcloudId':xcloud_id,'parentId':parent_id,'deviceId':device_id,'olsonTimeZone':timezone}, 'TakeSnapshot', headers={"xcloudId":xcloud_id})
+    def TakeSnapshot(self, basestation_id, device_id, xcloud_id, timezone):
+        self.GetStreamUrl(basestation_id, device_id, xcloud_id)
+        return self.post('https://arlo.netgear.com/hmsweb/users/devices/takeSnapshot', {'xcloudId':xcloud_id,'parentId':basestation_id,'deviceId':device_id,'olsonTimeZone':timezone}, 'TakeSnapshot', headers={"xcloudId":xcloud_id})
 
     ##
     # This function causes the camera to start recording.
     #
     # You can get the timezone from GetDevices().
     ##
-    def StartRecording(self, parent_id, device_id, xcloud_id, timezone):
-        self.GetStreamUrl(device_id, xcloud_id)
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startRecord', {'xcloudId':xcloud_id,'parentId':parent_id,'deviceId':device_id,'olsonTimeZone':timezone}, 'StartRecording', headers={"xcloudId":xcloud_id})
+    def StartRecording(self, basestation_id, device_id, xcloud_id, timezone):
+        self.GetStreamUrl(basestation_id, device_id, xcloud_id)
+        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startRecord', {'xcloudId':xcloud_id,'parentId':basestation_id,'deviceId':device_id,'olsonTimeZone':timezone}, 'StartRecording', headers={"xcloudId":xcloud_id})
 
     ##
     # This function causes the camera to stop recording.
     #
     # You can get the timezone from GetDevices().
     ##
-    def StopRecording(self, parent_id, device_id, xcloud_id, timezone):
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/stopRecord', {'xcloudId':xcloud_id,'parentId':parent_id,'deviceId':device_id,'olsonTimeZone':timezone}, 'StopRecording', headers={"xcloudId":xcloud_id})
+    def StopRecording(self, basestation_id, device_id, xcloud_id, timezone):
+        return self.post('https://arlo.netgear.com/hmsweb/users/devices/stopRecord', {'xcloudId':xcloud_id,'parentId':basestation_id,'deviceId':device_id,'olsonTimeZone':timezone}, 'StopRecording', headers={"xcloudId":xcloud_id})
 
