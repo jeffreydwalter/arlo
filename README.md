@@ -8,8 +8,6 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 To get started, just do the following:
 
-You can install them in one of two ways:
-
 They can be installed like so:
 ```bash
 # Clone the git repository.
