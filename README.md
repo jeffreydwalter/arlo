@@ -14,9 +14,9 @@ They can be installed like so:
 ```bash
 # Clone the git repository.
 $ git clone https://github.com/jeffreydwalter/arlo.git
-$ cd arlo
 
-# Run the make command to download and install all the dependencies.
+# Run the make command from the arlo repository directory to download and install all the dependencies.
+$ cd arlo
 $ make
 ```
 or:
