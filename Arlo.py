@@ -291,31 +291,31 @@ class Arlo(object):
 
             return event
 
-    def GetBaseStation(self, device_id, xcloud_id):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"get","resource":"basestation","publishResponse":False})
+    def GetBaseStation(self, basestation_id, xcloud_id):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"basestation","publishResponse":False})
 
-    def GetCameras(self, device_id, xcloud_id):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"get","resource":"cameras","publishResponse":False})
+    def GetCameras(self, basestation_id, xcloud_id):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"cameras","publishResponse":False})
 
-    def GetRules(self, device_id, xcloud_id):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"get","resource":"rules","publishResponse":False})
+    def GetRules(self, basestation_id, xcloud_id):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"rules","publishResponse":False})
 
-    def GetModes(self, device_id, xcloud_id):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"get","resource":"modes","publishResponse":False})
+    def GetModes(self, basestation_id, xcloud_id):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"modes","publishResponse":False})
 
-    def GetCalendar(self, device_id, xcloud_id):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"get","resource":"schedule","publishResponse":False})
+    def GetCalendar(self, basestation_id, xcloud_id):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"schedule","publishResponse":False})
 
-    def Arm(self, device_id, xcloud_id):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode1"}})
+    def Arm(self, basestation_id, xcloud_id):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode1"}})
 
-    def Disarm(self, device_id, xcloud_id):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode0"}})
+    def Disarm(self, basestation_id, xcloud_id):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode0"}})
 
     # NOTE: The Arlo API seems to disable calendar mode when switching to other modes, if it's enabled.
     # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
-    def Calendar(self, device_id, xcloud_id, active=True):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"set","resource":"schedule","publishResponse":True,"properties":{"active":active}})
+    def Calendar(self, basestation_id, xcloud_id, active=True):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"schedule","publishResponse":True,"properties":{"active":active}})
 
     # Get location_id is the id field from the return of GetLocations()
     # NOTE: The Arlo API seems to disable geofencing mode when switching to other modes, if it's enabled.
@@ -323,14 +323,14 @@ class Arlo(object):
     def Geofencing(self, location_id, active=True):
         return self.put('https://arlo.netgear.com/hmsweb/users/locations/'+location_id, {"geoEnabled":active}, 'ToggleGeoFencing')
 
-    def CustomMode(self, device_id, xcloud_id, mode):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
+    def CustomMode(self, basestation_id, xcloud_id, mode):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
 
-    def DeleteMode(self, device_id, xcloud_id, mode):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
+    def DeleteMode(self, basestation_id, xcloud_id, mode):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
 
-    def ToggleCamera(self, device_id, xcloud_id, active=True):
-        return self.NotifyAndGetResponse(device_id, xcloud_id, {"action":"set","resource":"cameras/"+device_id,"publishResponse":True,"properties":{"privacyActive":active}})
+    def ToggleCamera(self, basestation_id, device_id, xcloud_id, active=True):
+        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"cameras/"+device_id,"publishResponse":True,"properties":{"privacyActive":active}})
 
     def Reset(self):
         return self.get('https://arlo.netgear.com/hmsweb/users/library/reset', 'Reset')
@@ -343,6 +343,12 @@ class Arlo(object):
 
     def GetProfile(self):
         return self.get('https://arlo.netgear.com/hmsweb/users/profile', 'GetProfile')
+
+    ##
+    # {"userId":"336-4764296","email":"jeffreydwalter@gmail.com","token":"2_5BtvCDVr5K_KJyGKaq8H61hLybT7D69krsmaZeCG0tvs-yw5vm0Y1LKVVoVI9Id19Fk9vFcGFnMja0z_5eNNqP_BOXIX9rzekS2SgTjz7Ao6mPzGs86_yCBPqfaCZCkr0ogErwffuFIZsvh_XGodqkTehzkfQ4Xl8u1h9FhqDR2z","paymentId":"27432411","accountStatus":"registered","serialNumber":"48935B7SA9847","countryCode":"US","tocUpdate":false,"policyUpdate":false,"validEmail":true,"arlo":true,"dateCreated":1463975008658}
+    ##
+    def GetSession(self):
+        return self.get('https://arlo.netgear.com/hmsweb/users/session', 'GetSession')
 
     def GetFriends(self):
         return self.get('https://arlo.netgear.com/hmsweb/users/friends', 'GetFriends')
