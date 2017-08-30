@@ -6,16 +6,27 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 **Please, feel free to contribute to this repo or, buy Jeff a beer!** [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=R77B7UXMLA6ML&lc=US&item_name=Jeff%20Needs%20Beer&item_number=buyjeffabeer&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
-To get started, just do:
+To get started, just do the following:
 
+They can be installed like so:
 ```bash
+# Clone the git repository.
 $ git clone https://github.com/jeffreydwalter/arlo.git
+
+# Run the make command from the arlo repository directory to download and install all the dependencies.
+$ cd arlo
+$ make
 ```
-Once you have the repository cloned, you will need to install a couple of dependencies. They can be installed like so:
+or:
 ```bash
+# Clone the git repository.
+$ git clone https://github.com/jeffreydwalter/arlo.git
+
+# Install the required libraries using pip.
 $ pip install requests
 $ pip install sseclient 
 ```
+**A proper pip package is coming soon...**
 
 **NOTE: arlo.netgear.com requires TLS 1.2 for their API. So, if you're getting ssl errors, it's most likely related to your version of openssl. You must upgrade your openssl library.
 If you're running this library on OSX or macOS, they ship with openssl v0.9.x which does not support TLS 1.2. You should follow the instructions found here https://comeroutewithme.com/2016/03/13/python-osx-openssl-issue/ to upgrade your openssl library.**
@@ -98,13 +109,13 @@ try:
 
 	# Get the list of devices and filter on device type to only get the basestation.
 	# This will return an array which includes all of the basestation's associated metadata.
-	basestation = [ device for device in arlo.GetDevices() if device['deviceType'] == 'basestation' ]
+	basestations = [ device for device in arlo.GetDevices() if device['deviceType'] == 'basestation' ]
 
 	# Arm Arlo.
-	arlo.Arm(basestation[0]['deviceId'], basestation[0]['xCloudId'])
+	arlo.Arm(basestations[0]['deviceId'], basestations[0]['xCloudId'])
 	# Or
 	# Disarm Arlo.
-	# arlo.Disarm(basestation[0]['deviceId'], basestation[0]['xCloudId'])
+	# arlo.Disarm(basestations[0]['deviceId'], basestations[0]['xCloudId'])
 
 except Exception as e:
     print (e)
@@ -126,11 +137,11 @@ try:
 
 	# Get the list of devices and filter on device type to only get the cameras.
 	# This will return an array of cameras, including all of the cameras' associated metadata.
-	devices = [ device for device in arlo.GetDevices() if device['deviceType'] == 'camera']
+	cameras = [ device for device in arlo.GetDevices() if device['deviceType'] == 'camera']
 	# Turn camera on.
-	print (arlo.ToggleCamera(devices[0]['deviceId'], devices[0]['xCloudId'], True)))
+	print (arlo.ToggleCamera(cameras[0]['deviceId'], cameras[0]['xCloudId'], True)))
 	# Turn camera off.
-	print (arlo.ToggleCamera(devices[0]['deviceId'], devices[0]['xCloudId'], False)))
+	print (arlo.ToggleCamera(cameras[0]['deviceId'], cameras[0]['xCloudId'], False)))
 
 except Exception as e:
     print (e)
@@ -153,25 +164,21 @@ try:
     # Get the list of devices.
     devices = arlo.GetDevices()
 
-    # Filter on device type to only get the basestation.
-    # This will return an array which includes all of the basestation's associated metadata.
-    basestation = [ device for device in devices if device['deviceType'] == 'basestation' ]
-    
     # Filter on device type to only get the cameras.
     # This will return an array which includes all of the cameras and their associated metadata.
     cameras = [ device for device in devices if device['deviceType'] == 'camera' ]
 
     # Starting recording with a camera.
-    arlo.StartRecording(basestation[0]['deviceId'], cameras[0]['deviceId'], basestation[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
+    arlo.StartRecording(cameras[0]['parentId'], cameras[0]['deviceId'], cameras[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
 
     # Wait for 4 seconds while the camera records. (There are probably better ways to do this, but you get the idea.)
     time.sleep(4)
 
     # Stop recording.
-    arlo.StopRecording(basestation[0]['deviceId'], cameras[0]['deviceId'], basestation[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
+    arlo.StopRecording(cameras[0]['parentId'], cameras[0]['deviceId'], cameras[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
 
     # Take the snapshot.
-    arlo.TakeSnapshot(basestation[0]['deviceId'], cameras[0]['deviceId'], basestation[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
+    arlo.TakeSnapshot(cameras[0]['parentId'], cameras[0]['deviceId'], cameras[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
 
 except Exception as e:
     print (e)
