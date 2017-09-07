@@ -193,6 +193,7 @@ class Arlo(object):
     # You generally shouldn't need to call Subscribe() directly, although I'm leaving it "public" for now.
     ##
     def Subscribe(self, device_id, xcloud_id):
+
         def Register(self, device_id, xcloud_id):
             if device_id in self.event_streams and self.event_streams[device_id].connected:
                 self.Notify(device_id, xcloud_id, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[device_id]}})
@@ -204,14 +205,14 @@ class Arlo(object):
         def QueueEvents(self, event_stream):
             for event in event_stream:
                 response = json.loads(event.data)
-                if device_id in self.event_streams and self.event_streams[device_id].connected:
-                    if 'action' in response and response['action'] == 'logout':
-                        self.event_streams[device_id].Disconnect()
-                    else:
-                        message = json.loads(event.data)
-                        self.event_streams[device_id].queue.put(message)
-                elif device_id in self.event_streams and 'status' in response and response['status'] == 'connected':
-                    self.event_streams[device_id].Connect()
+                if device_id in self.event_streams:
+                    if self.event_streams[device_id].connected:
+                        if response.get('action') == 'logout':
+                            self.event_streams[device_id].Disconnect()
+                        else:
+                            self.event_streams[device_id].queue.put(response)
+                    elif response.get('status') == 'connected':
+                        self.event_streams[device_id].Connect()
 
         if device_id not in self.event_streams or not self.event_streams[device_id].connected:
             event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.headers['Authorization'], cookies=self.cookies)
@@ -278,18 +279,34 @@ class Arlo(object):
         self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+device_id, body, 'Notify', headers={"xcloudId":xcloud_id})
         return body['transId']
 
-    def NotifyAndGetResponse(self, device_id, xcloud_id, body):
-        self.Subscribe(device_id, xcloud_id)
-        if device_id in self.event_streams and self.event_streams[device_id].connected and self.event_streams[device_id].registered:
-            transId = self.Notify(device_id, xcloud_id, body)
-            event = self.event_streams[device_id].queue.get(block=True, timeout=120)
-            while event['transId'] != transId:
-                self.event_streams[device_id].queue.task_done()
-                self.event_streams[device_id].queue.put(event)
-                event = self.event_streams[device_id].queue.get(block=True, timeout=120)
-            self.event_streams[device_id].queue.task_done()
+    def NotifyAndGetResponse(self, basestation_id, xcloud_id, body):
+        self.Subscribe(basestation_id, xcloud_id)
+        if basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
+            transId = self.Notify(basestation_id, xcloud_id, body)
+            event = self.event_streams[basestation_id].queue.get(block=True, timeout=120)
+            while event.get('transId') != transId:
+                self.event_streams[basestation_id].queue.task_done()
+                self.event_streams[basestation_id].queue.put(event)
+                event = self.event_streams[basestation_id].queue.get(block=True, timeout=120)
+            self.event_streams[basestation_id].queue.task_done()
 
             return event
+
+    # Use this method to subscribe to motion events. You must provide a callback function which will get called once per motion event.
+    # The callback function should have the following signature:
+    #   def callback(self, basestation_id, xcloud_id, event)
+    def SubscribeToMotionEvents(self, basestation_id, xcloud_id, callback):
+        if not callable(callback):
+            raise Exception('The callback(self, basestation_id, xcloud_id, event) should be a callable function!')
+
+        self.Subscribe(basestation_id, xcloud_id)
+        if basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
+            # event = {u'action': u'is', u'resource': u'cameras/4WA16B7M72***', u'transId': u'48946B7GA***!41***92!1503***739902', u'from': u'48946B7GA9***', u'properties': {u'motionDetected': True}}
+            while basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
+                event = self.event_streams[basestation_id].queue.get(block=True, timeout=120)
+                if event.get('properties', {}).get('motionDetected'):
+                    callback(self, basestation_id, xcloud_id, event)
+                self.event_streams[basestation_id].queue.task_done()
 
     def GetBaseStation(self, basestation_id, xcloud_id):
         return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"basestation","publishResponse":False})
