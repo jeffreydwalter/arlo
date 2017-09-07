@@ -80,17 +80,17 @@ try:
 					f.buffer.write(chunk)
 			f.close()
 
-		print ('Downloaded video '+videofilename+' from '+recording['createdDate']+'.')
+		print('Downloaded video '+videofilename+' from '+recording['createdDate']+'.')
 
 	# Delete all of the videos you just downloaded from the Arlo library.
 	# Notice that you can pass the "library" object we got back from the GetLibrary() call.
 	result = arlo.BatchDeleteRecordings(library)
 
 	# If we made it here without an exception, then the videos were successfully deleted.
-	print ('Batch deletion of videos completed successfully.')
+	print('Batch deletion of videos completed successfully.')
 
 except Exception as e:
-    print (e)
+    print(e)
 ```
 
 Here's an example of arming/disarming Arlo.
@@ -118,10 +118,10 @@ try:
 	# arlo.Disarm(basestations[0]['deviceId'], basestations[0]['xCloudId'])
 
 except Exception as e:
-    print (e)
+    print(e)
 ```
 
-Here's an example of toggling an Arlo camera. 
+Here's an example of toggling an Arlo camera:
 
 ```python
 from Arlo.Arlo import Arlo
@@ -139,15 +139,15 @@ try:
 	# This will return an array of cameras, including all of the cameras' associated metadata.
 	cameras = [ device for device in arlo.GetDevices() if device['deviceType'] == 'camera']
 	# Turn camera on.
-	print (arlo.ToggleCamera(cameras[0]['deviceId'], cameras[0]['xCloudId'], True)))
+	print(arlo.ToggleCamera(cameras[0]['deviceId'], cameras[0]['xCloudId'], True)))
 	# Turn camera off.
-	print (arlo.ToggleCamera(cameras[0]['deviceId'], cameras[0]['xCloudId'], False)))
+	print(arlo.ToggleCamera(cameras[0]['deviceId'], cameras[0]['xCloudId'], False)))
 
 except Exception as e:
-    print (e)
+    print(e)
 ```
 
-Here's an example of recording and taking a snapshot with an Arlo camera.
+Here's an example of recording and taking a snapshot with an Arlo camera:
 
 ```python
 from Arlo import Arlo
@@ -181,5 +181,43 @@ try:
     arlo.TakeSnapshot(cameras[0]['parentId'], cameras[0]['deviceId'], cameras[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
 
 except Exception as e:
-    print (e)
+    print(e)
+```
+
+Here's an example of subscribing to Arlo motion events:
+
+```python
+from Arlo.Arlo import Arlo
+
+USERNAME = 'user@example.com'
+PASSWORD = 'supersecretpassword'
+
+try:
+
+    # Instantiating the Arlo object automatically calls Login(), which returns an oAuth token that gets cached.
+    # Subsequent successful calls to login will update the oAuth token.
+    arlo = Arlo(USERNAME, PASSWORD)
+    # At this point you're logged into Arlo.
+
+    # Get the list of devices.
+    devices = arlo.GetDevices()
+    
+    # Get the list of devices and filter on device type to only get the basestation.
+    # This will return an array which includes all of the basestation's associated metadata.
+    basestations = [ device for device in devices if device['deviceType'] == 'basestation' ]
+    
+    basestation_id = basestations[0]['deviceId']
+    xcloud_id = basestations[0]['xCloudId']
+
+    # Define a callback function that will get called once for each motion event.
+    def callback(arlo, basestation_id, xcloud_id, event):
+        # Here you will have access to self, basestation_id, xcloud_id, and the event schema.
+        print("motion event detected!")
+	#print(event)
+	#print(arlo)
+
+    # Subscribe to motion events. This method blocks until the event stream is closed. (You can close the event stream in the callback if you no longer want to listen for events.)
+    arlo.SubscribeToMotionEvents(basestation_id, xcloud_id, callback)
+except Exception as e:
+    print(e)
 ```
