@@ -109,7 +109,7 @@ try:
 
 	# Get the list of devices and filter on device type to only get the basestation.
 	# This will return an array which includes all of the basestation's associated metadata.
-	basestations = [ device for device in arlo.GetDevices() if device['deviceType'] == 'basestation' ]
+	basestations = arlo.GetDevices('basestation')
 
 	# Arm Arlo.
 	arlo.Arm(basestations[0]['deviceId'], basestations[0]['xCloudId'])
@@ -137,7 +137,8 @@ try:
 
 	# Get the list of devices and filter on device type to only get the cameras.
 	# This will return an array of cameras, including all of the cameras' associated metadata.
-	cameras = [ device for device in arlo.GetDevices() if device['deviceType'] == 'camera']
+	cameras = arlo.GetDevices('camera')
+
 	# Turn camera on.
 	print(arlo.ToggleCamera(cameras[0]['deviceId'], cameras[0]['xCloudId'], True)))
 	# Turn camera off.
@@ -161,12 +162,9 @@ try:
     arlo = Arlo(USERNAME, PASSWORD)
     # At this point you're logged into Arlo.
 
-    # Get the list of devices.
-    devices = arlo.GetDevices()
-
-    # Filter on device type to only get the cameras.
-    # This will return an array which includes all of the cameras and their associated metadata.
-    cameras = [ device for device in devices if device['deviceType'] == 'camera' ]
+    # Get the list of devices and filter on device type to only get the cameras.
+	# This will return an array of cameras, including all of the cameras' associated metadata.
+    cameras = arlo.GetDevices('camera')
 
     # Starting recording with a camera.
     arlo.StartRecording(cameras[0]['parentId'], cameras[0]['deviceId'], cameras[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
@@ -199,12 +197,9 @@ try:
     arlo = Arlo(USERNAME, PASSWORD)
     # At this point you're logged into Arlo.
 
-    # Get the list of devices.
-    devices = arlo.GetDevices()
-    
     # Get the list of devices and filter on device type to only get the basestation.
     # This will return an array which includes all of the basestation's associated metadata.
-    basestations = [ device for device in devices if device['deviceType'] == 'basestation' ]
+    basestations = arlo.GetDevices('basestation')
     
     basestation_id = basestations[0]['deviceId']
     xcloud_id = basestations[0]['xCloudId']

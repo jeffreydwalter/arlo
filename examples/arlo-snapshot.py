@@ -8,13 +8,10 @@ try:
     # Subsequent successful calls to login will update the oAuth token.
     arlo = Arlo(USERNAME, PASSWORD)
     # At this point you're logged into Arlo.
-
-    # Get the list of devices.
-    devices = arlo.GetDevices()
-
+ 
     # Filter on device type to only get the cameras.
     # This will return an array which includes all of the cameras and their associated metadata.
-    cameras = [ device for device in devices if device['deviceType'] == 'camera' ]
+    cameras = arlo.GetDevices('camera')
 
     # Starting recording with a camera.
     arlo.StartRecording(cameras[0]['parentId'], cameras[0]['deviceId'], cameras[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);

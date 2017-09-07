@@ -403,7 +403,11 @@ class Arlo(object):
     #
     ##
     def GetDevices(self, device_type=None):
-        return self.get('https://arlo.netgear.com/hmsweb/users/devices', 'GetDevices')
+        devices = self.get('https://arlo.netgear.com/hmsweb/users/devices', 'GetDevices')
+        if device_type:
+            return [ device for device in devices if device['deviceType'] == device_type]
+
+        return devices
 
     def GetLibraryMetaData(self, from_date, to_date):
         return self.post('https://arlo.netgear.com/hmsweb/users/library/metadata', {'dateFrom':from_date, 'dateTo':to_date}, 'GetLibraryMetaData')
