@@ -540,7 +540,7 @@ class Arlo(object):
     #]
     ##
     def GetLibrary(self, from_date, to_date):
-        return self.post('https://arlo.netgear.com/hmsweb/users/library', {'dateFrom':from_date, 'dateTo':to_date}, 'GetRecordings')
+        return self.post('https://arlo.netgear.com/hmsweb/users/library', {'dateFrom':from_date, 'dateTo':to_date}, 'GetLibrary')
 
     ##
     # Delete a single video recording from Arlo.
