@@ -23,6 +23,7 @@ or:
 $ git clone https://github.com/jeffreydwalter/arlo.git
 
 # Install the required libraries using pip.
+$ pip install monotonic 
 $ pip install requests
 $ pip install sseclient 
 ```
