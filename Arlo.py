@@ -17,16 +17,18 @@
 # 14 Sep 2016, Len Shustek: Added Logout()
 # 17 Jul 2017, Andreas Jakl: Port to Python 3 (https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/)
 
-
 import datetime
 #import logging
 import json
 import math
+import monotonic
+import os
 import random
 import requests
+import signal
 import sseclient
 import threading
-import time
+import time 
 import sys
 if sys.version[0] == '2':
     import Queue as queue
@@ -37,11 +39,35 @@ else:
 
 class EventStream(object):
     def __init__(self, method, args):
-        self.Disconnect()
-        self.Unregister()
+        self.connected = False
+        self.registered = False
         self.queue = queue.Queue()
         self.thread = threading.Thread(name="EventStream", target=method, args=(args))
         self.thread.setDaemon(True)
+
+    def Get(self, block=True, timeout=None):
+        if sys.version[0] == '2' and block:
+            if timeout:
+                timeout += monotonic.monotonic()
+            # If timeout is None, then just pick some arbitrarily large # for the timeout value.
+            else:
+                timeout = 1000000 + monotonic.monotonic()
+
+            while True:
+                try:
+                    # Allow check for Ctrl-C every second                               
+                    item = self.queue.get(timeout=min(1, timeout - monotonic.monotonic()))
+                    self.queue.task_done()
+                    return item
+                except queue.Empty:
+                    if monotonic.monotonic() > timeout:
+                        raise
+                    else:
+                        pass
+        else:
+            item = self.queue.get(block=block, timeout=timeout)
+            self.queue.task_done()
+            return item
 
     def Start(self):
         self.thread.start()
@@ -51,6 +77,9 @@ class EventStream(object):
 
     def Disconnect(self):
         self.connected = False
+        self.Unregister()
+        if self.queue:
+            self.queue.put(None)
 
     def Register(self):
         self.registered = True
@@ -61,10 +90,18 @@ class EventStream(object):
 class Arlo(object):
     TRANSID_PREFIX = 'web'
     def __init__(self, username, password):
+        signal.signal(signal.SIGINT, self.interrupt_handler)
         self.cookies = {}
         self.headers = {}
         self.event_streams = {}
         self.Login(username, password)
+
+    def interrupt_handler(self, signum, frame):
+        print("Caught Ctrl-C, exiting.")
+        #for basestation_id in self.event_streams:
+        #    self.event_streams[basestation_id].Disconnect()
+        os._exit(1)
+
 
     def genTransId(self, trans_type=TRANSID_PREFIX):
         def float2hex(f):
@@ -192,45 +229,48 @@ class Arlo(object):
     #
     # You generally shouldn't need to call Subscribe() directly, although I'm leaving it "public" for now.
     ##
-    def Subscribe(self, device_id, xcloud_id):
+    
+    def Subscribe(self, basestation):
+        basestation_id = basestation.get('deviceId') 
 
-        def Register(self, device_id, xcloud_id):
-            if device_id in self.event_streams and self.event_streams[device_id].connected:
-                self.Notify(device_id, xcloud_id, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[device_id]}})
-                event = self.event_streams[device_id].queue.get(block=True, timeout=120)
-                self.event_streams[device_id].queue.task_done()
-                self.event_streams[device_id].Register()
+        def Register(self):
+            if basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
+                self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
+                event = self.event_streams[basestation_id].Get(block=True, timeout=120)
+                if event:
+                    self.event_streams[basestation_id].Register()
                 return event
 
         def QueueEvents(self, event_stream):
             for event in event_stream:
                 response = json.loads(event.data)
-                if device_id in self.event_streams:
-                    if self.event_streams[device_id].connected:
+                if basestation_id in self.event_streams:
+                    if self.event_streams[basestation_id].connected:
                         if response.get('action') == 'logout':
-                            self.event_streams[device_id].Disconnect()
+                            self.event_streams[basestation_id].Disconnect()
                         else:
-                            self.event_streams[device_id].queue.put(response)
+                            self.event_streams[basestation_id].queue.put(response)
                     elif response.get('status') == 'connected':
-                        self.event_streams[device_id].Connect()
+                        self.event_streams[basestation_id].Connect()
 
-        if device_id not in self.event_streams or not self.event_streams[device_id].connected:
+        if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
             event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.headers['Authorization'], cookies=self.cookies)
-            self.event_streams[device_id] = EventStream(QueueEvents, args=(self, event_stream,))
-            self.event_streams[device_id].Start()
-            while not self.event_streams[device_id].connected:
+            self.event_streams[basestation_id] = EventStream(QueueEvents, args=(self, event_stream,))
+            self.event_streams[basestation_id].Start()
+            while not self.event_streams[basestation_id].connected:
                 time.sleep(1)
 
-        if not self.event_streams[device_id].registered:
-            Register(self, device_id, xcloud_id)
+        if not self.event_streams[basestation_id].registered:
+            Register(self)
 
     ##
     # This method stops the EventStream subscription and removes it from the event_stream collection.
     ##
-    def Unsubscribe(self, device_id):
-        if device_id in self.event_streams and self.event_streams[device_id].connected:
+    def Unsubscribe(self, basestation):
+        basestation_id = basestation.get('deviceId') 
+        if basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
             self.get('https://arlo.netgear.com/hmsweb/client/unsubscribe', 'Unsubscribe')
-            self.event_stream[device_id].remove()
+            self.event_stream[basestation_id].remove()
 
     ##
     # The following are examples of the json you would need to pass in the body of the Notify() call to interact with Arlo:
@@ -271,83 +311,93 @@ class Arlo(object):
     #   motionSetupModeEnabled (bool) - Motion Detection Setup Enabled/Disabled
     #   motionSetupModeSensitivity (int 0-100) - Motion Detection Sensitivity
     ##
-    def Notify(self, device_id, xcloud_id, body):
+    def Notify(self, basestation, body): 
+        basestation_id = basestation.get('deviceId')
+
         body['transId'] = self.genTransId()
         body['from'] = self.user_id+'_web'
-        body['to'] = device_id
+        body['to'] = basestation_id
 
-        self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+device_id, body, 'Notify', headers={"xcloudId":xcloud_id})
-        return body['transId']
+        self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+body['to'], body, 'Notify', headers={"xcloudId":basestation.get('xCloudId')})
+        return body.get('transId')
 
-    def NotifyAndGetResponse(self, basestation_id, xcloud_id, body):
-        self.Subscribe(basestation_id, xcloud_id)
+    def NotifyAndGetResponse(self, basestation, body, timeout=120):
+        basestation_id = basestation.get('deviceId')
+
+        self.Subscribe(basestation)
+
         if basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
-            transId = self.Notify(basestation_id, xcloud_id, body)
-            event = self.event_streams[basestation_id].queue.get(block=True, timeout=120)
-            while event.get('transId') != transId:
-                self.event_streams[basestation_id].queue.task_done()
+            transId = self.Notify(basestation, body)
+            event = self.event_streams[basestation_id].Get(block=True, timeout=timeout)
+            while self.event_streams[basestation_id].connected and event.get('transId') != transId:
                 self.event_streams[basestation_id].queue.put(event)
-                event = self.event_streams[basestation_id].queue.get(block=True, timeout=120)
-            self.event_streams[basestation_id].queue.task_done()
+                event = self.event_streams[basestation_id].Get(block=True, timeout=timeout)
 
             return event
 
     # Use this method to subscribe to motion events. You must provide a callback function which will get called once per motion event.
+    #
     # The callback function should have the following signature:
     #   def callback(self, basestation_id, xcloud_id, event)
-    def SubscribeToMotionEvents(self, basestation_id, xcloud_id, callback):
+    #
+    # This is an example of handling a specific event, in reality, you'd probably want to write a callback for HandleEvents()
+    # that has a big switch statement in it to handle all the various events Arlo produces.
+    def SubscribeToMotionEvents(self, basestation, callback, timeout=None):
+        def callbackwrapper(self, basestation, event):
+            if event.get('properties', {}).get('motionDetected'):
+                callback(self, basestation, event)
+
+        self.HandleEvents(basestation, callbackwrapper, timeout)
+
+    # Use this method to subscribe to the event stream and provide a callback that will be called for event event received.
+    # This function will allow you to potentially write a callback that can handle all of the events received from the event stream. 
+    def HandleEvents(self, basestation, callback, timeout=None):
         if not callable(callback):
-            raise Exception('The callback(self, basestation_id, xcloud_id, event) should be a callable function!')
+            raise Exception('The callback(self, basestation, event) should be a callable function!')
 
-        self.Subscribe(basestation_id, xcloud_id)
+        basestation_id = basestation.get('deviceId')
+
+        self.Subscribe(basestation)
         if basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
-            # event = {u'action': u'is', u'resource': u'cameras/4WA16B7M72***', u'transId': u'48946B7GA***!41***92!1503***739902', u'from': u'48946B7GA9***', u'properties': {u'motionDetected': True}}
             while basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
-                event = self.event_streams[basestation_id].queue.get(block=True, timeout=120)
-                if event.get('properties', {}).get('motionDetected'):
-                    callback(self, basestation_id, xcloud_id, event)
-                self.event_streams[basestation_id].queue.task_done()
+                event = self.event_streams[basestation_id].Get(block=True, timeout=timeout)
+                if event:
+                    callback(self, basestation, event)
 
-    def GetBaseStation(self, basestation_id, xcloud_id):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"basestation","publishResponse":False})
+    def GetBaseStationState(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"basestation","publishResponse":False})
 
-    def GetCameras(self, basestation_id, xcloud_id):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"cameras","publishResponse":False})
+    def GetCameraState(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
 
-    def GetRules(self, basestation_id, xcloud_id):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"rules","publishResponse":False})
+    def GetRules(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"rules","publishResponse":False})
 
-    def GetModes(self, basestation_id, xcloud_id):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"modes","publishResponse":False})
+    def GetModes(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"modes","publishResponse":False})
 
-    def GetCalendar(self, basestation_id, xcloud_id):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"get","resource":"schedule","publishResponse":False})
+    def GetCalendar(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"schedule","publishResponse":False})
 
-    def Arm(self, basestation_id, xcloud_id):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode1"}})
+    def Arm(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode1"}})
 
-    def Disarm(self, basestation_id, xcloud_id):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode0"}})
+    def Disarm(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode0"}})
 
     # NOTE: The Arlo API seems to disable calendar mode when switching to other modes, if it's enabled.
     # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
-    def Calendar(self, basestation_id, xcloud_id, active=True):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"schedule","publishResponse":True,"properties":{"active":active}})
+    def Calendar(self, basestation, active=True):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"schedule","publishResponse":True,"properties":{"active":active}})
 
-    # Get location_id is the id field from the return of GetLocations()
-    # NOTE: The Arlo API seems to disable geofencing mode when switching to other modes, if it's enabled.
-    # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
-    def Geofencing(self, location_id, active=True):
-        return self.put('https://arlo.netgear.com/hmsweb/users/locations/'+location_id, {"geoEnabled":active}, 'ToggleGeoFencing')
+    def CustomMode(self, basestation, mode):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
 
-    def CustomMode(self, basestation_id, xcloud_id, mode):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
+    def DeleteMode(self, basestation, mode):
+        return self.NotifyAndGetResponse(basestation, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
 
-    def DeleteMode(self, basestation_id, xcloud_id, mode):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
-
-    def ToggleCamera(self, basestation_id, device_id, xcloud_id, active=True):
-        return self.NotifyAndGetResponse(basestation_id, xcloud_id, {"action":"set","resource":"cameras/"+device_id,"publishResponse":True,"properties":{"privacyActive":active}})
+    def ToggleCamera(self, basestation, camera_id, active=True):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera_id,"publishResponse":True,"properties":{"privacyActive":active}})
 
     def Reset(self):
         return self.get('https://arlo.netgear.com/hmsweb/users/library/reset', 'Reset')
@@ -398,9 +448,15 @@ class Arlo(object):
     def GetLocations(self):
         return self.get('https://arlo.netgear.com/hmsweb/users/locations', 'GetLocations')
 
+    # Get location_id is the id field from the return of GetLocations()
+    # NOTE: The Arlo API seems to disable geofencing mode when switching to other modes, if it's enabled.
+    # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
+    def Geofencing(self, location_id, active=True):
+        return self.put('https://arlo.netgear.com/hmsweb/users/locations/'+location_id, {"geoEnabled":active}, 'ToggleGeoFencing')
+
     ##
     # This method returns an array that contains the basestation, cameras, etc. and their metadata.
-    #
+    # If you pass in a valid device type ('basestation', 'camera', etc.), this method will return an array of just those devices that match that type.
     ##
     def GetDevices(self, device_type=None):
         devices = self.get('https://arlo.netgear.com/hmsweb/users/devices', 'GetDevices')
@@ -439,8 +495,8 @@ class Arlo(object):
     def UpdateFriends(self, body):
         return self.put('https://arlo.netgear.com/hmsweb/users/friends', body, 'UpdateFriends')
 
-    def UpdateDeviceName(self, basestation_id, device_id, name):
-        return self.put('https://arlo.netgear.com/hmsweb/users/devices/renameDevice', {'deviceId':device_id, 'deviceName':name, 'parentId':basestation_id}, 'UpdateDeviceName')
+    def UpdateDeviceName(self, device, name):
+        return self.put('https://arlo.netgear.com/hmsweb/users/devices/renameDevice', {'deviceId':device.get('deviceId'), 'deviceName':name, 'parentId':device.get('parentId')}, 'UpdateDeviceName')
 
     ##
     # This is an example of the json you would pass in the body to UpdateDisplayOrder() of your devices in the UI.
@@ -492,8 +548,8 @@ class Arlo(object):
     # All of the date info and device id you need to pass into this method are given in the results of the GetLibrary() call.
     #
     ##
-    def DeleteRecording(self, created_date, utc_created_date, device_id):
-        return self.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':[{'createdDate':created_date,'utcCreatedDate':utc_created_date,'deviceId':device_id}]}, 'DeleteRecording')
+    def DeleteRecording(self, camera, created_date, utc_created_date):
+        return self.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':[{'createdDate':created_date,'utcCreatedDate':utc_created_date,'deviceId':camera.get('deviceId')}]}, 'DeleteRecording')
 
     ##
     # Delete a batch of video recordings from Arlo.
@@ -565,32 +621,33 @@ class Arlo(object):
     #{ "url":"rtmps://vzwow09-z2-prod.vz.netgear.com:80/vzmodulelive?egressToken=b1b4b675_ac03_4182_9844_043e02a44f71&userAgent=web&cameraId=48B4597VD8FF5_1473010750131" }
     #
     ##
-    def GetStreamUrl(self, basestation_id, device_id, xcloud_id):
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":basestation_id,"from":self.user_id+"_web","resource":"cameras/"+device_id,"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":device_id}}, 'StartStream', headers={"xcloudId":xcloud_id})
+    def StartStream(self, camera):
+        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, 'gc', headers={"xcloudId":camera.get('xCloudId')})
 
     ##
     # This function causes the camera to record a snapshot.
     #
     # You can get the timezone from GetDevices().
     ##
-    def TakeSnapshot(self, basestation_id, device_id, xcloud_id, timezone):
-        self.GetStreamUrl(basestation_id, device_id, xcloud_id)
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/takeSnapshot', {'xcloudId':xcloud_id,'parentId':basestation_id,'deviceId':device_id,'olsonTimeZone':timezone}, 'TakeSnapshot', headers={"xcloudId":xcloud_id})
+    def TakeSnapshot(self, camera):
+        stream_url = self.StartStream(camera)
+        self.post('https://arlo.netgear.com/hmsweb/users/devices/takeSnapshot', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, 'TakeSnapshot', headers={"xcloudId":camera.get('xCloudId')})
+        return stream_url;
 
     ##
     # This function causes the camera to start recording.
     #
     # You can get the timezone from GetDevices().
     ##
-    def StartRecording(self, basestation_id, device_id, xcloud_id, timezone):
-        self.GetStreamUrl(basestation_id, device_id, xcloud_id)
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startRecord', {'xcloudId':xcloud_id,'parentId':basestation_id,'deviceId':device_id,'olsonTimeZone':timezone}, 'StartRecording', headers={"xcloudId":xcloud_id})
+    def StartRecording(self, camera):
+        stream_url = self.StartStream(camera)
+        self.post('https://arlo.netgear.com/hmsweb/users/devices/startRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, 'StartRecording', headers={"xcloudId":camera.get('xCloudId')})
+        return stream_url
 
     ##
     # This function causes the camera to stop recording.
     #
     # You can get the timezone from GetDevices().
     ##
-    def StopRecording(self, basestation_id, device_id, xcloud_id, timezone):
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/stopRecord', {'xcloudId':xcloud_id,'parentId':basestation_id,'deviceId':device_id,'olsonTimeZone':timezone}, 'StopRecording', headers={"xcloudId":xcloud_id})
-
+    def StopRecording(self, camera):
+        return self.post('https://arlo.netgear.com/hmsweb/users/devices/stopRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, 'StopRecording', headers={"xcloudId":camera.get('xCloudId')})
