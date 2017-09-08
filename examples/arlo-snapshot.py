@@ -14,16 +14,16 @@ try:
     cameras = arlo.GetDevices('camera')
 
     # Starting recording with a camera.
-    arlo.StartRecording(cameras[0]['parentId'], cameras[0]['deviceId'], cameras[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
+    arlo.StartRecording(cameras[0])
 
     # Wait for 4 seconds while the camera records. (There are probably better ways to do this, but you get the idea.)
     time.sleep(4)
 
     # Stop recording.
-    arlo.StopRecording(cameras[0]['parentId'], cameras[0]['deviceId'], cameras[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
+    arlo.StopRecording(cameras[0])
 
     # Take the snapshot.
-    arlo.TakeSnapshot(cameras[0]['parentId'], cameras[0]['deviceId'], cameras[0]['xCloudId'], cameras[0]['properties']['olsonTimeZone']);
+    arlo.TakeSnapshot(cameras[0])
 
 except Exception as e:
     print (e)
