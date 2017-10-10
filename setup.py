@@ -14,7 +14,6 @@ setup(
     license=license,
     include_package_data=True,
     install_requires=['requests', 'sseclient', 'json'],
-    test_suite='tests',
     keywords=[
         'arlo',
         'camera',
