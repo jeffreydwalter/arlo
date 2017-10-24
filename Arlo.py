@@ -28,7 +28,7 @@ import requests
 import signal
 import sseclient
 import threading
-import time 
+import time
 import sys
 if sys.version[0] == '2':
     import Queue as queue
@@ -55,7 +55,7 @@ class EventStream(object):
 
             while True:
                 try:
-                    # Allow check for Ctrl-C every second                               
+                    # Allow check for Ctrl-C every second
                     item = self.queue.get(timeout=min(1, timeout - monotonic.monotonic()))
                     self.queue.task_done()
                     return item
@@ -229,9 +229,9 @@ class Arlo(object):
     #
     # You generally shouldn't need to call Subscribe() directly, although I'm leaving it "public" for now.
     ##
-    
+
     def Subscribe(self, basestation):
-        basestation_id = basestation.get('deviceId') 
+        basestation_id = basestation.get('deviceId')
 
         def Register(self):
             if basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
@@ -267,7 +267,7 @@ class Arlo(object):
     # This method stops the EventStream subscription and removes it from the event_stream collection.
     ##
     def Unsubscribe(self, basestation):
-        basestation_id = basestation.get('deviceId') 
+        basestation_id = basestation.get('deviceId')
         if basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
             self.get('https://arlo.netgear.com/hmsweb/client/unsubscribe', 'Unsubscribe')
             self.event_stream[basestation_id].remove()
@@ -311,7 +311,7 @@ class Arlo(object):
     #   motionSetupModeEnabled (bool) - Motion Detection Setup Enabled/Disabled
     #   motionSetupModeSensitivity (int 0-100) - Motion Detection Sensitivity
     ##
-    def Notify(self, basestation, body): 
+    def Notify(self, basestation, body):
         basestation_id = basestation.get('deviceId')
 
         body['transId'] = self.genTransId()
@@ -350,7 +350,7 @@ class Arlo(object):
         self.HandleEvents(basestation, callbackwrapper, timeout)
 
     # Use this method to subscribe to the event stream and provide a callback that will be called for event event received.
-    # This function will allow you to potentially write a callback that can handle all of the events received from the event stream. 
+    # This function will allow you to potentially write a callback that can handle all of the events received from the event stream.
     def HandleEvents(self, basestation, callback, timeout=None):
         if not callable(callback):
             raise Exception('The callback(self, basestation, event) should be a callable function!')
@@ -378,6 +378,12 @@ class Arlo(object):
 
     def GetCalendar(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"schedule","publishResponse":False})
+
+    def SirenOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"siren","publishResponse":True,"properties":{"sirenState":"on","duration":300,"volume":8,"pattern":"alarm"}})
+
+    def SirenOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"siren","publishResponse":True,"properties":{"sirenState":"off","duration":300,"volume":8,"pattern":"alarm"}})
 
     def Arm(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode1"}})
@@ -597,7 +603,7 @@ class Arlo(object):
         r.raise_for_status()
         for chunk in r.iter_content(chunk_size):
             yield chunk
-    
+
     ##
     # Writes a video to a given local file path.
     # url: presignedContentUrl
