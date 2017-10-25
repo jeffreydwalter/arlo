@@ -87,13 +87,46 @@ class EventStream(object):
     def Unregister(self):
         self.registered = False
 
+class Request(object):
+    """HTTP helper class"""
+
+    def __init__(self):
+        self.session = requests.Session()
+
+    def _request(self, url, method='GET', params={}, headers={}, stream=False):
+        if method == 'GET':
+            r = self.session.get(url, headers=headers, stream=stream)
+            if stream is True:
+                return r
+        elif method == 'PUT':
+            r = self.session.put(url, json=params, headers=headers)
+        elif method == 'POST':
+            r = self.session.post(url, json=params, headers=headers)
+
+        r.raise_for_status()
+        body = r.json()
+        if body['success'] == True:
+            if 'data' in body:
+                return body['data']
+        else:
+            raise Exception('Request ({0} {1}) failed'.format(method, url), body)
+
+    def get(self, url, headers={}, stream=False):
+        return self._request(url, 'GET', {}, headers, stream)
+
+    def put(self, url, params={}, headers={}):
+        return self._request(url, 'PUT', params, headers)
+
+    def post(self, url, params={}, headers={}):
+        return self._request(url, 'POST', params, headers)
+
 class Arlo(object):
     TRANSID_PREFIX = 'web'
     def __init__(self, username, password):
         signal.signal(signal.SIGINT, self.interrupt_handler)
-        self.cookies = {}
-        self.headers = {}
         self.event_streams = {}
+        self.request = None
+
         self.Login(username, password)
 
     def interrupt_handler(self, signum, frame):
@@ -101,7 +134,6 @@ class Arlo(object):
         #for basestation_id in self.event_streams:
         #    self.event_streams[basestation_id].Disconnect()
         os._exit(1)
-
 
     def genTransId(self, trans_type=TRANSID_PREFIX):
         def float2hex(f):
@@ -139,47 +171,6 @@ class Arlo(object):
         now = datetime.datetime.today()
         return trans_type+"!" + float2hex(random.random() * math.pow(2, 32)).lower() + "!" + str(int((time.mktime(now.timetuple())*1e3 + now.microsecond/1e3)))
 
-    def get(self, url, caller, headers={}, cookies={}, stream=False):
-        cookies.update(self.cookies)
-        headers.update(self.headers)
-        r = requests.get(url, headers=headers, cookies=cookies, stream=stream)
-        if stream is True:
-            return r
-        r.raise_for_status()
-        body = r.json()
-        if body['success'] == True:
-            if 'data' in body:
-                return body['data']
-        else:
-            raise Exception(caller+' failed', body)
-
-    def post(self, url, body, caller, headers={}, cookies={}):
-        cookies.update(self.cookies)
-        headers.update(self.headers)
-        r = requests.post(url, json=body, cookies=cookies, headers=headers)
-        r.raise_for_status()
-        body = r.json()
-        if body['success'] == True:
-            if caller == 'Login':
-                self.cookies = r.cookies
-
-            if 'data' in body:
-                return body['data']
-        else:
-            raise Exception(caller+' failed', body)
-
-    def put(self, url, body, caller, headers={}, cookies={}):
-        cookies.update(self.cookies)
-        headers.update(self.headers)
-        r = requests.put(url, json=body, cookies=cookies, headers=headers)
-        r.raise_for_status()
-        body = r.json()
-        if body['success'] == True:
-            if 'data' in body:
-                return body['data']
-        else:
-            raise Exception(caller+' failed', body)
-
     ##
     # This call returns the following:
     #{
@@ -200,19 +191,24 @@ class Arlo(object):
         self.username = username
         self.password = password
 
-        body = self.post('https://arlo.netgear.com/hmsweb/login/v2', {'email': self.username, 'password': self.password}, 'Login')
-        self.headers = {
+        self.request = Request()
+
+        body = self.request.post('https://arlo.netgear.com/hmsweb/login/v2', {'email': self.username, 'password': self.password})
+
+        headers = {
             'DNT':'1',
             'Host': 'arlo.netgear.com',
             'Referer': 'https://arlo.netgear.com/',
+	    #'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
             'Authorization': body['token']
         }
+        self.request.session.headers.update(headers)
 
         self.user_id = body['userId']
         return body
 
     def Logout(self):
-        return self.put('https://arlo.netgear.com/hmsweb/logout', {}, 'Logout')
+        return self.request.put('https://arlo.netgear.com/hmsweb/logout')
 
     ##
     # Arlo uses the EventStream interface in the browser to do pub/sub style messaging.
@@ -254,7 +250,7 @@ class Arlo(object):
                         self.event_streams[basestation_id].Connect()
 
         if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
-            event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.headers['Authorization'], cookies=self.cookies)
+            event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.request.session.headers.get('Authorization'), session=self.request.session)
             self.event_streams[basestation_id] = EventStream(QueueEvents, args=(self, event_stream,))
             self.event_streams[basestation_id].Start()
             while not self.event_streams[basestation_id].connected:
@@ -269,7 +265,7 @@ class Arlo(object):
     def Unsubscribe(self, basestation):
         basestation_id = basestation.get('deviceId')
         if basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
-            self.get('https://arlo.netgear.com/hmsweb/client/unsubscribe', 'Unsubscribe')
+            self.request.get('https://arlo.netgear.com/hmsweb/client/unsubscribe', 'Unsubscribe')
             self.event_stream[basestation_id].remove()
 
     ##
@@ -318,7 +314,7 @@ class Arlo(object):
         body['from'] = self.user_id+'_web'
         body['to'] = basestation_id
 
-        self.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+body['to'], body, 'Notify', headers={"xcloudId":basestation.get('xCloudId')})
+        self.request.post('https://arlo.netgear.com/hmsweb/users/devices/notify/'+body['to'], body, headers={"xcloudId":basestation.get('xCloudId')})
         return body.get('transId')
 
     def NotifyAndGetResponse(self, basestation, body, timeout=120):
@@ -406,25 +402,25 @@ class Arlo(object):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera_id,"publishResponse":True,"properties":{"privacyActive":active}})
 
     def Reset(self):
-        return self.get('https://arlo.netgear.com/hmsweb/users/library/reset', 'Reset')
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/library/reset')
 
     def GetServiceLevel(self):
-        return self.get('https://arlo.netgear.com/hmsweb/users/serviceLevel', 'GetServiceLevel')
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/serviceLevel')
 
     def GetPaymentOffers(self):
-        return self.get('https://arlo.netgear.com/hmsweb/users/payment/offers', 'GetPaymentOffers')
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/payment/offers')
 
     def GetProfile(self):
-        return self.get('https://arlo.netgear.com/hmsweb/users/profile', 'GetProfile')
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/profile')
 
     ##
     # {"userId":"336-4764296","email":"jeffreydwalter@gmail.com","token":"2_5BtvCDVr5K_KJyGKaq8H61hLybT7D69krsmaZeCG0tvs-yw5vm0Y1LKVVoVI9Id19Fk9vFcGFnMja0z_5eNNqP_BOXIX9rzekS2SgTjz7Ao6mPzGs86_yCBPqfaCZCkr0ogErwffuFIZsvh_XGodqkTehzkfQ4Xl8u1h9FhqDR2z","paymentId":"27432411","accountStatus":"registered","serialNumber":"48935B7SA9847","countryCode":"US","tocUpdate":false,"policyUpdate":false,"validEmail":true,"arlo":true,"dateCreated":1463975008658}
     ##
     def GetSession(self):
-        return self.get('https://arlo.netgear.com/hmsweb/users/session', 'GetSession')
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/session')
 
     def GetFriends(self):
-        return self.get('https://arlo.netgear.com/hmsweb/users/friends', 'GetFriends')
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/friends')
 
     ##
     # This call returns the following:
@@ -452,33 +448,33 @@ class Arlo(object):
     #}
     ##
     def GetLocations(self):
-        return self.get('https://arlo.netgear.com/hmsweb/users/locations', 'GetLocations')
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/locations')
 
     # Get location_id is the id field from the return of GetLocations()
     # NOTE: The Arlo API seems to disable geofencing mode when switching to other modes, if it's enabled.
     # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
     def Geofencing(self, location_id, active=True):
-        return self.put('https://arlo.netgear.com/hmsweb/users/locations/'+location_id, {"geoEnabled":active}, 'ToggleGeoFencing')
+        return self.request.put('https://arlo.netgear.com/hmsweb/users/locations/'+location_id, {"geoEnabled":active})
 
     ##
     # This method returns an array that contains the basestation, cameras, etc. and their metadata.
     # If you pass in a valid device type ('basestation', 'camera', etc.), this method will return an array of just those devices that match that type.
     ##
     def GetDevices(self, device_type=None):
-        devices = self.get('https://arlo.netgear.com/hmsweb/users/devices', 'GetDevices')
+        devices = self.request.get('https://arlo.netgear.com/hmsweb/users/devices')
         if device_type:
             return [ device for device in devices if device['deviceType'] == device_type]
 
         return devices
 
     def GetLibraryMetaData(self, from_date, to_date):
-        return self.post('https://arlo.netgear.com/hmsweb/users/library/metadata', {'dateFrom':from_date, 'dateTo':to_date}, 'GetLibraryMetaData')
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/library/metadata', {'dateFrom':from_date, 'dateTo':to_date})
 
     def UpdateProfile(self, first_name, last_name):
-        return self.put('https://arlo.netgear.com/hmsweb/users/profile', {'firstName': first_name, 'lastName': last_name}, 'UpdateProfile')
+        return self.request.put('https://arlo.netgear.com/hmsweb/users/profile', {'firstName': first_name, 'lastName': last_name})
 
     def UpdatePassword(self, password):
-        r = self.post('https://arlo.netgear.com/hmsweb/users/changePassword', {'currentPassword':self.password,'newPassword':password}, 'UpdatePassword')
+        r = self.request.post('https://arlo.netgear.com/hmsweb/users/changePassword', {'currentPassword':self.password,'newPassword':password})
         self.password = password
         return r
 
@@ -499,10 +495,10 @@ class Arlo(object):
     #}
     ##
     def UpdateFriends(self, body):
-        return self.put('https://arlo.netgear.com/hmsweb/users/friends', body, 'UpdateFriends')
+        return self.request.put('https://arlo.netgear.com/hmsweb/users/friends', body)
 
     def UpdateDeviceName(self, device, name):
-        return self.put('https://arlo.netgear.com/hmsweb/users/devices/renameDevice', {'deviceId':device.get('deviceId'), 'deviceName':name, 'parentId':device.get('parentId')}, 'UpdateDeviceName')
+        return self.request.put('https://arlo.netgear.com/hmsweb/users/devices/renameDevice', {'deviceId':device.get('deviceId'), 'deviceName':name, 'parentId':device.get('parentId')})
 
     ##
     # This is an example of the json you would pass in the body to UpdateDisplayOrder() of your devices in the UI.
@@ -517,7 +513,7 @@ class Arlo(object):
     #}
     ##
     def UpdateDisplayOrder(self, body):
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/displayOrder', body, 'UpdateDisplayOrder')
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/displayOrder', body)
 
     ##
     # This call returns the following:
@@ -546,7 +542,7 @@ class Arlo(object):
     #]
     ##
     def GetLibrary(self, from_date, to_date):
-        return self.post('https://arlo.netgear.com/hmsweb/users/library', {'dateFrom':from_date, 'dateTo':to_date}, 'GetLibrary')
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/library', {'dateFrom':from_date, 'dateTo':to_date})
 
     ##
     # Delete a single video recording from Arlo.
@@ -555,7 +551,7 @@ class Arlo(object):
     #
     ##
     def DeleteRecording(self, camera, created_date, utc_created_date):
-        return self.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':[{'createdDate':created_date,'utcCreatedDate':utc_created_date,'deviceId':camera.get('deviceId')}]}, 'DeleteRecording')
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':[{'createdDate':created_date,'utcCreatedDate':utc_created_date,'deviceId':camera.get('deviceId')}]})
 
     ##
     # Delete a batch of video recordings from Arlo.
@@ -577,7 +573,7 @@ class Arlo(object):
     #]
     ##
     def BatchDeleteRecordings(self, recording_metadata):
-        return self.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':recording_metadata}, 'BatchDeleteRecordings')
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':recording_metadata})
 
     ##
     # Returns the whole video from the presignedContentUrl.
@@ -628,7 +624,7 @@ class Arlo(object):
     #
     ##
     def StartStream(self, camera):
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, 'gc', headers={"xcloudId":camera.get('xCloudId')})
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
 
     ##
     # This function causes the camera to record a snapshot.
@@ -637,7 +633,7 @@ class Arlo(object):
     ##
     def TakeSnapshot(self, camera):
         stream_url = self.StartStream(camera)
-        self.post('https://arlo.netgear.com/hmsweb/users/devices/takeSnapshot', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, 'TakeSnapshot', headers={"xcloudId":camera.get('xCloudId')})
+        self.request.post('https://arlo.netgear.com/hmsweb/users/devices/takeSnapshot', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
         return stream_url;
 
     ##
@@ -647,7 +643,7 @@ class Arlo(object):
     ##
     def StartRecording(self, camera):
         stream_url = self.StartStream(camera)
-        self.post('https://arlo.netgear.com/hmsweb/users/devices/startRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, 'StartRecording', headers={"xcloudId":camera.get('xCloudId')})
+        self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
         return stream_url
 
     ##
@@ -656,4 +652,4 @@ class Arlo(object):
     # You can get the timezone from GetDevices().
     ##
     def StopRecording(self, camera):
-        return self.post('https://arlo.netgear.com/hmsweb/users/devices/stopRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, 'StopRecording', headers={"xcloudId":camera.get('xCloudId')})
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/stopRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
