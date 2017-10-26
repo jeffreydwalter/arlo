@@ -6,6 +6,12 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 **Please, feel free to contribute to this repo or, buy Jeff a beer!** [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=R77B7UXMLA6ML&lc=US&item_name=Jeff%20Needs%20Beer&item_number=buyjeffabeer&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
+---
+### Generous Benefactors
+[imopen](https://github.com/imopen) - $5.00 (Thanks for the beer!) 
+
+---
+
 To get started, just do the following:
 
 They can be installed like so:
