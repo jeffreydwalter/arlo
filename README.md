@@ -8,6 +8,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Generous Benefactors
+[cubewot](https://github.com/cubewot) - $10.00 (Thanks for the two beers!)
 [imopen](https://github.com/imopen) - $5.00 (Thanks for the beer!) 
 
 ---
