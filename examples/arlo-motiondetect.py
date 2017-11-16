@@ -1,4 +1,4 @@
-from Arlo.Arlo import Arlo
+from Arlo import Arlo
 
 USERNAME = 'user@example.com'
 PASSWORD = 'supersecretpassword'
