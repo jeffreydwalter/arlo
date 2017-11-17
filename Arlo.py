@@ -398,8 +398,8 @@ class Arlo(object):
     def DeleteMode(self, basestation, mode):
         return self.NotifyAndGetResponse(basestation, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
 
-    def ToggleCamera(self, basestation, camera_id, active=True):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera_id,"publishResponse":True,"properties":{"privacyActive":active}})
+    def ToggleCamera(self, basestation, camera, active=True):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"privacyActive":active}})
 
     def Reset(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/library/reset')
