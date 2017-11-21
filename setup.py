@@ -3,8 +3,8 @@
 from setuptools import setup
 
 setup(
-    name='pyarlo',
-    packages=['pyarlo'],
+    name='arlo',
+    packages=[],
     version='0.8.0',
     description='Python Arlo is a library written in Python 2.7/3x ' +
                 'which exposes the Netgear Arlo cameras via the apis that are consumed by their website.',
@@ -13,7 +13,7 @@ setup(
     url='https://github.com/jeffreydwalter/arlo',
     license=license,
     include_package_data=True,
-    install_requires=['requests', 'sseclient', 'json'],
+    install_requires=['monotonic', 'requests', 'sseclient'],
     keywords=[
         'arlo',
         'camera',
