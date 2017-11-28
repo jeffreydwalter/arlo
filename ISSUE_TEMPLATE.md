@@ -7,15 +7,15 @@ Please answer these questions before submitting your issue. Thanks!
 ### What operating system and processor architecture are you using (`python -c 'import platform; print(platform.uname());'`)?
 
 
-### Which Python packages do you have installed (`pip freeze` or `pip3 freeze`)?
+### Which Python packages do you have installed (run the `pip freeze` or `pip3 freeze` command and paste output)?
 
 
-### Which Arlo hardware do you have (camera types, basestation model, etc.)?
+### Which Arlo hardware do you have (camera types - [Arlo, Pro, Q, etc.], basestation model, etc.)?
 
 
 ### What did you do?
 
-If possible, provide a recipe for reproducing the error.
+If possible, provide the steps you took to reproduce the issue. 
 A complete runnable program is good. (don't include your user/password or any sensitive info)
 
 
