@@ -123,7 +123,13 @@ class Request(object):
 class Arlo(object):
     TRANSID_PREFIX = 'web'
     def __init__(self, username, password):
-        signal.signal(signal.SIGINT, self.interrupt_handler)
+        
+        # signals only work in main thread
+        try:
+            signal.signal(signal.SIGINT, self.interrupt_handler)
+        except:
+            pass
+
         self.event_streams = {}
         self.request = None
 
@@ -199,7 +205,7 @@ class Arlo(object):
             'DNT':'1',
             'Host': 'arlo.netgear.com',
             'Referer': 'https://arlo.netgear.com/',
-	    #'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
             'Authorization': body['token']
         }
         self.request.session.headers.update(headers)
@@ -248,6 +254,7 @@ class Arlo(object):
                             self.event_streams[basestation_id].queue.put(response)
                     elif response.get('status') == 'connected':
                         self.event_streams[basestation_id].Connect()
+                        threading.Timer(30.0, self.PingRegister, [basestation]).start() # once connected, send /notify every 30 seconds
 
         if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
             event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.request.session.headers.get('Authorization'), session=self.request.session)
@@ -258,6 +265,12 @@ class Arlo(object):
 
         if not self.event_streams[basestation_id].registered:
             Register(self)
+
+    # this function registers the connection every 30 seconds to keep it alive, same as web and ios interface
+    def PingRegister(self, basestation):
+        basestation_id = basestation.get('deviceId')
+        self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"","publishResponse":False,"properties":{"devices":[basestation_id]}})
+        threading.Timer(30.0, self.PingRegister, [basestation]).start()
 
     ##
     # This method stops the EventStream subscription and removes it from the event_stream collection.
@@ -620,11 +633,13 @@ class Arlo(object):
     # You will need the to install a library to handle streaming of this protocol: https://pypi.python.org/pypi/python-librtmp
     #
     # The request to /users/devices/startStream returns:
-    #{ "url":"rtmps://vzwow09-z2-prod.vz.netgear.com:80/vzmodulelive?egressToken=b1b4b675_ac03_4182_9844_043e02a44f71&userAgent=web&cameraId=48B4597VD8FF5_1473010750131" }
+    #{ "url":"rtsp://<url>:443/vzmodulelive?egressToken=b<xx>&userAgent=iOS&cameraId=<camid>" }
     #
     ##
     def StartStream(self, camera):
-        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
+        stream_url = self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
+        stream_url['url'] = stream_url['url'].replace("rtsp://", "rtsps://")
+        return stream_url
 
     ##
     # This function causes the camera to record a snapshot.
