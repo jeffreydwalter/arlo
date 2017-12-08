@@ -76,6 +76,7 @@ class EventStream(object):
 
     def Start(self):
         self.thread.start()
+        return self
 
     def Connect(self):
         self.connected = True
@@ -268,8 +269,7 @@ class Arlo(object):
                         self.event_streams[basestation_id].Connect()
 
         if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
-            self.event_streams[basestation_id] = EventStream(QueueEvents, Ping, args=(self, ))
-            self.event_streams[basestation_id].Start()
+            self.event_streams[basestation_id] = EventStream(QueueEvents, Ping, args=(self, )).Start()
             while not self.event_streams[basestation_id].connected:
                 time.sleep(1)
 
@@ -628,7 +628,7 @@ class Arlo(object):
     # to: path where the file should be written
     ##
     def DownloadRecording(self, url, to):
-        stream = arlo.StreamRecording(url)
+        stream = self.StreamRecording(url)
         with open(to, 'w') as f:
             for chunk in stream:
                 # Support both Python 2.7 and 3.
