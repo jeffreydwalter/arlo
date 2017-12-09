@@ -7,9 +7,19 @@ This just a personal utility that I created out of necessity. It is by no means 
 **Please, feel free to contribute to this repo or, buy Jeff a beer!** [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=R77B7UXMLA6ML&lc=US&item_name=Jeff%20Needs%20Beer&item_number=buyjeffabeer&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
 
 ---
-### Generous Benefactors
-* [cubewot](https://github.com/cubewot) - $10.00 - Thanks for the two beers!
-* [imopen](https://github.com/imopen) - $5.00 - Thanks for the beer!
+### Generous Benefactors (Thank you!)
+* [cubewot](https://github.com/cubewot) - 🍺🍺 
+* [imopen](https://github.com/imopen) - 🍺 
+
+---
+---
+### Awesomely Smart Contributors (Thank you!)
+* [deanmcguire](https://github.com/deanmcguire) - Dec 7, 2017 - Unravelled the mysteries of RTSP streaming video.
+* [andijakl](https://github.com/andijakl) - Jul 24, 2017 - Added Python 3 support and cleaned up examples.
+* [cemeyer2](https://github.com/cemeyer2) - Nov 26, 2016 - Fixed setup issues.
+* [LenShustek](https://github.com/LenShustek) - Sep 14, 2016, - Added Logout().
+
+If You'd like to make a diffrence in the world and get your name on this most prestegious list, have a look at our [help wanted](https://github.com/jeffreydwalter/arlo/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) section!
 
 ---
 
