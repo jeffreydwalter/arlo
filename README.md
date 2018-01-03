@@ -23,7 +23,7 @@ If You'd like to make a diffrence in the world and get your name on this most pr
 
 ---
 
-# To get started, just do the following:
+## Install
 ```bash
 $ pip install arlo
 
