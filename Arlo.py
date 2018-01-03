@@ -82,7 +82,7 @@ class EventStream(object):
 
     def Connect(self):
         self.connected = True
-        
+
     def Disconnect(self):
         self.connected = False
         self.Unregister()
@@ -135,7 +135,7 @@ class Request(object):
 class Arlo(object):
     TRANSID_PREFIX = 'web'
     def __init__(self, username, password):
-        
+
         # signals only work in main thread
         try:
             signal.signal(signal.SIGINT, self.interrupt_handler)
@@ -257,7 +257,7 @@ class Arlo(object):
         def Ping(self, stop_event):
             while not stop_event.wait(25.0):
                 self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
-        
+
         def QueueEvents(self, ssestream, event_stream):
             # Kludge to fix timing issue.
             while not event_stream.started:
@@ -413,6 +413,23 @@ class Arlo(object):
     def Disarm(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode0"}})
 
+    # NOTE: Brightness is between -2 and 2 in increments of 1 (-2, -1, 0, 1, 2).
+    # Setting it to an invalid value has no effect.
+    # Returns:
+    #{
+    #   "action": "is",
+    #   "from": "XXXXXXXXXXXXX",
+    #   "properties": {
+    #       "brightness": -2
+    #   },
+    #   "resource": "cameras/XXXXXXXXXXXXX",
+    #   "to": "336-XXXXXXX_web",
+    #   "transId": "web!XXXXXXXX.389518!1514956240683"
+    #}
+    #
+    def AdjustBrightness(self, basestation, camera, brightness=0):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"brightness":brightness}})
+
     # NOTE: The Arlo API seems to disable calendar mode when switching to other modes, if it's enabled.
     # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
     def Calendar(self, basestation, active=True):
@@ -442,7 +459,7 @@ class Arlo(object):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/profile')
 
     ##
-    # {"userId":"336-4764296","email":"jeffreydwalter@gmail.com","token":"2_5BtvCDVr5K_KJyGKaq8H61hLybT7D69krsmaZeCG0tvs-yw5vm0Y1LKVVoVI9Id19Fk9vFcGFnMja0z_5eNNqP_BOXIX9rzekS2SgTjz7Ao6mPzGs86_yCBPqfaCZCkr0ogErwffuFIZsvh_XGodqkTehzkfQ4Xl8u1h9FhqDR2z","paymentId":"27432411","accountStatus":"registered","serialNumber":"48935B7SA9847","countryCode":"US","tocUpdate":false,"policyUpdate":false,"validEmail":true,"arlo":true,"dateCreated":1463975008658}
+    # {"userId":"XXX-XXXXXXX","email":"jeffreydwalter@gmail.com","token":"2_5BtvCDVr5K_KJyGKaq8H61hLybT7D69krsmaZeCG0tvs-yw5vm0Y1LKVVoVI9Id19Fk9vFcGFnMja0z_5eNNqP_BOXIX9rzekS2SgTjz7Ao6mPzGs86_yCBPqfaCZCkr0ogErwffuFIZsvh_XGodqkTehzkfQ4Xl8u1h9FhqDR2z","paymentId":"XXXXXXXX","accountStatus":"registered","serialNumber":"XXXXXXXXXXXXXX","countryCode":"US","tocUpdate":false,"policyUpdate":false,"validEmail":true,"arlo":true,"dateCreated":1463975008658}
     ##
     def GetSession(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/session')
