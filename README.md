@@ -23,28 +23,13 @@ If You'd like to make a diffrence in the world and get your name on this most pr
 
 ---
 
-To get started, just do the following:
-
-They can be installed like so:
+# To get started, just do the following:
 ```bash
-# Clone the git repository.
-$ git clone https://github.com/jeffreydwalter/arlo.git
+$ pip install arlo
 
-# Run the make command from the arlo repository directory to download and install all the dependencies.
-$ cd arlo
-$ make
+# Install from master branch
+$ pip install git+https://github.com/jeffreydwalter/arlo
 ```
-or:
-```bash
-# Clone the git repository.
-$ git clone https://github.com/jeffreydwalter/arlo.git
-
-# Install the required libraries using pip.
-$ pip install monotonic 
-$ pip install requests
-$ pip install sseclient 
-```
-**A proper pip package is coming soon...**
 
 **NOTE: arlo.netgear.com requires TLS 1.2 for their API. So, if you're getting ssl errors, it's most likely related to your version of openssl. You must upgrade your openssl library.
 If you're running this library on OSX or macOS, they ship with openssl v0.9.x which does not support TLS 1.2. You should follow the instructions found here https://comeroutewithme.com/2016/03/13/python-osx-openssl-issue/ to upgrade your openssl library.**
