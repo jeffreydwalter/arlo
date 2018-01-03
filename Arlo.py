@@ -259,10 +259,6 @@ class Arlo(object):
                 self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
 
         def QueueEvents(self, ssestream, event_stream):
-            # Kludge to fix timing issue.
-            while not event_stream.started:
-                time.sleep(0.01)
-
             for event in ssestream:
                 response = json.loads(event.data)
                 if basestation_id in self.event_streams:
@@ -275,7 +271,8 @@ class Arlo(object):
                         self.event_streams[basestation_id].Connect()
 
         if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
-            self.event_streams[basestation_id] = EventStream(QueueEvents, Ping, args=(self, )).Start()
+            self.event_streams[basestation_id] = EventStream(QueueEvents, Ping, args=(self, ))
+            self.event_streams[basestation_id].Start()
             while not self.event_streams[basestation_id].connected:
                 time.sleep(0.5)
 
