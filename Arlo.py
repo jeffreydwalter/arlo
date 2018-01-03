@@ -39,6 +39,7 @@ else:
 
 class EventStream(object):
     def __init__(self, event_handler, ping_handler, args):
+        self.started = False
         self.connected = False
         self.registered = False
         self.queue = queue.Queue()
@@ -47,7 +48,7 @@ class EventStream(object):
         self.ping_handler = ping_handler
 
         event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get('Authorization'), session=self.arlo.request.session)
-        self.thread = threading.Thread(name="EventStream", target=event_handler, args=(args[0], event_stream, ))
+        self.thread = threading.Thread(name="EventStream", target=event_handler, args=(args[0], event_stream, self, ))
         self.thread.setDaemon(True)
 
     def Get(self, block=True, timeout=None):
@@ -76,6 +77,7 @@ class EventStream(object):
 
     def Start(self):
         self.thread.start()
+        self.started = True
         return self
 
     def Connect(self):
@@ -256,8 +258,12 @@ class Arlo(object):
             while not stop_event.wait(25.0):
                 self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
         
-        def QueueEvents(self, event_stream):
-            for event in event_stream:
+        def QueueEvents(self, ssestream, event_stream):
+            # Kludge to fix timing issue.
+            while not event_stream.started:
+                time.sleep(0.01)
+
+            for event in ssestream:
                 response = json.loads(event.data)
                 if basestation_id in self.event_streams:
                     if self.event_streams[basestation_id].connected:
@@ -271,7 +277,7 @@ class Arlo(object):
         if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
             self.event_streams[basestation_id] = EventStream(QueueEvents, Ping, args=(self, )).Start()
             while not self.event_streams[basestation_id].connected:
-                time.sleep(1)
+                time.sleep(0.5)
 
         if not self.event_streams[basestation_id].registered:
             Register(self)
