@@ -4,16 +4,16 @@ from setuptools import setup
 
 setup(
     name='arlo',
-    packages=[],
+    py_modules=['Arlo'],
     version='1.0.0',
     description='Python Arlo is a library written in Python 2.7/3x ' +
                 'which exposes the Netgear Arlo cameras via the apis that are consumed by their website.',
     author='Jeffrey D. Walter',
     author_email='jeffreydwalter@gmail.com',
     url='https://github.com/jeffreydwalter/arlo',
-    license=license,
+    license='Apache Software License',
     include_package_data=True,
-    install_requires=['monotonic', 'requests', 'sseclient'],
+    install_requires=['monotonic', 'requests', 'sseclient', 'PySocks'],
     keywords=[
         'arlo',
         'camera',
@@ -22,10 +22,10 @@ setup(
         'python',
         ],
     classifiers=[
+	'Development Status :: 5 - Production/Stable',
         'Environment :: Other Environment',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: ' +
-        'Apache License 2.0',
+	'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
