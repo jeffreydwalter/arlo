@@ -37,8 +37,9 @@ If you're running this library on OSX or macOS, they ship with openssl v0.9.x wh
 After installing all of the required libraries, you can import and use this library like so:
 
 ```python
-from datetime import timedelta, date
 from Arlo import Arlo
+
+from datetime import timedelta, date
 import datetime
 import sys
 
