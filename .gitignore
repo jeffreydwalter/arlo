@@ -91,3 +91,7 @@ ENV/
 # vim files
 .swp
 .swo
+
+# Test script
+ArloTest.py
+

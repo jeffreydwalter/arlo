@@ -651,11 +651,7 @@ class Arlo(object):
         stream = self.StreamRecording(url)
         with open(to, 'wb') as f:
             for chunk in stream:
-                # Support both Python 2.7 and 3.
-                if sys.version[0] == '2':
-                    f.write(chunk)
-                else:
-                    f.buffer.write(chunk)
+                f.write(chunk)
         f.close()
     ##
     # This function returns the url of the rtsp video stream

@@ -77,11 +77,7 @@ try:
 		stream = arlo.StreamRecording(recording['presignedContentUrl'])
 		with open('videos/'+videofilename, 'wb') as f:
 			for chunk in stream:
-				# Support both Python 2.7 and 3.
-				if sys.version[0] == '2':
-					f.write(chunk)
-				else:
-					f.buffer.write(chunk)
+				f.write(chunk)
 			f.close()
 
 		print('Downloaded video '+videofilename+' from '+recording['createdDate']+'.')
