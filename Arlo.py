@@ -649,7 +649,7 @@ class Arlo(object):
     ##
     def DownloadRecording(self, url, to):
         stream = self.StreamRecording(url)
-        with open(to, 'w') as f:
+        with open(to, 'wb') as f:
             for chunk in stream:
                 # Support both Python 2.7 and 3.
                 if sys.version[0] == '2':

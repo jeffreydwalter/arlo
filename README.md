@@ -68,14 +68,14 @@ try:
 		###    
 		#    # Download the whole video into memory as a single chunk.
 		#    video = arlo.GetRecording(recording['presignedContentUrl'])
-		#	 with open('videos/'+videofilename, 'w') as f:
+		#	 with open('videos/'+videofilename, 'wb') as f:
 		#        f.write(stream)
 		#        f.close()
 		# Or:
 		#
 		# Get video as a chunked stream; this function returns a generator.
 		stream = arlo.StreamRecording(recording['presignedContentUrl'])
-		with open('videos/'+videofilename, 'w') as f:
+		with open('videos/'+videofilename, 'wb') as f:
 			for chunk in stream:
 				# Support both Python 2.7 and 3.
 				if sys.version[0] == '2':
