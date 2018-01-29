@@ -14,6 +14,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 ---
 ---
 ### Awesomely Smart Contributors (Thank you!)
+* [erosen](https://github.com/erosen) - Jan 27, 2018 - Added the ArloQ camera schema to the wiki.
 * [deanmcguire](https://github.com/deanmcguire) - Dec 7, 2017 - Unravelled the mysteries of RTSP streaming video.
 * [andijakl](https://github.com/andijakl) - Jul 24, 2017 - Added Python 3 support and cleaned up examples.
 * [cemeyer2](https://github.com/cemeyer2) - Nov 26, 2016 - Fixed setup issues.
