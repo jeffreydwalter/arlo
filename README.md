@@ -10,8 +10,6 @@ This just a personal utility that I created out of necessity. It is by no means 
 ### Generous Benefactors (Thank you!)
 * [cubewot](https://github.com/cubewot) - 🍺🍺 
 * [imopen](https://github.com/imopen) - 🍺 
-
----
 ---
 ### Awesomely Smart Contributors (Thank you!)
 * [erosen](https://github.com/erosen) - Jan 27, 2018 - Added the ArloQ camera schema to the wiki.
