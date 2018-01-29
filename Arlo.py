@@ -17,6 +17,7 @@
 # 14 Sep 2016, Len Shustek: Added Logout()
 # 17 Jul 2017, Andreas Jakl: Port to Python 3 (https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/)
 
+import cgi
 import datetime
 #import logging
 import json
@@ -357,7 +358,7 @@ class Arlo(object):
     # Use this method to subscribe to motion events. You must provide a callback function which will get called once per motion event.
     #
     # The callback function should have the following signature:
-    #   def callback(self, basestation_id, xcloud_id, event)
+    #   def callback(self, basestation, event)
     #
     # This is an example of handling a specific event, in reality, you'd probably want to write a callback for HandleEvents()
     # that has a big switch statement in it to handle all the various events Arlo produces.
@@ -381,7 +382,10 @@ class Arlo(object):
             while basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
                 event = self.event_streams[basestation_id].Get(block=True, timeout=timeout)
                 if event:
-                    callback(self, basestation, event)
+                    response = callback(self, basestation, event)
+                    # NOTE: Not ideal, but this allows you to look for a specific event and break if you want to return it.
+                    if response is not None:
+                        return response
 
     def GetBaseStationState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"basestation","publishResponse":False})
@@ -634,6 +638,8 @@ class Arlo(object):
     ##
     # Returns a generator that is the chunked video stream from the presignedContentUrl.
     #
+    # url: presignedContentUrl
+    #
     # Obviously, this function is generic and could be used to download anything. :)
     ##
     def StreamRecording(self, url, chunk_size=4096):
@@ -644,15 +650,32 @@ class Arlo(object):
 
     ##
     # Writes a video to a given local file path.
+    #
     # url: presignedContentUrl
+    #
     # to: path where the file should be written
     ##
     def DownloadRecording(self, url, to):
         stream = self.StreamRecording(url)
-        with open(to, 'wb') as f:
+        with open(to, 'wb') as fd:
             for chunk in stream:
-                f.write(chunk)
-        f.close()
+                fd.write(chunk)
+        fd.close()
+
+    ##
+    # Writes a snapshot to a given local file path.
+    #
+    # url: presignedContentUrl or presignedFullFrameSnapshotUrl
+    #
+    # to: path where the file should be written
+    ##
+    def DownloadSnapshot(self, url, to, chunk_size=4096):
+        r = Request().get(url, stream=True)
+        with open(to, 'wb') as fd:
+            for chunk in r.iter_content(chunk_size):
+                fd.write(chunk)
+        fd.close()
+
     ##
     # This function returns the url of the rtsp video stream
     # This stream needs to be called within 30 seconds or else it becomes invalid
@@ -668,12 +691,29 @@ class Arlo(object):
     ##
     # This function causes the camera to record a snapshot.
     #
-    # You can get the timezone from GetDevices().
+    # Use DownloadSnapshot() to download the actual image file.
     ##
     def TakeSnapshot(self, camera):
         stream_url = self.StartStream(camera)
         self.request.post('https://arlo.netgear.com/hmsweb/users/devices/takeSnapshot', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
         return stream_url;
+
+    ##
+    # This function causes the camera to record a fullframe snapshot.
+    #
+    # The presignedFullFrameSnapshotUrl url is returned.
+    #
+    # Use DownloadSnapshot() to download the actual image file.
+    ##
+    def TriggerFullFrameSnapshot(self, basestation, camera):
+        def callback(self, basestation, event):
+            if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("action") == "fullFrameSnapshotAvailable":
+                return event.get("properties", {}).get("presignedFullFrameSnapshotUrl")
+            return None
+
+        self.request.post("https://arlo.netgear.com/hmsweb/users/devices/fullFrameSnapshot", {"to":camera.get("parentId"),"from":self.user_id+"_web","resource":"cameras/"+camera.get("deviceId"),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"fullFrameSnapshot"}}, headers={"xcloudId":camera.get("xCloudId")})
+
+        return self.HandleEvents(basestation, callback)
 
     ##
     # This function causes the camera to start recording.
