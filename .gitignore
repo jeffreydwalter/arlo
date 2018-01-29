@@ -89,9 +89,9 @@ ENV/
 .ropeproject
 
 # vim files
-.swp
-.swo
+*.swp
+*.swo
 
 # Test script
-ArloTest.py
+ArloTest.py*
 
