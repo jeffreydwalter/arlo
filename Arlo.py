@@ -17,7 +17,6 @@
 # 14 Sep 2016, Len Shustek: Added Logout()
 # 17 Jul 2017, Andreas Jakl: Port to Python 3 (https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/)
 
-import cgi
 import datetime
 #import logging
 import json
