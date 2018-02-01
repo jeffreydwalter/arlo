@@ -38,17 +38,17 @@ else:
 #logging.basicConfig(level=logging.DEBUG,format='[%(levelname)s] (%(threadName)-10s) %(message)s',)
 
 class EventStream(object):
-    def __init__(self, event_handler, ping_handler, args):
+    def __init__(self, event_handler, heartbeat_handler, args):
         self.started = False
         self.connected = False
         self.registered = False
         self.queue = queue.Queue()
-        self.ping_stop_event = threading.Event()
+        self.heartbeat_stop_event = threading.Event()
         self.arlo = args[0]
-        self.ping_handler = ping_handler
+        self.heartbeat_handler = heartbeat_handler
 
         event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get('Authorization'), session=self.arlo.request.session)
-        self.thread = threading.Thread(name="EventStream", target=event_handler, args=(args[0], event_stream, self, ))
+        self.thread = threading.Thread(name="EventStream", target=event_handler, args=(args[0], event_stream, ))
         self.thread.setDaemon(True)
 
     def Get(self, block=True, timeout=None):
@@ -90,13 +90,13 @@ class EventStream(object):
             self.queue.put(None)
 
     def Register(self):
-        ping_thread = threading.Thread(name='PingThread', target=self.ping_handler, args=(self.arlo, self.ping_stop_event, ))
-        ping_thread.setDaemon(True)
-        ping_thread.start()
+        heartbeat_thread = threading.Thread(name='HeartbeatThread', target=self.heartbeat_handler, args=(self.arlo, self.heartbeat_stop_event, ))
+        heartbeat_thread.setDaemon(True)
+        heartbeat_thread.start()
         self.registered = True
 
     def Unregister(self):
-        self.ping_stop_event.set()
+        self.heartbeat_stop_event.set()
         self.registered = False
 
 class Request(object):
@@ -149,8 +149,6 @@ class Arlo(object):
 
     def interrupt_handler(self, signum, frame):
         print("Caught Ctrl-C, exiting.")
-        #for basestation_id in self.event_streams:
-        #    self.event_streams[basestation_id].Disconnect()
         os._exit(1)
 
     def genTransId(self, trans_type=TRANSID_PREFIX):
@@ -254,12 +252,8 @@ class Arlo(object):
                     self.event_streams[basestation_id].Register()
                 return event
 
-        def Ping(self, stop_event):
-            while not stop_event.wait(25.0):
-                self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
-
-        def QueueEvents(self, ssestream, event_stream):
-            for event in ssestream:
+        def QueueEvents(self, event_stream):
+            for event in event_stream:
                 response = json.loads(event.data)
                 if basestation_id in self.event_streams:
                     if self.event_streams[basestation_id].connected:
@@ -269,9 +263,16 @@ class Arlo(object):
                             self.event_streams[basestation_id].queue.put(response)
                     elif response.get('status') == 'connected':
                         self.event_streams[basestation_id].Connect()
+        
+        def Heartbeat(self, stop_event):
+            while not stop_event.wait(2.0):
+                try:
+                    self.Ping(basestation)
+                except queue.Empty:
+                    pass
 
         if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
-            self.event_streams[basestation_id] = EventStream(QueueEvents, Ping, args=(self, ))
+            self.event_streams[basestation_id] = EventStream(QueueEvents, Heartbeat, args=(self, ))
             self.event_streams[basestation_id].Start()
             while not self.event_streams[basestation_id].connected:
                 time.sleep(0.5)
@@ -287,9 +288,9 @@ class Arlo(object):
         if basestation_id in self.event_streams:
             if self.event_streams[basestation_id].connected:
                 self.request.get('https://arlo.netgear.com/hmsweb/client/unsubscribe', 'Unsubscribe')
-                self.event_stream[basestation_id].Disconnect()
+                self.event_streams[basestation_id].Disconnect()
 
-            self.event_stream[basestation_id].remove()
+            self.event_streams[basestation_id].remove()
 
     ##
     # The following are examples of the json you would need to pass in the body of the Notify() call to interact with Arlo:
@@ -354,6 +355,10 @@ class Arlo(object):
 
             return event
 
+    def Ping(self, basestation):
+        basestation_id = basestation.get('deviceId')
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
+
     # Use this method to subscribe to motion events. You must provide a callback function which will get called once per motion event.
     #
     # The callback function should have the following signature:
@@ -381,10 +386,17 @@ class Arlo(object):
             while basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
                 event = self.event_streams[basestation_id].Get(block=True, timeout=timeout)
                 if event:
-                    response = callback(self, basestation, event)
-                    # NOTE: Not ideal, but this allows you to look for a specific event and break if you want to return it.
-                    if response is not None:
-                        return response
+                    # If this event has is of resource type "subscriptions", then it's a ping reply event.
+                    # For now, these types of events will be requeued, since they are generated in response to and expected as a reply by the Ping() method.
+                    # HACK: Take a quick nap here to give the Ping() method's thread a chance to get the queued event.
+                    if event.get('resource').startswith('subscriptions'):
+                        self.event_streams[basestation_id].queue.put(event)
+                        time.sleep(0.05)
+                    else:
+                        response = callback(self, basestation, event)
+                        # NOTE: Not ideal, but this allows you to look for a specific event and break if you want to return it.
+                        if response is not None:
+                            return response
 
     def GetBaseStationState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"basestation","publishResponse":False})
