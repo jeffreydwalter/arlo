@@ -10,8 +10,10 @@ This just a personal utility that I created out of necessity. It is by no means 
 ### Generous Benefactors (Thank you!)
 * [cubewot](https://github.com/cubewot) - 🍺🍺 
 * [imopen](https://github.com/imopen) - 🍺 
+* [notalifeform](https://github.com/notalifeform) - 🍺🍺🍺🍺 
 ---
 ### Awesomely Smart Contributors (Thank you!)
+* [notalifeform](https://github.com/notalifeform) - Feb 10, 2018 - Fixed bug and formatting in example script.
 * [erosen](https://github.com/erosen) - Jan 27, 2018 - Added the ArloQ camera schema to the wiki.
 * [deanmcguire](https://github.com/deanmcguire) - Dec 7, 2017 - Unravelled the mysteries of RTSP streaming video.
 * [andijakl](https://github.com/andijakl) - Jul 24, 2017 - Added Python 3 support and cleaned up examples.
