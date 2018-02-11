@@ -1,5 +1,5 @@
-![](logo.png)
-# arlo ![](https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-blue.svg)
+# ![](logo.png) arlo
+![](https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-blue.svg)
 
 > Python module for interacting with Netgear's Arlo camera system.
 
@@ -13,7 +13,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 * [cubewot](https://github.com/cubewot) - 🍺🍺 
 * [imopen](https://github.com/imopen) - 🍺 
 * [notalifeform](https://github.com/notalifeform) - 🍺🍺
-* [anonymous](#) - 🍺🍺🍺🍺 
+* [anonymous](https://github.com/jeffreydwalter/arlo) - 🍺🍺🍺🍺 
 ---
 ### Awesomely Smart Contributors (Thank you!)
 * [notalifeform](https://github.com/notalifeform) - Feb 10, 2018 - Fixed bug and formatting in example script.
