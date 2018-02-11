@@ -10,7 +10,8 @@ This just a personal utility that I created out of necessity. It is by no means 
 ### Generous Benefactors (Thank you!)
 * [cubewot](https://github.com/cubewot) - 🍺🍺 
 * [imopen](https://github.com/imopen) - 🍺 
-* [notalifeform](https://github.com/notalifeform) - 🍺🍺🍺🍺 
+* [notalifeform](https://github.com/notalifeform) - 🍺🍺 
+* [anonymous](unknown) - 🍺🍺🍺🍺 
 ---
 ### Awesomely Smart Contributors (Thank you!)
 * [notalifeform](https://github.com/notalifeform) - Feb 10, 2018 - Fixed bug and formatting in example script.
