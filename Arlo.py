@@ -103,7 +103,7 @@ class EventStream(object):
 
         if self.queue:
             self.queue.put(None)
-        
+
         self.event_stream_stop_event.set()
         self.heartbeat_stop_event.set()
 
@@ -266,7 +266,7 @@ class Arlo(object):
                 self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
                 event = self.event_streams[basestation_id].Get(block=True, timeout=120)
                 if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
-                    return None 
+                    return None
                 elif event:
                     self.event_streams[basestation_id].Register()
                 return event
@@ -281,11 +281,12 @@ class Arlo(object):
                     if self.event_streams[basestation_id].connected:
                         if response.get('action') == 'logout':
                             self.event_streams[basestation_id].Disconnect()
+                            return None
                         else:
                             self.event_streams[basestation_id].queue.put(response)
                     elif response.get('status') == 'connected':
                         self.event_streams[basestation_id].Connect()
-        
+
         def Heartbeat(self, stop_event):
             while not stop_event.wait(2.0):
                 try:
@@ -396,10 +397,10 @@ class Arlo(object):
     #
     # This is an example of handling a specific event, in reality, you'd probably want to write a callback for HandleEvents()
     # that has a big switch statement in it to handle all the various events Arlo produces.
-    def SubscribeToMotionEvents(self, basestation, callback, timeout=120):
-        def callbackwrapper(self, basestation, event):
+    def SubscribeToMotionEvents(self, callback, timeout=120):
+        def callbackwrapper(self, event):
             if event.get('properties', {}).get('motionDetected'):
-                callback(self, basestation, event)
+                callback(self, event)
 
         self.HandleEvents(basestation, callbackwrapper, timeout)
 
@@ -416,7 +417,7 @@ class Arlo(object):
             while basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
                 event = self.event_streams[basestation_id].Get(block=True, timeout=timeout)
                 if event is None and not self.event_streams[basestation_id].event_stream_stop_event.is_set():
-                    return 
+                    return
 
                 # If this event has is of resource type "subscriptions", then it's a ping reply event.
                 # For now, these types of events will be requeued, since they are generated in response to and expected as a reply by the Ping() method.
@@ -425,10 +426,25 @@ class Arlo(object):
                     self.event_streams[basestation_id].queue.put(event)
                     time.sleep(0.05)
                 else:
-                    response = callback(self, basestation, event)
+                    response = callback(self, event)
                     # NOTE: Not ideal, but this allows you to look for a specific event and break if you want to return it.
                     if response is not None:
                         return response
+
+    # Use this method to subscribe to the event stream and provide a callback that will be called for event event received.
+    # This function will allow you to potentially write a callback that can handle all of the events received from the event stream.
+    # NOTE: Use this function if you need to run some code after subscribing to the eventstream, but before your callback to handle the events runs. 
+    def TriggerAndHandleEvent(self, basestation, trigger, callback, timeout=120):
+        if not callable(trigger):
+            raise Exception('The trigger(self, basestation, camera) should be a callable function!')
+        if not callable(callback):
+            raise Exception('The callback(self, basestation, event) should be a callable function!')
+
+        self.Subscribe(basestation)
+        trigger(self)
+
+        # NOTE: Calling HandleEvents() calls Subscribe() again, which basically turns into a no-op. Hackie I know, but it cleans up the code a bit.
+        return self.HandleEvents(basestation, callback, timeout)
 
     def GetBaseStationState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"basestation","publishResponse":False})
@@ -727,19 +743,48 @@ class Arlo(object):
     #{ "url":"rtsp://<url>:443/vzmodulelive?egressToken=b<xx>&userAgent=iOS&cameraId=<camid>" }
     #
     ##
-    def StartStream(self, camera):
-        stream_url_dict = self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
-        return stream_url_dict['url'].replace("rtsp://", "rtsps://")
+    def StartStream(self, basestation, camera):
+        
+        # nonlocal variable hack for Python 2.x.
+        class nl:
+            stream_url_dict = None 
+
+        def trigger(self):
+            nl.stream_url_dict = self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
+
+        def callback(self, event):
+            if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
+                return nl.stream_url_dict['url'].replace("rtsp://", "rtsps://")
+
+            return None
+
+        return self.TriggerAndHandleEvent(basestation, trigger, callback)
 
     ##
-    # This function causes the camera to record a snapshot.
+    # This function causes the camera to snapshot while recording.
+    # NOTE: You MUST call StartStream() before calling this function.
+    # If you call StartStream(), you have to start reading data from the stream, or streaming will be cancelled
+    # and taking a snapshot may fail (since it requires the stream to be active).
     #
-    # Use DownloadSnapshot() to download the actual image file.
+    # NOTE: You should not use this function is you just want a snapshot and aren't intending to stream.
+    # Use TriggerFullFrameSnapshot() instead.
+    #
+    # NOTE: Use DownloadSnapshot() to download the actual image file.
     ##
-    def TakeSnapshot(self, camera):
-        stream_url = self.StartStream(camera)
-        self.request.post('https://arlo.netgear.com/hmsweb/users/devices/takeSnapshot', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
-        return stream_url;
+    def TriggerStreamSnapshot(self, basestation, camera):
+
+        def trigger(self):
+            self.request.post('https://arlo.netgear.com/hmsweb/users/devices/takeSnapshot', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
+
+        def callback(self, event):
+            if event.get("deviceId") == camera.get("deviceId") and event.get("resource") == "mediaUploadNotification":
+                presigned_content_url = event.get("presignedContentUrl")
+                if presigned_content_url is not None:
+                    return presigned_content_url
+
+            return None
+
+        return self.TriggerAndHandleEvent(basestation, trigger, callback)
 
     ##
     # This function causes the camera to record a fullframe snapshot.
@@ -749,22 +794,24 @@ class Arlo(object):
     # Use DownloadSnapshot() to download the actual image file.
     ##
     def TriggerFullFrameSnapshot(self, basestation, camera):
-        def callback(self, basestation, event):
+
+        def trigger(self):
+            self.request.post("https://arlo.netgear.com/hmsweb/users/devices/fullFrameSnapshot", {"to":camera.get("parentId"),"from":self.user_id+"_web","resource":"cameras/"+camera.get("deviceId"),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"fullFrameSnapshot"}}, headers={"xcloudId":camera.get("xCloudId")})
+
+        def callback(self, event):
             if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("action") == "fullFrameSnapshotAvailable":
                 return event.get("properties", {}).get("presignedFullFrameSnapshotUrl")
             return None
 
-        self.request.post("https://arlo.netgear.com/hmsweb/users/devices/fullFrameSnapshot", {"to":camera.get("parentId"),"from":self.user_id+"_web","resource":"cameras/"+camera.get("deviceId"),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"fullFrameSnapshot"}}, headers={"xcloudId":camera.get("xCloudId")})
-
-        return self.HandleEvents(basestation, callback)
+        return self.TriggerAndHandleEvent(basestation, trigger, callback)
 
     ##
     # This function causes the camera to start recording.
     #
     # You can get the timezone from GetDevices().
     ##
-    def StartRecording(self, camera):
-        stream_url = self.StartStream(camera)
+    def StartRecording(self, basestation, camera):
+        stream_url = self.StartStream(baststation, camera)
         self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
         return stream_url
 
