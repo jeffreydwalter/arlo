@@ -397,10 +397,10 @@ class Arlo(object):
     #
     # This is an example of handling a specific event, in reality, you'd probably want to write a callback for HandleEvents()
     # that has a big switch statement in it to handle all the various events Arlo produces.
-    def SubscribeToMotionEvents(self, callback, timeout=120):
+    def SubscribeToMotionEvents(self, basestation, callback, timeout=120):
         def callbackwrapper(self, event):
             if event.get('properties', {}).get('motionDetected'):
-                callback(self, event)
+                callback(self, basestation, event)
 
         self.HandleEvents(basestation, callbackwrapper, timeout)
 
@@ -422,7 +422,8 @@ class Arlo(object):
                 # If this event has is of resource type "subscriptions", then it's a ping reply event.
                 # For now, these types of events will be requeued, since they are generated in response to and expected as a reply by the Ping() method.
                 # HACK: Take a quick nap here to give the Ping() method's thread a chance to get the queued event.
-                if event.get('resource').startswith('subscriptions'):
+                resource = event.get('resource')
+                if resource and resource.startswith('subscriptions'):
                     self.event_streams[basestation_id].queue.put(event)
                     time.sleep(0.05)
                 else:
