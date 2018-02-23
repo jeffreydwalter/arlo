@@ -393,11 +393,11 @@ class Arlo(object):
     # Use this method to subscribe to motion events. You must provide a callback function which will get called once per motion event.
     #
     # The callback function should have the following signature:
-    #   def callback(self, basestation, event)
+    #   def callback(self, event)
     #
     # This is an example of handling a specific event, in reality, you'd probably want to write a callback for HandleEvents()
     # that has a big switch statement in it to handle all the various events Arlo produces.
-    def SubscribeToMotionEvents(self, callback, timeout=120):
+    def SubscribeToMotionEvents(self, basestation, callback, timeout=120):
         def callbackwrapper(self, event):
             if event.get('properties', {}).get('motionDetected'):
                 callback(self, event)
@@ -408,7 +408,7 @@ class Arlo(object):
     # This function will allow you to potentially write a callback that can handle all of the events received from the event stream.
     def HandleEvents(self, basestation, callback, timeout=120):
         if not callable(callback):
-            raise Exception('The callback(self, basestation, event) should be a callable function!')
+            raise Exception('The callback(self, event) should be a callable function!')
 
         basestation_id = basestation.get('deviceId')
 
@@ -422,7 +422,7 @@ class Arlo(object):
                 # If this event has is of resource type "subscriptions", then it's a ping reply event.
                 # For now, these types of events will be requeued, since they are generated in response to and expected as a reply by the Ping() method.
                 # HACK: Take a quick nap here to give the Ping() method's thread a chance to get the queued event.
-                if event.get('resource').startswith('subscriptions'):
+                if event.get('resource', '').startswith('subscriptions'):
                     self.event_streams[basestation_id].queue.put(event)
                     time.sleep(0.05)
                 else:
@@ -436,9 +436,9 @@ class Arlo(object):
     # NOTE: Use this function if you need to run some code after subscribing to the eventstream, but before your callback to handle the events runs. 
     def TriggerAndHandleEvent(self, basestation, trigger, callback, timeout=120):
         if not callable(trigger):
-            raise Exception('The trigger(self, basestation, camera) should be a callable function!')
+            raise Exception('The trigger(self, camera) should be a callable function!')
         if not callable(callback):
-            raise Exception('The callback(self, basestation, event) should be a callable function!')
+            raise Exception('The callback(self, event) should be a callable function!')
 
         self.Subscribe(basestation)
         trigger(self)
