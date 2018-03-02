@@ -811,7 +811,7 @@ class Arlo(object):
     # You can get the timezone from GetDevices().
     ##
     def StartRecording(self, basestation, camera):
-        stream_url = self.StartStream(baststation, camera)
+        stream_url = self.StartStream(basestation, camera)
         self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
         return stream_url
 
