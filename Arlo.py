@@ -418,6 +418,8 @@ class Arlo(object):
                 event = self.event_streams[basestation_id].Get(block=True, timeout=timeout)
                 if event is None and not self.event_streams[basestation_id].event_stream_stop_event.is_set():
                     return
+                elif event is None:
+                    continue;
 
                 # If this event has is of resource type "subscriptions", then it's a ping reply event.
                 # For now, these types of events will be requeued, since they are generated in response to and expected as a reply by the Ping() method.
