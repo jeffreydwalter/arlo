@@ -16,6 +16,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Awesomely Smart Contributors (Thank you!)
+* [manluk] (https://github.com/manluk) - Mar 2, 2018 - Squashed a couple of bugs.
 * [notalifeform](https://github.com/notalifeform) - Feb 10, 2018 - Fixed bug and formatting in example script.
 * [erosen](https://github.com/erosen) - Jan 27, 2018 - Added the ArloQ camera schema to the wiki.
 * [deanmcguire](https://github.com/deanmcguire) - Dec 7, 2017 - Unravelled the mysteries of RTSP streaming video.
