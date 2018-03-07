@@ -680,7 +680,9 @@ class Arlo(object):
     #]
     ##
     def BatchDeleteRecordings(self, recording_metadata):
-        return self.request.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':recording_metadata})
+        if recording_metadata:
+            return self.request.post('https://arlo.netgear.com/hmsweb/users/library/recycle', {'data':recording_metadata})
+
 
     ##
     # Returns the whole video from the presignedContentUrl.
