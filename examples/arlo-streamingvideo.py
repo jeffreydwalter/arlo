@@ -20,12 +20,9 @@ try:
     # Get the list of devices and filter on device type to only get the basestation.
     # This will return an array which includes all of the basestation's associated metadata.
     basestations = arlo.GetDevices('basestation')
-
-    # Open the event stream to act as a keep-alive for our stream.
-    arlo.Subscribe(basestations[0])
-
+    
     # Send the command to start the stream and return the stream url.
-    url = arlo.StartStream(cameras[0])
+    url = arlo.StartStream(basestations[0], cameras[0])
 
     # Record the stream to a file named 'test.mp4'.
     # **Requires ffmpeg 3.4 or greater.**
