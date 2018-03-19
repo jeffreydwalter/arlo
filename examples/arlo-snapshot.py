@@ -17,6 +17,14 @@ try:
     # This will return an array of cameras, including all of the cameras' associated metadata.
     cameras = arlo.GetDevices('camera')
 
+    # Trigger the snapshot.
+    url = arlo.TriggerFullFrameSnapshot(basestations[0], cameras[0]);
+    
+    # Download snapshot.
+    arlo.DownloadSnapshot(url, 'snapshot.jpg')
+    
+    # If you are already recording, or have a need to snapshot while recording, you can do so like this:
+    """
     # Starting recording with a camera.
     arlo.StartRecording(basestations[0], cameras[0]);
 
@@ -24,10 +32,13 @@ try:
     time.sleep(4)
 
     # Trigger the snapshot.
-    arlo.TriggerStreamSnapshot(basestations[0], cameras[0]);
+    url = arlo.TriggerStreamSnapshot(basestations[0], cameras[0]);
+    
+    # Download snapshot.
+    arlo.DownloadSnapshot(url, 'snapshot.jpg')
     
     # Stop recording.
     arlo.StopRecording(cameras[0]);
-
+    """
 except Exception as e:
     print(e):
