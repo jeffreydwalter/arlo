@@ -307,7 +307,7 @@ class Arlo(object):
     # This method stops the EventStream subscription and removes it from the event_stream collection.
     ##
     def Unsubscribe(self, basestation):
-        if isinstance(basestation, str):
+        if isinstance(basestation, (basestring, str, unicode)):
             basestation_id = basestation
         else:
             basestation_id = basestation.get('deviceId')
