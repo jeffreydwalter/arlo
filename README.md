@@ -16,7 +16,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Awesomely Smart Contributors (Thank you!)
-* [manluk] (https://github.com/manluk) - Mar 2, 2018 - Squashed a couple of bugs.
+* [manluk](https://github.com/manluk) - Mar 2, 2018 - Squashed a couple of bugs.
 * [notalifeform](https://github.com/notalifeform) - Feb 10, 2018 - Fixed bug and formatting in example script.
 * [erosen](https://github.com/erosen) - Jan 27, 2018 - Added the ArloQ camera schema to the wiki.
 * [deanmcguire](https://github.com/deanmcguire) - Dec 7, 2017 - Unravelled the mysteries of RTSP streaming video.
@@ -30,16 +30,19 @@ If You'd like to make a diffrence in the world and get your name on this most pr
 
 ## Install
 ```bash
+# Install latest stable package
 $ pip install arlo
+
+--or--
 
 # Install from master branch
 $ pip install git+https://github.com/jeffreydwalter/arlo
 ```
 
-**NOTE: arlo.netgear.com requires TLS 1.2 for their API. So, if you're getting ssl errors, it's most likely related to your version of openssl. You must upgrade your openssl library.
-If you're running this library on OSX or macOS, they ship with openssl v0.9.x which does not support TLS 1.2. You should follow the instructions found here https://comeroutewithme.com/2016/03/13/python-osx-openssl-issue/ to upgrade your openssl library.**
+**NOTE 1:** arlo.netgear.com requires TLS 1.2 for their API. So, if you're getting ssl errors, it's most likely related to your version of openssl. You may need to upgrade your openssl library.
+If you're running this library on OSX or macOS, they ship with `openssl v0.9.x` which does not support TLS 1.2. You should follow the instructions found [here](https://comeroutewithme.com/2016/03/13/python-osx-openssl-issue/) to upgrade your openssl library.
 
-**NOTE: Please ensure you don't have ANY other seeclient packages installed in addition to sseclient 0.0.18! This may cause this package to fail in unexpected ways. I common one that is known to cause issues is the sseclient-py 1.7 package. If you have a hard requirement to have more than one, please let me know and we can look into making that work.
+**NOTE 2:** Please ensure you don't have ANY other `sseclient` packages installed in addition to `sseclient 0.0.18`! This may cause this package to fail in unexpected ways. A common one that is known to cause issues is the `sseclient-py 1.7` package. If you have a hard requirement to have more than one, please let me know and we can look into making that work.
 
 After installing all of the required libraries, you can import and use this library like so:
 
