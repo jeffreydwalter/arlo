@@ -29,7 +29,9 @@ import signal
 import sseclient
 import threading
 import time
+import calendar
 import sys
+
 if sys.version[0] == '2':
     import Queue as queue
 else:
@@ -453,6 +455,40 @@ class Arlo(object):
 
     def GetCameraState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
+
+    def GetAudioPlayback(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"audioPlayback","publishResponse":False})
+
+    # defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all
+    def PlayTrack(self, basestation, track_id="2391d620-e491-4412-99f6-e9a40d6046ed", position=0):
+        return self.Notify(basestation, {"action":"playTrack","resource":"audioPlayback/player","properties":{"trackId":track_id,"position":position}})
+
+    def PauseTrack(self, basestation):
+        return self.Notify(basestation, {"action":"pause","resource":"audioPlayback/player"})
+
+    def SkipTrack(self, basestation):
+        return self.Notify(basestation, {"action":"nextTrack","resource":"audioPlayback/player"})
+
+    def SetSleepTimerOn(self, basestation, time=calendar.timegm(time.gmtime()) + 300, timediff=0):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "sleepTime": time, "sleepTimeRel": timediff}}})
+
+    def SetSleepTimerOff(self, basestation, time=0, timediff=300):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "sleepTime": time, "sleepTimeRel": timediff}}})
+
+    def SetLoopBackModeContinuous(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "loopbackMode": "continuous"}}})
+
+    def SetLoopBackModeSingleTrack(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "loopbackMode": "singleTrack"}}})
+
+    def SetShuffleOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "shuffleActive": True}}})
+
+    def SetShuffleOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "shuffleActive": False}}})
+
+    def SetVolume(self, basestation, mute=False, volume=50):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"speaker":{"mute":mute,"volume":volume}}})
 
     def GetCameraTempReading(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/history","publishResponse":False})
