@@ -463,10 +463,10 @@ class Arlo(object):
     def TempAlertOff(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":False}}})
 
-    def TempAlertThresholdMin(self, basestation, number=200):
+    def SetTempAlertThresholdMin(self, basestation, number=200):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"minThreshold":number}}})
 
-    def TempAlertThresholdMax(self, basestation, number=240):
+    def SetTempAlertThresholdMax(self, basestation, number=240):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"maxThreshold":number}}})
 
     def TempRecordingOn(self, basestation):

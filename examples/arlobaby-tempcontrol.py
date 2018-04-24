@@ -21,10 +21,10 @@ try:
         arlo.TempAlertOn(cameras[0])
 
         # Alert min threshold (so if temp falls below this number it alerts)
-        arlo.TempAlertThresholdMin(cameras[0], 170)
+        arlo.SetTempAlertThresholdMin(cameras[0], 170)
 
         # Alert max threshold (so if temp go above this number it alerts)
-        arlo.TempAlertThresholdMax(cameras[0], 270)
+        arlo.SetTempAlertThresholdMax(cameras[0], 270)
 
         # record temperature history
         arlo.TempRecordingOn(cameras[0])
