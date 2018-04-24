@@ -17,7 +17,7 @@ try:
         # This will return an array which includes all of the camera's associated metadata.
         cameras = arlo.GetDevices('camera')
 
-        # Turn tempreture alerts on
+        # Turn temperature alerts on
         arlo.TempAlertOn(cameras[0])
 
         # Alert min threshold (so if temp falls below this number it alerts)
@@ -26,10 +26,10 @@ try:
         # Alert max threshold (so if temp go above this number it alerts)
         arlo.TempAlertThresholdMax(cameras[0], 270)
 
-        # record tempreture history
+        # record temperature history
         arlo.TempRecordingOn(cameras[0])
 
-        # Set the tempreture unit to Celcius
+        # Set the temperature unit to Celcius
         arlo.SetTempUnit(cameras[0]["uniqueId"], "C")
 
 except Exception as e:
