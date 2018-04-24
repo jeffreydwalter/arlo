@@ -457,6 +457,9 @@ class Arlo(object):
     def GetCameraTempReading(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/history","publishResponse":False})
 
+    def GetSensorConfig(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":False})
+
     def TempAlertOn(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":True}}})
 
