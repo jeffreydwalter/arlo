@@ -454,6 +454,30 @@ class Arlo(object):
     def GetCameraState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
 
+    def GetCameraTempReading(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/history","publishResponse":False})
+
+    def TempAlertOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":True}}})
+
+    def TempAlertOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":False}}})
+
+    def TempAlertThresholdMin(self, basestation, number=200):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"minThreshold":number}}})
+
+    def TempAlertThresholdMax(self, basestation, number=240):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"maxThreshold":number}}})
+
+    def TempRecordingOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"recordingEnabled":True}}})
+
+    def TempRecordingOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"recordingEnabled":False}}})
+
+    def SetTempUnit(self, uniqueId, unit="C"):
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/'+uniqueId+'/tempUnit', {"tempUnit":unit})
+
     def GetRules(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"rules","publishResponse":False})
 
