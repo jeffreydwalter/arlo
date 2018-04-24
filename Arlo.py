@@ -435,7 +435,7 @@ class Arlo(object):
 
     # Use this method to subscribe to the event stream and provide a callback that will be called for event event received.
     # This function will allow you to potentially write a callback that can handle all of the events received from the event stream.
-    # NOTE: Use this function if you need to run some code after subscribing to the eventstream, but before your callback to handle the events runs. 
+    # NOTE: Use this function if you need to run some code after subscribing to the eventstream, but before your callback to handle the events runs.
     def TriggerAndHandleEvent(self, basestation, trigger, callback, timeout=120):
         if not callable(trigger):
             raise Exception('The trigger(self, camera) should be a callable function!')
@@ -453,6 +453,33 @@ class Arlo(object):
 
     def GetCameraState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
+
+    def GetCameraTempReading(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/history","publishResponse":False})
+
+    def GetSensorConfig(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":False})
+
+    def TempAlertOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":True}}})
+
+    def TempAlertOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":False}}})
+
+    def SetTempAlertThresholdMin(self, basestation, number=200):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"minThreshold":number}}})
+
+    def SetTempAlertThresholdMax(self, basestation, number=240):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"maxThreshold":number}}})
+
+    def TempRecordingOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"recordingEnabled":True}}})
+
+    def TempRecordingOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"recordingEnabled":False}}})
+
+    def SetTempUnit(self, uniqueId, unit="C"):
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/'+uniqueId+'/tempUnit', {"tempUnit":unit})
 
     def GetRules(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"rules","publishResponse":False})
@@ -748,10 +775,10 @@ class Arlo(object):
     #
     ##
     def StartStream(self, basestation, camera):
-        
+
         # nonlocal variable hack for Python 2.x.
         class nl:
-            stream_url_dict = None 
+            stream_url_dict = None
 
         def trigger(self):
             nl.stream_url_dict = self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
