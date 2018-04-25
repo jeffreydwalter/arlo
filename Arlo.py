@@ -456,10 +456,11 @@ class Arlo(object):
     def GetCameraState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
 
+    # Arlo Baby Audio Control
     def GetAudioPlayback(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"audioPlayback","publishResponse":False})
 
-    # defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all
+    # defaulting to 'hush little baby', which is a supplied track. I hope the ID is the same for all
     def PlayTrack(self, basestation, track_id="2391d620-e491-4412-99f6-e9a40d6046ed", position=0):
         return self.Notify(basestation, {"action":"playTrack","resource":"audioPlayback/player","properties":{"trackId":track_id,"position":position}})
 
