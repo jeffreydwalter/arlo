@@ -29,10 +29,10 @@ try:
         # Skip the track
         arlo.SkipTrack(cameras[0])
 
-        # record temperature history
+        # Set the sleep timer
         arlo.SetSleepTimerOn(cameras[0])
 
-        # Set the temperature unit to Celcius
+        # Set the playback mode ot continuous
         arlo.SetLoopBackModeContinuous(cameras[0])
 
 except Exception as e:
