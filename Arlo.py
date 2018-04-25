@@ -456,10 +456,11 @@ class Arlo(object):
     def GetCameraState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
 
+    # Arlo Baby Audio Control
     def GetAudioPlayback(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"audioPlayback","publishResponse":False})
 
-    # defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all
+    # defaulting to 'hush little baby', which is a supplied track. I hope the ID is the same for all
     def PlayTrack(self, basestation, track_id="2391d620-e491-4412-99f6-e9a40d6046ed", position=0):
         return self.Notify(basestation, {"action":"playTrack","resource":"audioPlayback/player","properties":{"trackId":track_id,"position":position}})
 
@@ -490,6 +491,27 @@ class Arlo(object):
     def SetVolume(self, basestation, mute=False, volume=50):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"speaker":{"mute":mute,"volume":volume}}})
 
+    # Baby Arlo Nightlight, (current state is in the arlo.GetCameraState(cameras[0]["properties"][0]["nightLight"])
+    def SetNightLightOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "enabled": True}}})
+
+    def SetNightLightOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "enabled": False}}})
+
+    def SetNightLightBrightness(self, basestation, level=200):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "brightness": level}}})
+
+    # either rainbow or rgb
+    def SetNightLightMode(self, basestation, mode="rainbow"):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "mode": mode}}})
+
+    def SetNightLightTimerOn(self, basestation, time=calendar.timegm(time.gmtime()) + 300, timediff=0):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "sleepTime": time, "sleepTimeRel": timediff}}})
+
+    def SetNightLightTimerOff(self, basestation, time=0, timediff=300):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "sleepTime": time, "sleepTimeRel": timediff}}})
+
+    # Baby Arlo Sensors
     def GetCameraTempReading(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/history","publishResponse":False})
 

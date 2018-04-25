@@ -18,22 +18,14 @@ try:
         cameras = arlo.GetDevices('camera')
 
         # Get current state payload
-        arlo.GetAudioPlayback(cameras[0])
+        state=arlo.GetCameraState(cameras[0])
+        print(state["properties"][0]["nightLight"])
 
-        # Start playing
-        arlo.PlayTrack(cameras[0], track_id, position)
+        # nightlight on
+        arlo.SetNightLightOn(cameras[0])
 
-        # Pause the track
-        arlo.PauseTrack(cameras[0])
-
-        # Skip the track
-        arlo.SkipTrack(cameras[0])
-
-        # Set the sleep timer
-        arlo.SetSleepTimerOn(cameras[0])
-
-        # Set the playback mode ot continuous
-        arlo.SetLoopBackModeContinuous(cameras[0])
+        # night light timer on
+        arlo.SetNightLightTimerOn(cameras[0], 500)
 
 except Exception as e:
     print(e)
