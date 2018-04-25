@@ -456,6 +456,23 @@ class Arlo(object):
     def GetCameraState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
 
+    # General alert toggles
+    def SetMotionAlertsOn(self, basestation, sensitivity=5):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"motionDetection":{"armed":True,"sensitivity":sensitivity,"zones":[]}}})
+
+    def SetMotionAlertsOff(self, basestation, sensitivity=5):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"motionDetection":{"armed":False,"sensitivity":sensitivity,"zones":[]}}})
+
+    def SetAudioAlertsOn(self, basestation, sensitivity=3):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"audioDetection":{"armed":True,"sensitivity":sensitivity}}})
+
+    def SetAudioAlertsOff(self, basestation, sensitivity=3):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"audioDetection":{"armed":False,"sensitivity":sensitivity}}})
+
+    # actiontype: disabled OR recordSnapshot OR recordVideo
+    def AlertNotificationMethods(self, basestation, action="disabled", email=False, push=False):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"eventAction":{"actionType":action,"stopType":"timeout","timeout":15,"emailNotification":{"enabled":email,"emailList":["__OWNER_EMAIL__"]},"pushNotification":push}}})
+
     # Arlo Baby Audio Control
     def GetAudioPlayback(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"audioPlayback","publishResponse":False})
