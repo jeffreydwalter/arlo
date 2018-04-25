@@ -456,11 +456,28 @@ class Arlo(object):
     def GetCameraState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
 
+    # General alert toggles
+    def SetMotionAlertsOn(self, basestation, sensitivity=5):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"motionDetection":{"armed":True,"sensitivity":sensitivity,"zones":[]}}})
+
+    def SetMotionAlertsOff(self, basestation, sensitivity=5):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"motionDetection":{"armed":False,"sensitivity":sensitivity,"zones":[]}}})
+
+    def SetAudioAlertsOn(self, basestation, sensitivity=3):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"audioDetection":{"armed":True,"sensitivity":sensitivity}}})
+
+    def SetAudioAlertsOff(self, basestation, sensitivity=3):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"audioDetection":{"armed":False,"sensitivity":sensitivity}}})
+
+    # actiontype: disabled OR recordSnapshot OR recordVideo
+    def AlertNotificationMethods(self, basestation, action="disabled", email=False, push=False):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"eventAction":{"actionType":action,"stopType":"timeout","timeout":15,"emailNotification":{"enabled":email,"emailList":["__OWNER_EMAIL__"]},"pushNotification":push}}})
+
     # Arlo Baby Audio Control
     def GetAudioPlayback(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"audioPlayback","publishResponse":False})
 
-    # defaulting to 'hush little baby', which is a supplied track. I hope the ID is the same for all
+    # defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all
     def PlayTrack(self, basestation, track_id="2391d620-e491-4412-99f6-e9a40d6046ed", position=0):
         return self.Notify(basestation, {"action":"playTrack","resource":"audioPlayback/player","properties":{"trackId":track_id,"position":position}})
 
@@ -518,10 +535,46 @@ class Arlo(object):
     def GetSensorConfig(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":False})
 
-    def TempAlertOn(self, basestation):
+    def SetairQualityAlertOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"alertsEnabled":True}}})
+
+    def SetairQualityAlertOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"alertsEnabled":False}}})
+
+    def SetairQualityAlertThresholdMin(self, basestation, number=400):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"minThreshold":number}}})
+
+    def SetairQualityAlertThresholdMax(self, basestation, number=700):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"maxThreshold":number}}})
+
+    def SetairQualityRecordingOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"recordingEnabled":True}}})
+
+    def SetairQualityRecordingOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"recordingEnabled":False}}})
+
+    def SetHumidityAlertOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"alertsEnabled":True}}})
+
+    def SetHumidityAlertOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"alertsEnabled":False}}})
+
+    def SetHumidityAlertThresholdMin(self, basestation, number=400):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"minThreshold":number}}})
+
+    def SetHumidityAlertThresholdMax(self, basestation, number=800):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"maxThreshold":number}}})
+
+    def SetHumidityRecordingOn(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"recordingEnabled":True}}})
+
+    def SetHumidityRecordingOff(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"recordingEnabled":False}}})
+
+    def SetTempAlertOn(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":True}}})
 
-    def TempAlertOff(self, basestation):
+    def SetTempAlertOff(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":False}}})
 
     def SetTempAlertThresholdMin(self, basestation, number=200):
@@ -530,10 +583,10 @@ class Arlo(object):
     def SetTempAlertThresholdMax(self, basestation, number=240):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"maxThreshold":number}}})
 
-    def TempRecordingOn(self, basestation):
+    def SetTempRecordingOn(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"recordingEnabled":True}}})
 
-    def TempRecordingOff(self, basestation):
+    def SetTempRecordingOff(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"recordingEnabled":False}}})
 
     def SetTempUnit(self, uniqueId, unit="C"):
