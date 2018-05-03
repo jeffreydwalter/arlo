@@ -25,6 +25,7 @@ import monotonic
 import os
 import random
 import requests
+from requests.exceptions import HTTPError 
 import signal
 import sseclient
 import threading
@@ -137,7 +138,7 @@ class Request(object):
             if 'data' in body:
                 return body['data']
         else:
-            raise Exception('Request ({0} {1}) failed'.format(method, url), r)
+            raise HTTPError('Request ({0} {1}) failed'.format(method, url), response=r)
 
     def get(self, url, headers={}, stream=False):
         return self._request(url, 'GET', {}, headers, stream)
