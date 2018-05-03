@@ -137,7 +137,7 @@ class Request(object):
             if 'data' in body:
                 return body['data']
         else:
-            raise Exception('Request ({0} {1}) failed'.format(method, url), body)
+            raise Exception('Request ({0} {1}) failed'.format(method, url), r)
 
     def get(self, url, headers={}, stream=False):
         return self._request(url, 'GET', {}, headers, stream)
