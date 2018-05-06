@@ -291,7 +291,7 @@ class Arlo(object):
                         self.event_streams[basestation_id].Connect()
 
         def Heartbeat(self, stop_event):
-            while not stop_event.wait(2.0):
+            while not stop_event.wait(30.0):
                 try:
                     self.Ping(basestation)
                 except queue.Empty:
