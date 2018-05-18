@@ -122,32 +122,36 @@ class Request(object):
     def __init__(self):
         self.session = requests.Session()
 
-    def _request(self, url, method='GET', params={}, headers={}, stream=False):
+    def _request(self, url, method='GET', params={}, headers={}, stream=False, raw=False):
         if method == 'GET':
-            r = self.session.get(url, headers=headers, stream=stream)
+            r = self.session.get(url, params=params, headers=headers, stream=stream)
             if stream is True:
                 return r
         elif method == 'PUT':
             r = self.session.put(url, json=params, headers=headers)
         elif method == 'POST':
             r = self.session.post(url, json=params, headers=headers)
-
+        
         r.raise_for_status()
         body = r.json()
-        if body['success'] == True:
-            if 'data' in body:
-                return body['data']
+
+        if raw:
+            return body
         else:
-            raise HTTPError('Request ({0} {1}) failed'.format(method, url), response=r)
+            if body['success'] == True:
+                if 'data' in body:
+                    return body['data']
+            else:
+                raise HTTPError('Request ({0} {1}) failed'.format(method, url), response=r)
 
-    def get(self, url, headers={}, stream=False):
-        return self._request(url, 'GET', {}, headers, stream)
+    def get(self, url, params={}, headers={}, stream=False, raw=False):
+        return self._request(url, 'GET', params, headers, stream, raw)
 
-    def put(self, url, params={}, headers={}):
-        return self._request(url, 'PUT', params, headers)
+    def put(self, url, params={}, headers={}, raw=False):
+        return self._request(url, 'PUT', params, headers, raw)
 
-    def post(self, url, params={}, headers={}):
-        return self._request(url, 'POST', params, headers)
+    def post(self, url, params={}, headers={}, raw=False):
+        return self._request(url, 'POST', params, headers, raw)
 
 class Arlo(object):
     TRANSID_PREFIX = 'web'
@@ -229,7 +233,8 @@ class Arlo(object):
         body = self.request.post('https://arlo.netgear.com/hmsweb/login/v2', {'email': self.username, 'password': self.password})
 
         headers = {
-            'DNT':'1',
+            'DNT': '1',
+            'schemaVersion': '1',
             'Host': 'arlo.netgear.com',
             'Referer': 'https://arlo.netgear.com/',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
@@ -647,18 +652,23 @@ class Arlo(object):
     def ToggleCamera(self, basestation, camera, active=True):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"privacyActive":active}})
 
+    def PushToTalk(self, camera):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('uniqueId')+'/pushtotalk')
+
     def Reset(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/library/reset')
 
     def GetServiceLevel(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/serviceLevel')
 
+    def GetServiceLevelV2(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/serviceLevel/v2')
+
     def GetPaymentOffers(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/payment/offers')
 
     def GetProfile(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/profile')
-
     ##
     # {"userId":"XXX-XXXXXXX","email":"jeffreydwalter@gmail.com","token":"2_5BtvCDVr5K_KJyGKaq8H61hLybT7D69krsmaZeCG0tvs-yw5vm0Y1LKVVoVI9Id19Fk9vFcGFnMja0z_5eNNqP_BOXIX9rzekS2SgTjz7Ao6mPzGs86_yCBPqfaCZCkr0ogErwffuFIZsvh_XGodqkTehzkfQ4Xl8u1h9FhqDR2z","paymentId":"XXXXXXXX","accountStatus":"registered","serialNumber":"XXXXXXXXXXXXXX","countryCode":"US","tocUpdate":false,"policyUpdate":false,"validEmail":true,"arlo":true,"dateCreated":1463975008658}
     ##
@@ -696,11 +706,23 @@ class Arlo(object):
     def GetLocations(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/locations')
 
+    def GetEmergencyLocations(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/emergency/locations')
+
     # Get location_id is the id field from the return of GetLocations()
     # NOTE: The Arlo API seems to disable geofencing mode when switching to other modes, if it's enabled.
     # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
     def Geofencing(self, location_id, active=True):
-        return self.request.put('https://arlo.netgear.com/hmsweb/users/locations/'+location_id, {"geoEnabled":active})
+        return self.request.put('https://arlo.netgear.com/hmsweb/users/locations/'+location_id, {'geoEnabled':active})
+
+    def GetAutomationDefinitions(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/automation/definitions', {'uniqueIds':'all'})
+
+    def GetAutomationActive(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/automation/active')
+
+    def GetAutomationActivityZones(self, camera):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('deviceId')+'/activityzones')
 
     ##
     # This method returns an array that contains the basestation, cameras, etc. and their metadata.
@@ -712,6 +734,10 @@ class Arlo(object):
             return [ device for device in devices if device['deviceType'] == device_type]
 
         return devices
+
+    def GetDeviceCapabilities(self, device):
+        model = device.get('modelId').lower()
+        return self.request.get('https://arlo.netgear.com/resources/capabilities/'+model+'/'+model+'_'+device.get('interfaceVersion')+'.json', raw=True)
 
     def GetLibraryMetaData(self, from_date, to_date):
         return self.request.post('https://arlo.netgear.com/hmsweb/users/library/metadata', {'dateFrom':from_date, 'dateTo':to_date})
