@@ -12,7 +12,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 * [cubewot](https://github.com/cubewot) - 🍺🍺 
 * [imopen](https://github.com/imopen) - 🍺 
 * [notalifeform](https://github.com/notalifeform) - 🍺🍺
-* [anonymous](https://github.com/jeffreydwalter/arlo) - 🍺🍺🍺🍺
+* [anonymous](https://github.com/jeffreydwalter/arlo) - 🍺🍺🍺🍺🍺🍺
 
 ---
 ### Awesomely Smart Contributors (Thank you!)
