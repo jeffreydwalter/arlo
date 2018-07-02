@@ -376,6 +376,7 @@ class Arlo(object):
         return body.get('transId')
 
     def NotifyAndGetResponse(self, basestation, body, timeout=120):
+        start_time = monotonic.monotonic()
         basestation_id = basestation.get('deviceId')
 
         self.Subscribe(basestation)
@@ -389,7 +390,7 @@ class Arlo(object):
             while basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered and event.get('transId') != transId:
                 self.event_streams[basestation_id].queue.put(event)
                 event = self.event_streams[basestation_id].Get(block=True, timeout=timeout)
-                if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
+                if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set() or monotonic.monotonic() - start_time > timeout:
                     return None
 
             return event
