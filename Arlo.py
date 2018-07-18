@@ -76,13 +76,16 @@ class EventStream(object):
                     return item
                 except queue.Empty:
                     if monotonic.monotonic() > timeout:
-                        raise
+                        return None 
                     else:
                         pass
         else:
-            item = self.queue.get(block=block, timeout=timeout)
-            self.queue.task_done()
-            return item
+            try:
+                item = self.queue.get(block=block, timeout=timeout)
+                self.queue.task_done()
+                return item
+            except queue.Empty:
+                return None
 
     def Start(self):
         self.event_stream_thread.start()
@@ -260,7 +263,7 @@ class Arlo(object):
     # This call "registers" the device (which should be the basestation) so that events will be sent to the EventStream
     # when subsequent calls to /notify are made.
     #
-    # Since this interface is asyncronous, and this is a quick and dirty hack to get this working, I'm using a thread
+    # Since this interface is asynchronous, and this is a quick and dirty hack to get this working, I'm using a thread
     # to listen to the EventStream. This thread puts events into a queue. Some polling is required (see NotifyAndGetResponse()) because
     # the event messages aren't guaranteed to be delivered in any specific order, but I wanted to maintain a synchronous style API.
     #
@@ -919,7 +922,7 @@ class Arlo(object):
             stream_url_dict = None
 
         def trigger(self):
-            nl.stream_url_dict = self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
+            nl.stream_url_dict = self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
 
         def callback(self, event):
             if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
