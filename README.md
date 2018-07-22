@@ -30,6 +30,10 @@ This just a personal utility that I created out of necessity. It is by no means 
 If You'd like to make a diffrence in the world and get your name on this most prestegious list, have a look at our [help wanted](https://github.com/jeffreydwalter/arlo/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) section!
 
 ---
+### Filing an Issue
+Please read the [Issue Guidelines and Policies](https://github.com/jeffreydwalter/arlo/wiki/Issue-Guidelines-and-Policies) wiki page **BEFORE** you file an issue. Thanks.
+
+---
 
 ## Install
 ```bash
