@@ -21,11 +21,14 @@ try:
         state=arlo.GetCameraState(cameras[0])
         print(state["properties"][0]["nightLight"])
 
-        # nightlight on
+        # night light on
         arlo.SetNightLightOn(cameras[0])
 
         # night light timer on
         arlo.SetNightLightTimerOn(cameras[0], 500)
+	
+	# night light color mode
+	arlo.SetNightLightMode(cameras[0], mode={"blue":255,"green":255,"red":255 }) # or mode="rainbow"
 
 except Exception as e:
     print(e)
