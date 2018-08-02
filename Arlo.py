@@ -502,45 +502,48 @@ class Arlo(object):
         return self.Notify(basestation, {"action":"nextTrack","resource":"audioPlayback/player"})
 
     def SetSleepTimerOn(self, basestation, time=calendar.timegm(time.gmtime()) + 300, timediff=0):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "sleepTime": time, "sleepTimeRel": timediff}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"sleepTime":time,"sleepTimeRel":timediff}}})
 
     def SetSleepTimerOff(self, basestation, time=0, timediff=300):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "sleepTime": time, "sleepTimeRel": timediff}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"sleepTime": time,"sleepTimeRel":timediff}}})
 
     def SetLoopBackModeContinuous(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "loopbackMode": "continuous"}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"loopbackMode":"continuous"}}})
 
     def SetLoopBackModeSingleTrack(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "loopbackMode": "singleTrack"}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"loopbackMode":"singleTrack"}}})
 
     def SetShuffleOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "shuffleActive": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"shuffleActive":True}}})
 
     def SetShuffleOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{ "shuffleActive": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"shuffleActive":False}}})
 
     def SetVolume(self, basestation, mute=False, volume=50):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"speaker":{"mute":mute,"volume":volume}}})
 
     # Baby Arlo Nightlight, (current state is in the arlo.GetCameraState(cameras[0]["properties"][0]["nightLight"])
     def SetNightLightOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "enabled": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"enabled":True}}})
 
     def SetNightLightOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "enabled": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"enabled":False}}})
 
     def SetNightLightBrightness(self, basestation, level=200):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "brightness": level}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"brightness":level}}})
 
     # either rainbow or rgb
     def SetNightLightMode(self, basestation, mode="rainbow"):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "mode": mode}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"mode":mode}}})
+
+    def SetNightLightColor(self, basestation, red=255, green=255, blue=255):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"rgb":{"blue":blue,"green":green,"red":red}}}})
 
     def SetNightLightTimerOn(self, basestation, time=calendar.timegm(time.gmtime()) + 300, timediff=0):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "sleepTime": time, "sleepTimeRel": timediff}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"sleepTime":time,"sleepTimeRel":timediff}}})
 
     def SetNightLightTimerOff(self, basestation, time=0, timediff=300):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{ "sleepTime": time, "sleepTimeRel": timediff}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"sleepTime":time,"sleepTimeRel":timediff}}})
 
     # Baby Arlo Sensors
     def GetCameraTempReading(self, basestation):
