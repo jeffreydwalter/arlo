@@ -86,7 +86,7 @@ try:
 		#    # Download the whole video into memory as a single chunk.
 		#    video = arlo.GetRecording(recording['presignedContentUrl'])
 		#	 with open('videos/'+videofilename, 'wb') as f:
-		#        f.write(stream)
+		#        f.write(video)
 		#        f.close()
 		# Or:
 		#
