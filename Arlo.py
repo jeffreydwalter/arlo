@@ -1026,5 +1026,8 @@ class Arlo(object):
     def StopRecording(self, camera):
         return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/stopRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
 
+    ##
+    # This function downloads a Cvr Playlist file for the period fromDate to toDate
+    ##
     def GetCvrPlaylist(self, camera, fromDate, toDate):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('deviceId')+'/playlist?fromDate='+fromDate+'&toDate='+toDate)

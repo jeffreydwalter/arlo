@@ -36,7 +36,7 @@ try:
 
     # If no recordings are available exit
     if not playlist['playlist']:
-        print "No playlist found for camera for the period "+datetime_from+" and "+datetime_to
+        print "No playlist found for camera for the period " + datetimeFrom.strftime("%Y-%m-%d %H:%M:%S") + " and " + datetimeTo.strftime("%Y-%m-%d %H:%M:%S")
         arlo.Logout()
         print('Logged out')
         sys.exit()
