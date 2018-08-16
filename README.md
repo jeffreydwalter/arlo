@@ -17,6 +17,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Awesomely Smart Contributors (Thank you!)
+* [kimc78](https://github.com/kimc78) - Aug 16, 2018 - Added method to get CVR recording list.
 * [jurgenweber](https://github.com/jurgenweber) - Apr 25, 2018 - Added Arlo Baby APIs!
 * [pliablepixels](https://github.com/pliablepixels) - Apr 3, 2018 - Fixed up issues with the README.
 * [manluk](https://github.com/manluk) - Mar 2, 2018 - Squashed a couple of bugs.
