@@ -2,6 +2,12 @@
 # arlo ![](https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5%2C%203.6-blue.svg)
 > Python module for interacting with Netgear's Arlo camera system.
 
+---
+### Now in Golang!
+If you love the Go programming language, check out [arlo-golang](https://github.com/jeffreydwalter/arlo-golang).
+My goal is to bring parity to the Python version asap. If you know what you're doing in Go, I would appreciate any feedback on the general structure of the library, and contributions, etc.
+
+---
 This just a personal utility that I created out of necessity. It is by no means complete, although it does expose quite a bit of the Arlo interface in an easy to use Python pacakge. As such, this package does not come with unit tests (feel free to add them) or guarantees.
 **All [contributions](https://github.com/jeffreydwalter/arlo/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) are welcome and appreciated!**
 
@@ -14,6 +20,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 * [imopen](https://github.com/imopen) - 🍺 
 * [notalifeform](https://github.com/notalifeform) - 🍺🍺
 * [anonymous](https://github.com/jeffreydwalter/arlo) - 🍺🍺🍺🍺
+* [kewashi](https://github.com/kewashi) - 🍺
 
 ---
 ### Awesomely Smart Contributors (Thank you!)
