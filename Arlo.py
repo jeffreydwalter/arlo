@@ -32,6 +32,7 @@ import threading
 import time
 import calendar
 import sys
+from six import string_types, text_type
 
 if sys.version[0] == '2':
     import Queue as queue
@@ -318,7 +319,7 @@ class Arlo(object):
     # This method stops the EventStream subscription and removes it from the event_stream collection.
     ##
     def Unsubscribe(self, basestation):
-        if isinstance(basestation, (basestring, str, unicode)):
+        if isinstance(basestation, (text_type, string_types)):
             basestation_id = basestation
         else:
             basestation_id = basestation.get('deviceId')
