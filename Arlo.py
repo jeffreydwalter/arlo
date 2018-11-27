@@ -305,6 +305,8 @@ class Arlo(object):
                     self.Ping(basestation)
                 except queue.Empty:
                     pass
+                except Exception as e:
+                    pass
 
         if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
             self.event_streams[basestation_id] = EventStream(QueueEvents, Heartbeat, args=(self, ))
