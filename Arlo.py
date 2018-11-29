@@ -303,9 +303,7 @@ class Arlo(object):
             while not stop_event.wait(30.0):
                 try:
                     self.Ping(basestation)
-                except queue.Empty:
-                    pass
-                except Exception as e:
+                except:
                     pass
 
         if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
@@ -427,7 +425,7 @@ class Arlo(object):
     # This function will allow you to potentially write a callback that can handle all of the events received from the event stream.
     def HandleEvents(self, basestation, callback, timeout=120):
         if not callable(callback):
-            raise Exception('The callback(self, event) should be a callable function!')
+            raise Exception('The callback(self, event) should be a callable function.')
 
         basestation_id = basestation.get('deviceId')
 
@@ -457,9 +455,9 @@ class Arlo(object):
     # NOTE: Use this function if you need to run some code after subscribing to the eventstream, but before your callback to handle the events runs.
     def TriggerAndHandleEvent(self, basestation, trigger, callback, timeout=120):
         if not callable(trigger):
-            raise Exception('The trigger(self, camera) should be a callable function!')
+            raise Exception('The trigger(self, camera) should be a callable function.')
         if not callable(callback):
-            raise Exception('The callback(self, event) should be a callable function!')
+            raise Exception('The callback(self, event) should be a callable function.')
 
         self.Subscribe(basestation)
         trigger(self)
@@ -627,11 +625,26 @@ class Arlo(object):
     def SirenOff(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"siren","publishResponse":True,"properties":{"sirenState":"off","duration":300,"volume":8,"pattern":"alarm"}})
 
-    def Arm(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode1"}})
+    def Arm(self, device):
+        mode = "mode1"
+        parentId = device.get('parentId', None)
+        if device['deviceType'] == 'arlobridge':
+            return self.SetAutomationActive(mode)
+        elif not parentId or device['deviceId'] == parentId:
+            return self.NotifyAndGetResponse(device, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
+        else:
+            raise Exception('Only parent devices can be armed.');
 
-    def Disarm(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":"mode0"}})
+    def Disarm(self, device):
+        mode = "mode0"
+        parentId = device.get('parentId', None)
+        if device['deviceType'] == 'arlobridge':
+            return self.SetAutomationActive(mode)
+        elif not parentId or device['deviceId'] == parentId:
+            return self.NotifyAndGetResponse(device, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
+        else:
+            raise Exception('Only parent devices can be disarmed.');
+
 
     # NOTE: Brightness is between -2 and 2 in increments of 1 (-2, -1, 0, 1, 2).
     # Setting it to an invalid value has no effect.
@@ -747,8 +760,8 @@ class Arlo(object):
     # This is the newer API for setting the "mode". It should be used instead of GetModes()/SetModes()
     # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015622105,"activeModes":["mode1"],"activeSchedules":[]}]}
     # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}
-    def SetAutomationActive(self, basestation, mode, schedule):
-        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':basestation.get('deviceId'),'timestamp':time.now(),'activeModes':[mode],'activeSchedules':[]}]})
+    def SetAutomationActive(self, basestation, mode, schedules=[]):
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':basestation.get('deviceId'),'timestamp':time.now(),'activeModes':[mode],'activeSchedules':schedules}]})
 
     def GetAutomationActivityZones(self, camera):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('deviceId')+'/activityzones')
