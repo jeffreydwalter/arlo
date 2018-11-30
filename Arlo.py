@@ -629,7 +629,7 @@ class Arlo(object):
         mode = "mode1"
         parentId = device.get('parentId', None)
         if device['deviceType'] == 'arlobridge':
-            return self.SetAutomationActive(mode)
+            return self.SetAutomationActive(device, mode)
         elif not parentId or device['deviceId'] == parentId:
             return self.NotifyAndGetResponse(device, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
         else:
@@ -639,7 +639,7 @@ class Arlo(object):
         mode = "mode0"
         parentId = device.get('parentId', None)
         if device['deviceType'] == 'arlobridge':
-            return self.SetAutomationActive(mode)
+            return self.SetAutomationActive(device, mode)
         elif not parentId or device['deviceId'] == parentId:
             return self.NotifyAndGetResponse(device, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
         else:
