@@ -135,6 +135,7 @@ class Request(object):
             r = self.session.put(url, json=params, headers=headers)
         elif method == 'POST':
             r = self.session.post(url, json=params, headers=headers)
+            print(r.headers)
         
         r.raise_for_status()
         body = r.json()
@@ -146,7 +147,7 @@ class Request(object):
                 if 'data' in body:
                     return body['data']
             else:
-                raise HTTPError('Request ({0} {1}) failed'.format(method, url), response=r)
+                raise HTTPError('Request ({0} {1}) failed: {2}'.format(method, url, r.json()), response=r)
 
     def get(self, url, params={}, headers={}, stream=False, raw=False):
         return self._request(url, 'GET', params, headers, stream, raw)
@@ -175,6 +176,9 @@ class Arlo(object):
     def interrupt_handler(self, signum, frame):
         print("Caught Ctrl-C, exiting.")
         os._exit(1)
+
+    def to_timestamp(self, dt):
+        return int(dt.strftime("%s")) * 1000
 
     def genTransId(self, trans_type=TRANSID_PREFIX):
         def float2hex(f):
@@ -240,6 +244,7 @@ class Arlo(object):
             'DNT': '1',
             'schemaVersion': '1',
             'Host': 'arlo.netgear.com',
+            'Content-Type': 'application/json; charset=utf-8;',
             'Referer': 'https://arlo.netgear.com/',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
             'Authorization': body['token']
@@ -761,7 +766,7 @@ class Arlo(object):
     # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015622105,"activeModes":["mode1"],"activeSchedules":[]}]}
     # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}
     def SetAutomationActive(self, basestation, mode, schedules=[]):
-        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':basestation.get('deviceId'),'timestamp':time.now(),'activeModes':[mode],'activeSchedules':schedules}]})
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':basestation.get('deviceId'),'timestamp':self.to_timestamp(datetime.datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
 
     def GetAutomationActivityZones(self, camera):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('deviceId')+'/activityzones')
