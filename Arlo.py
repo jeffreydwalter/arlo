@@ -621,6 +621,24 @@ class Arlo(object):
     def GetModes(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"modes","publishResponse":False})
 
+    def GetActiveModes(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/automation/active')
+
+    def GetSmartFeatures(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/subscription/smart/features')
+
+    def GetAutomationDefinitions(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/automation/definitions', {'uniqueIds':'all'})
+
+    # This is the newer API for setting the "mode". It should be used instead of GetModes()/SetModes()
+    # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015622105,"activeModes":["mode1"],"activeSchedules":[]}]}
+    # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}
+    def SetAutomationActive(self, basestation, mode, schedules=[]):
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':basestation.get('deviceId'),'timestamp':self.to_timestamp(datetime.datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
+
+    def GetAutomationActivityZones(self, camera):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('deviceId')+'/activityzones')
+
     def GetCalendar(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"schedule","publishResponse":False})
 
@@ -755,21 +773,6 @@ class Arlo(object):
     # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
     def Geofencing(self, location_id, active=True):
         return self.request.put('https://arlo.netgear.com/hmsweb/users/locations/'+location_id, {'geoEnabled':active})
-
-    def GetAutomationDefinitions(self):
-        return self.request.get('https://arlo.netgear.com/hmsweb/users/automation/definitions', {'uniqueIds':'all'})
-
-    def GetAutomationActive(self):
-        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/automation/active')
-
-    # This is the newer API for setting the "mode". It should be used instead of GetModes()/SetModes()
-    # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015622105,"activeModes":["mode1"],"activeSchedules":[]}]}
-    # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}
-    def SetAutomationActive(self, basestation, mode, schedules=[]):
-        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':basestation.get('deviceId'),'timestamp':self.to_timestamp(datetime.datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
-
-    def GetAutomationActivityZones(self, camera):
-        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('deviceId')+'/activityzones')
 
     ##
     # This method returns an array that contains the basestation, cameras, etc. and their metadata.
