@@ -135,7 +135,6 @@ class Request(object):
             r = self.session.put(url, json=params, headers=headers)
         elif method == 'POST':
             r = self.session.post(url, json=params, headers=headers)
-            print(r.headers)
         
         r.raise_for_status()
         body = r.json()
@@ -476,6 +475,79 @@ class Arlo(object):
     def GetCameraState(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
 
+    def GetRules(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"rules","publishResponse":False})
+
+    def GetAutomationDefinitions(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/automation/definitions', {'uniqueIds':'all'})
+
+    def GetAutomationActivityZones(self, camera):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('deviceId')+'/activityzones')
+
+    def GetSmartFeatures(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/subscription/smart/features')
+
+    def GetCalendar(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"schedule","publishResponse":False})
+
+    def DeleteMode(self, basestation, mode):
+        return self.NotifyAndGetResponse(basestation, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
+
+    # This is the older API for getting the "mode". It still works, but GetModesV2 is the way the Arlo software does it these days.
+    def GetModes(self, basestation):
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"modes","publishResponse":False})
+
+    # This is the newer API for getting the "mode". This method also returns the schedules. 
+    # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015622105,"activeModes":["mode1"],"activeSchedules":[]}]}
+    # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}
+    def GetModesV2(self):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/automation/active')
+
+    def CustomMode(self, device, mode, schedules=[]):
+        parentId = device.get('parentId', None)
+        if device['deviceType'] == 'arlobridge':
+            return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
+        elif not parentId or device['deviceId'] == parentId:
+            return self.NotifyAndGetResponse(device, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
+        else:
+            raise Exception('Only parent device modes and schedules can be set.');
+
+    def Arm(self, device):
+        return self.CustomMode(device, "mode1")
+
+    def Disarm(self, device):
+        return self.CustomMode(device, "mode0")
+
+    # NOTE: The Arlo API seems to disable calendar mode when switching to other modes, if it's enabled.
+    # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
+    def Calendar(self, basestation, active=True):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"schedule","publishResponse":True,"properties":{"active":active}})
+
+    # NOTE: Brightness is between -2 and 2 in increments of 1 (-2, -1, 0, 1, 2).
+    # Setting it to an invalid value has no effect.
+    # Returns:
+    #{
+    #   "action": "is",
+    #   "from": "XXXXXXXXXXXXX",
+    #   "properties": {
+    #       "brightness": -2
+    #   },
+    #   "resource": "cameras/XXXXXXXXXXXXX",
+    #   "to": "336-XXXXXXX_web",
+    #   "transId": "web!XXXXXXXX.389518!1514956240683"
+    #}
+    #
+    def AdjustBrightness(self, basestation, camera, brightness=0):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"brightness":brightness}})
+
+    # Privacy active = True - Camera is off.
+    # Privacy active = False - Camera is on.
+    def ToggleCamera(self, basestation, camera, active=True):
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"privacyActive":active}})
+
+    def PushToTalk(self, camera):
+        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('uniqueId')+'/pushtotalk')
+
     # General alert toggles
     def SetMotionAlertsOn(self, basestation, sensitivity=5):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"motionDetection":{"armed":True,"sensitivity":sensitivity,"zones":[]}}})
@@ -558,22 +630,22 @@ class Arlo(object):
     def GetSensorConfig(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":False})
 
-    def SetairQualityAlertOn(self, basestation):
+    def SetAirQualityAlertOn(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"alertsEnabled":True}}})
 
-    def SetairQualityAlertOff(self, basestation):
+    def SetAirQualityAlertOff(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"alertsEnabled":False}}})
 
-    def SetairQualityAlertThresholdMin(self, basestation, number=400):
+    def SetAirQualityAlertThresholdMin(self, basestation, number=400):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"minThreshold":number}}})
 
-    def SetairQualityAlertThresholdMax(self, basestation, number=700):
+    def SetAirQualityAlertThresholdMax(self, basestation, number=700):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"maxThreshold":number}}})
 
-    def SetairQualityRecordingOn(self, basestation):
+    def SetAirQualityRecordingOn(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"recordingEnabled":True}}})
 
-    def SetairQualityRecordingOff(self, basestation):
+    def SetAirQualityRecordingOff(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"recordingEnabled":False}}})
 
     def SetHumidityAlertOn(self, basestation):
@@ -615,95 +687,11 @@ class Arlo(object):
     def SetTempUnit(self, uniqueId, unit="C"):
         return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/'+uniqueId+'/tempUnit', {"tempUnit":unit})
 
-    def GetRules(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"rules","publishResponse":False})
-
-    def GetModes(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"modes","publishResponse":False})
-
-    def GetActiveModes(self):
-        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/automation/active')
-
-    def GetSmartFeatures(self):
-        return self.request.get('https://arlo.netgear.com/hmsweb/users/subscription/smart/features')
-
-    def GetAutomationDefinitions(self):
-        return self.request.get('https://arlo.netgear.com/hmsweb/users/automation/definitions', {'uniqueIds':'all'})
-
-    # This is the newer API for setting the "mode". It should be used instead of GetModes()/SetModes()
-    # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015622105,"activeModes":["mode1"],"activeSchedules":[]}]}
-    # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}
-    def SetAutomationActive(self, basestation, mode, schedules=[]):
-        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':basestation.get('deviceId'),'timestamp':self.to_timestamp(datetime.datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
-
-    def GetAutomationActivityZones(self, camera):
-        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('deviceId')+'/activityzones')
-
-    def GetCalendar(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"schedule","publishResponse":False})
-
     def SirenOn(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"siren","publishResponse":True,"properties":{"sirenState":"on","duration":300,"volume":8,"pattern":"alarm"}})
 
     def SirenOff(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"siren","publishResponse":True,"properties":{"sirenState":"off","duration":300,"volume":8,"pattern":"alarm"}})
-
-    def Arm(self, device):
-        mode = "mode1"
-        parentId = device.get('parentId', None)
-        if device['deviceType'] == 'arlobridge':
-            return self.SetAutomationActive(device, mode)
-        elif not parentId or device['deviceId'] == parentId:
-            return self.NotifyAndGetResponse(device, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
-        else:
-            raise Exception('Only parent devices can be armed.');
-
-    def Disarm(self, device):
-        mode = "mode0"
-        parentId = device.get('parentId', None)
-        if device['deviceType'] == 'arlobridge':
-            return self.SetAutomationActive(device, mode)
-        elif not parentId or device['deviceId'] == parentId:
-            return self.NotifyAndGetResponse(device, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
-        else:
-            raise Exception('Only parent devices can be disarmed.');
-
-
-    # NOTE: Brightness is between -2 and 2 in increments of 1 (-2, -1, 0, 1, 2).
-    # Setting it to an invalid value has no effect.
-    # Returns:
-    #{
-    #   "action": "is",
-    #   "from": "XXXXXXXXXXXXX",
-    #   "properties": {
-    #       "brightness": -2
-    #   },
-    #   "resource": "cameras/XXXXXXXXXXXXX",
-    #   "to": "336-XXXXXXX_web",
-    #   "transId": "web!XXXXXXXX.389518!1514956240683"
-    #}
-    #
-    def AdjustBrightness(self, basestation, camera, brightness=0):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"brightness":brightness}})
-
-    # NOTE: The Arlo API seems to disable calendar mode when switching to other modes, if it's enabled.
-    # You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
-    def Calendar(self, basestation, active=True):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"schedule","publishResponse":True,"properties":{"active":active}})
-
-    def CustomMode(self, basestation, mode):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
-
-    def DeleteMode(self, basestation, mode):
-        return self.NotifyAndGetResponse(basestation, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
-
-    # Privacy active = True - Camera is off.
-    # Privacy active = False - Camera is on.
-    def ToggleCamera(self, basestation, camera, active=True):
-        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"privacyActive":active}})
-
-    def PushToTalk(self, camera):
-        return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('uniqueId')+'/pushtotalk')
 
     def Reset(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/library/reset')
