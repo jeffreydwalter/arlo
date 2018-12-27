@@ -61,7 +61,7 @@ class ArloGooglePhotos:
                 self.videos_to_upload.append('temp/' + videofilename)
 
                 # upload to g photos every 10 downloads
-                if counter % 2 == 0:
+                if counter % 10 == 0:
                     self._upload(10)
 
             self.last_update = today
