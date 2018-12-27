@@ -33,6 +33,7 @@ class ArloGooglePhotos:
             self._get_videos()
             self._upload()
             time.sleep(60)  # re-check every minute
+            print("Upload complete. Snoozing for 1 minute... zzzzzzzzz")
 
     def _get_videos(self):
         # Downloads videos from Arlo and uploads every 10 videos
@@ -42,14 +43,14 @@ class ArloGooglePhotos:
             counter = 0  # count number of videos
             for recording in library:
 
-                # skip files that have been uploaded
-                if recording in self.photos_uploaded:
-                    pass
-
-                counter += 1
                 # Grab the recording name
                 videofilename = datetime.datetime.fromtimestamp(int(recording['name']) // 1000).strftime(
                     '%Y-%m-%d %H-%M-%S') + ' ' + recording['uniqueId'] + '.mp4'
+
+                # skip files that have been uploaded
+                if videofilename in self.photos_uploaded:
+                    continue
+                counter += 1
 
                 # Download video recording from Arlo
                 stream = self.arlo.StreamRecording(recording['presignedContentUrl'])
