@@ -21,6 +21,7 @@ class ArloGooglePhotos:
         self.googlePhotos = GooglePhotos()
         self.last_update = (date.today() - timedelta(days=14)).strftime("%Y%m%d")
         self.videos_to_upload = []
+        self.photos_uploaded = self._load_uploaded_files()
 
         # create folder "temp"
         if not os.path.exists("temp"):
@@ -40,6 +41,11 @@ class ArloGooglePhotos:
             library = self.arlo.GetLibrary(self.last_update, today)
             counter = 0  # count number of videos
             for recording in library:
+
+                # skip files that have been uploaded
+                if recording in self.photos_uploaded:
+                    pass
+
                 counter += 1
                 # Grab the recording name
                 videofilename = datetime.datetime.fromtimestamp(int(recording['name']) // 1000).strftime(
@@ -55,7 +61,7 @@ class ArloGooglePhotos:
                 self.videos_to_upload.append('temp/' + videofilename)
 
                 # upload to g photos every 10 downloads
-                if counter % 10 == 0:
+                if counter % 2 == 0:
                     self._upload(10)
 
             self.last_update = today
@@ -73,10 +79,25 @@ class ArloGooglePhotos:
 
         # Delete uploaded recordings
         for file in upload_list:
+            self.photos_uploaded.append(file[5:])  # remove "temp/" from filename
             if os.path.exists(file):
                 os.remove(file)
                 self.videos_to_upload.remove(file)
 
+        self._save_uploaded_files()  # save progress
+
+    def _save_uploaded_files(self):
+        f = open('uploaded.json', 'w+')
+        f.write(json.dumps(self.photos_uploaded))
+        f.close()
+
+    def _load_uploaded_files(self):
+        if os.path.exists('uploaded.json'):
+            f = open('uploaded.json', 'r')
+            list = json.loads(f.read());
+            return list
+        else:
+            return []
 
 class GooglePhotos:
     """ Thanks to eshmu/gphotos-upload """
@@ -117,14 +138,12 @@ class GooglePhotos:
         if not cred:
             cred = self.auth(scopes)
 
+        try:
+            self.save_cred(cred, auth_token_file)
+        except OSError as err:
+            logging.debug("Could not save auth tokens - {0}".format(err))
+
         session = AuthorizedSession(cred)
-
-        if auth_token_file:
-            try:
-                self.save_cred(cred, auth_token_file)
-            except OSError as err:
-                logging.debug("Could not save auth tokens - {0}".format(err))
-
         return session
 
     def save_cred(self, cred, auth_file):
@@ -152,7 +171,6 @@ class GooglePhotos:
         while True:
 
             albums = session.get('https://photoslibrary.googleapis.com/v1/albums', params=params).json()
-
             logging.debug("Server response: {}".format(albums))
 
             if 'albums' in albums:
