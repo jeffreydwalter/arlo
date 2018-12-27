@@ -22,6 +22,10 @@ class ArloGooglePhotos:
         self.last_update = (date.today() - timedelta(days=14)).strftime("%Y%m%d")
         self.videos_to_upload = []
 
+        # create folder "temp"
+        if not os.path.exists("temp"):
+            os.mkdir("temp")
+
     def run(self):
         """ Downloads arlo footage and uploads them to google photos"""
         while True:
