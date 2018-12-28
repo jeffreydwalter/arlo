@@ -35,7 +35,7 @@ class ArloGooglePhotos:
         while True:
             self._get_videos()
             self._upload()
-            if not up_to_date:
+            if not self.up_to_date:
                 print(date.today().strftime('%Y-%m-%d %H:%M:%S') + ": Up to date! Leave this running for real-time backups.")
             self.up_to_update = True
             time.sleep(1)  # wait 1 second
