@@ -21,7 +21,9 @@ class ArloGooglePhotos:
         self.googlePhotos = GooglePhotos()
         self.last_update = (date.today() - timedelta(days=30)).strftime("%Y%m%d")
         self.videos_to_upload = []
-        self.photos_uploaded = self._load_uploaded_files()
+        self._load_progress()
+
+        self.up_to_update = False
 
         # create folder "temp"
         if not os.path.exists("temp"):
@@ -29,10 +31,13 @@ class ArloGooglePhotos:
 
     def run(self):
         """ Downloads arlo footage and uploads them to google photos"""
-        print("Checking for new footage... This may take a minute")
+        print("Checking for new footage...")
         while True:
             self._get_videos()
             self._upload()
+            if not up_to_date:
+                print(date.today().strftime('%Y-%m-%d %H:%M:%S') + ": Up to date! Leave this running for real-time backups.")
+            self.up_to_update = True
             time.sleep(1)  # wait 1 second
 
     def _get_videos(self):
@@ -87,17 +92,26 @@ class ArloGooglePhotos:
         self._save_uploaded_files()  # save progress
 
     def _save_uploaded_files(self):
+        output = {
+            "uploaded": self.photos_uploaded,
+            "last_update": self.last_update
+        }
         f = open('uploaded.json', 'w+')
         f.write(json.dumps(self.photos_uploaded))
         f.close()
 
-    def _load_uploaded_files(self):
+    def _load_progress(self):
+        self.photos_uploaded = []
         if os.path.exists('uploaded.json'):
             f = open('uploaded.json', 'r')
-            list = json.loads(f.read())
-            return list
-        else:
-            return []
+            data = json.loads(f.read())
+            # support for old format
+            if isinstance(data, list):
+                self.photos_uploaded = data
+            else:
+                self.last_update = data.last_update
+                self.photos_uploaded = data.uploaded
+
 
 class GooglePhotos:
     """ Thanks to eshmu/gphotos-upload """
