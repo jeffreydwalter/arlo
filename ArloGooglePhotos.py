@@ -19,7 +19,7 @@ class ArloGooglePhotos:
         self.arlo = arlo
         # Get auth from file or log user in via browser
         self.googlePhotos = GooglePhotos()
-        self.last_update = (date.today() - timedelta(days=14)).strftime("%Y%m%d")
+        self.last_update = (date.today() - timedelta(days=30)).strftime("%Y%m%d")
         self.videos_to_upload = []
         self.photos_uploaded = self._load_uploaded_files()
 
@@ -29,8 +29,10 @@ class ArloGooglePhotos:
 
     def run(self):
         """ Downloads arlo footage and uploads them to google photos"""
+        print("Checking for new footage... This may take a minute")
         while True:
             self._get_videos()
+            self.last_update = date.today().strftime("%Y%m%d");
             self._upload()
             time.sleep(60)  # re-check every minute
             print("Upload complete. Snoozing for 1 minute... zzzzzzzzz")
@@ -65,8 +67,6 @@ class ArloGooglePhotos:
                 if counter % 10 == 0:
                     self._upload(10)
 
-            self.last_update = today
-
         except Exception as e:
             print(e)
 
@@ -95,7 +95,7 @@ class ArloGooglePhotos:
     def _load_uploaded_files(self):
         if os.path.exists('uploaded.json'):
             f = open('uploaded.json', 'r')
-            list = json.loads(f.read());
+            list = json.loads(f.read())
             return list
         else:
             return []
