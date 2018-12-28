@@ -23,7 +23,7 @@ class ArloGooglePhotos:
         self.videos_to_upload = []
         self._load_progress()
 
-        self.up_to_update = False
+        self.up_to_date = False
 
         # create folder "temp"
         if not os.path.exists("temp"):
@@ -37,7 +37,7 @@ class ArloGooglePhotos:
             self._upload()
             if not self.up_to_date:
                 print(date.today().strftime('%Y-%m-%d %H:%M:%S') + ": Up to date! Leave this running for real-time backups.")
-            self.up_to_update = True
+            self.up_to_date = True
             time.sleep(1)  # wait 1 second
 
     def _get_videos(self):
