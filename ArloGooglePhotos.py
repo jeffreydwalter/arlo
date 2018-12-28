@@ -32,16 +32,15 @@ class ArloGooglePhotos:
         print("Checking for new footage... This may take a minute")
         while True:
             self._get_videos()
-            self.last_update = date.today().strftime("%Y%m%d");
             self._upload()
-            time.sleep(60)  # re-check every minute
-            print("Upload complete. Snoozing for 1 minute... zzzzzzzzz")
+            time.sleep(1)  # wait 1 second
 
     def _get_videos(self):
         # Downloads videos from Arlo and uploads every 10 videos
         try:
             today = (date.today() - timedelta(days=0)).strftime("%Y%m%d")
             library = self.arlo.GetLibrary(self.last_update, today)
+            self.last_update = date.today().strftime("%Y%m%d");
             counter = 0  # count number of videos
             for recording in library:
 
