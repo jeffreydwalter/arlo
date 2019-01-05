@@ -71,21 +71,36 @@ class EventStream(object):
 
             while True:
                 try:
+                    #print("Get() item from queue")
                     # Allow check for Ctrl-C every second
                     item = self.queue.get(timeout=min(1, timeout - monotonic.monotonic()))
+                    #print("Got() item from queue")
+                    #print(item)
                     self.queue.task_done()
                     return item
                 except queue.Empty:
+                    #print("queue empty")
                     if monotonic.monotonic() > timeout:
+                        #print("queue timed out - return")
                         return None 
                     else:
+                        #print("queue didn't timed out - pass")
                         pass
         else:
             try:
+                #print("Get() item from queue")
                 item = self.queue.get(block=block, timeout=timeout)
+                #print("Got() item from queue")
+                #print(item)
                 self.queue.task_done()
                 return item
-            except queue.Empty:
+            except queue.Empty as e:
+                #print("queue empty")
+                #print(e)
+                return None
+            except Exception as e:
+                #print("exception")
+                #print(e)
                 return None
 
     def Start(self):
@@ -490,8 +505,15 @@ class Arlo(object):
     def GetCalendar(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"schedule","publishResponse":False})
 
-    def DeleteMode(self, basestation, mode):
-        return self.NotifyAndGetResponse(basestation, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
+    # device can be any object that has parentId == deviceId. i.e., not a camera
+    def DeleteMode(self, device, mode):
+        parentId = device.get('parentId', None)
+        if device['deviceType'] == 'arlobridge':
+            return self.request.delete('https://arlo.netgear.com/hmsweb/users/locations/'+device.get('uniqueId')+'/modes/'+mode)
+        elif not parentId or device.get('deviceId') == parentId:
+            return self.NotifyAndGetResponse(basestation, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
+        else:
+            raise Exception('Only parent device modes and schedules can be deleted.');
 
     # This is the older API for getting the "mode". It still works, but GetModesV2 is the way the Arlo software does it these days.
     def GetModes(self, basestation):
@@ -503,11 +525,12 @@ class Arlo(object):
     def GetModesV2(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/automation/active')
 
+    # device can be any object that has parentId == deviceId. i.e., not a camera
     def CustomMode(self, device, mode, schedules=[]):
         parentId = device.get('parentId', None)
         if device['deviceType'] == 'arlobridge':
             return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
-        elif not parentId or device['deviceId'] == parentId:
+        elif not parentId or device.get('deviceId') == parentId:
             return self.NotifyAndGetResponse(device, {"action":"set","resource":"modes","publishResponse":True,"properties":{"active":mode}})
         else:
             raise Exception('Only parent device modes and schedules can be set.');
@@ -968,6 +991,7 @@ class Arlo(object):
             nl.stream_url_dict = self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
 
         def callback(self, event):
+            print(event)
             if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
                 return nl.stream_url_dict['url'].replace("rtsp://", "rtsps://")
 
@@ -975,6 +999,24 @@ class Arlo(object):
 
         return self.TriggerAndHandleEvent(basestation, trigger, callback)
 
+    def StopStream(self, basestation, camera):
+
+        # nonlocal variable hack for Python 2.x.
+        class nl:
+            stream_url_dict = None
+
+        def trigger(self):
+            self.request.post('https://arlo.netgear.com/hmsweb/users/devices/stopStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.         get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"stopUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId": camera.get('xCloudId')})
+
+        def callback(self, event):
+            print(event)
+            """
+            if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
+                return nl.stream_url_dict['url'].replace("rtsp://", "rtsps://")
+            """
+            return None
+
+        return self.TriggerAndHandleEvent(basestation, trigger, callback)
     ##
     # This function causes the camera to snapshot while recording.
     # NOTE: You MUST call StartStream() before calling this function.
