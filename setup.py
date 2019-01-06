@@ -9,10 +9,11 @@ def readme():
 setup(
     name='arlo',
     py_modules=['Arlo'],
-    version='1.2.2',
+    version='1.2.3',
     description='Python Arlo is a library written in Python 2.7/3x ' +
                 'which exposes the Netgear Arlo cameras via the apis that are consumed by their website.',
     long_description=readme(),
+    long_description_content_type="text/markdown",
     author='Jeffrey D. Walter',
     author_email='jeffreydwalter@gmail.com',
     url='https://github.com/jeffreydwalter/arlo',
