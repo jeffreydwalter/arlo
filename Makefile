@@ -10,7 +10,10 @@ clean:
 	rm -rf arlo.egg-info
 
 commit:
-	test -n "$(message)" || $(error "Error: commit message required. Usage: make $(MAKECMDGOALS) message='<your commit message here>'")
+ifndef message
+	$(error "Error: commit message required. Usage: make $(MAKECMDGOALS) message='<your commit message here>'")
+endif
+
 	python rev.py 
 	git add setup.py
 	git commit -m "$(message)"
