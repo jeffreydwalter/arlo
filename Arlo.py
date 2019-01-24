@@ -71,36 +71,23 @@ class EventStream(object):
 
             while True:
                 try:
-                    #print("Get() item from queue")
                     # Allow check for Ctrl-C every second
                     item = self.queue.get(timeout=min(1, timeout - monotonic.monotonic()))
-                    #print("Got() item from queue")
-                    #print(item)
                     self.queue.task_done()
                     return item
                 except queue.Empty:
-                    #print("queue empty")
                     if monotonic.monotonic() > timeout:
-                        #print("queue timed out - return")
                         return None 
                     else:
-                        #print("queue didn't timed out - pass")
                         pass
         else:
             try:
-                #print("Get() item from queue")
                 item = self.queue.get(block=block, timeout=timeout)
-                #print("Got() item from queue")
-                #print(item)
                 self.queue.task_done()
                 return item
             except queue.Empty as e:
-                #print("queue empty")
-                #print(e)
                 return None
             except Exception as e:
-                #print("exception")
-                #print(e)
                 return None
 
     def Start(self):
@@ -405,20 +392,20 @@ class Arlo(object):
 
         if basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
             transId = self.Notify(basestation, body)
+
             event = self.event_streams[basestation_id].Get(timeout=timeout)
             if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
                 return None
 
-            while basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered and event.get('transId') != transId:
-                if event.get('transId', '').startswith(self.TRANSID_PREFIX):
-                    self.event_streams[basestation_id].queue.put(event)
+            while basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
+                tid = event.get('transId', '')
+                if tid != transId:
+                    if tid.startswith(self.TRANSID_PREFIX):
+                        self.event_streams[basestation_id].queue.put(event)
 
-                    if self.event_streams[basestation_id].event_stream_stop_event.is_set():
-                        return None
-                
-                event = self.event_streams[basestation_id].Get(timeout=timeout)
-                if event is None:
-                    break;
+                    event = self.event_streams[basestation_id].Get(timeout=timeout)
+                    if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
+                        return None;
 
             return event
 
@@ -452,10 +439,8 @@ class Arlo(object):
         if basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
             while basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
                 event = self.event_streams[basestation_id].Get(timeout=timeout)
-                if event is None and not self.event_streams[basestation_id].event_stream_stop_event.is_set():
-                    return
-                elif event is None:
-                    continue;
+                if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
+                    return None
 
                 # If this event has is of resource type "subscriptions", then it's a ping reply event.
                 # For now, these types of events will be requeued, since they are generated in response to and expected as a reply by the Ping() method.
