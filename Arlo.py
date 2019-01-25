@@ -25,7 +25,7 @@ import monotonic
 import os
 import random
 import requests
-from requests.exceptions import HTTPError 
+from requests.exceptions import HTTPError
 import signal
 import sseclient
 import threading
@@ -55,8 +55,8 @@ class EventStream(object):
             event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get('Authorization'), session=self.arlo.request.session)
             self.event_stream_thread = threading.Thread(name="EventStream", target=event_handler, args=(self.arlo, event_stream, self.event_stream_stop_event, ))
             self.event_stream_thread.setDaemon(True)
-        except:
-            pass
+        except Exception as e:
+            raise Exception('Failed to subscribe to eventstream: {0}'.format(e))
 
     def __del__(self):
         self.Disconnect()
@@ -77,7 +77,7 @@ class EventStream(object):
                     return item
                 except queue.Empty:
                     if monotonic.monotonic() > timeout:
-                        return None 
+                        return None
                     else:
                         pass
         else:
@@ -137,7 +137,7 @@ class Request(object):
             r = self.session.put(url, json=params, headers=headers)
         elif method == 'POST':
             r = self.session.post(url, json=params, headers=headers)
-        
+
         r.raise_for_status()
         body = r.json()
 
@@ -282,7 +282,7 @@ class Arlo(object):
         def Register(self):
             if basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
                 self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
-                event = self.event_streams[basestation_id].Get(timeout=120)
+                event = self.event_streams[basestation_id].Get()
                 if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
                     return None
                 elif event:
@@ -405,7 +405,8 @@ class Arlo(object):
 
                     event = self.event_streams[basestation_id].Get(timeout=timeout)
                     if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
-                        return None;
+                        return None
+                else: break
 
             return event
 
@@ -504,7 +505,7 @@ class Arlo(object):
     def GetModes(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"modes","publishResponse":False})
 
-    # This is the newer API for getting the "mode". This method also returns the schedules. 
+    # This is the newer API for getting the "mode". This method also returns the schedules.
     # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015622105,"activeModes":["mode1"],"activeSchedules":[]}]}
     # {"activeAutomations":[{"deviceId":"48935B7SA9847","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}
     def GetModesV2(self):
@@ -976,7 +977,6 @@ class Arlo(object):
             nl.stream_url_dict = self.request.post('https://arlo.netgear.com/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
 
         def callback(self, event):
-            print(event)
             if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
                 return nl.stream_url_dict['url'].replace("rtsp://", "rtsps://")
 
@@ -994,7 +994,6 @@ class Arlo(object):
             self.request.post('https://arlo.netgear.com/hmsweb/users/devices/stopStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.         get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"stopUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId": camera.get('xCloudId')})
 
         def callback(self, event):
-            print(event)
             """
             if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
                 return nl.stream_url_dict['url'].replace("rtsp://", "rtsps://")
