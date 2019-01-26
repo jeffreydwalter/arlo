@@ -13,25 +13,27 @@ clean:
 
 docs:
 	pydoc -w ../arlo/arlo.py
+	git add arlo.html
 
-commit: docs
+rev:
+	python rev.py
+	git add setup.py
+
+commit:
 ifndef message
 	$(error "Error: commit message required. Usage: make $(MAKECMDGOALS) message='<your commit message here>'")
 endif
 
-	python rev.py 
-	git add setup.py
+	git add Makefile
 
 	git add arlo.py
 	git add request.py
 	git add eventstream.py
-	git add Makefile
-	git add pydoc.md
 
 	git commit -m "$(message)"
 	git push
 
-release: clean commit
+release: clean rev docs commit
 	python3 setup.py sdist
 	python3 setup.py bdist_wheel --universal
 	twine upload --skip-existing dist/*
