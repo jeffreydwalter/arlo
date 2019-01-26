@@ -11,10 +11,15 @@ clean:
 	rm -rf __pycache__
 	rm -rf arlo.egg-info
 
-docs:
-	pydoc -w ../arlo/arlo.py
-	mv arlo.html arlo_api_doc.md
-	git add arlo_api_doc.md
+doc:
+	#pydoc -w ../arlo/arlo.py
+	#mv arlo.html arlo_api_doc.md
+	#git add arlo_api_doc.md
+	pdoc --overwrite --html --html-dir docs arlo.py
+	sed -i'.bak' 's/#sidebar{width:30%}#content{width:70%;/#sidebar{width:45%}#content{width:55%;/g' docs/arlo.html
+	rm docs/arlo.html.bak
+	cp docs/arlo.html docs/README.md
+	git add docs/*
 
 rev:
 	python rev.py
@@ -34,7 +39,7 @@ endif
 	git commit -m "$(message)"
 	git push
 
-release: clean rev docs commit
+release: clean rev doc commit
 	python3 setup.py sdist
 	python3 setup.py bdist_wheel --universal
 	twine upload --skip-existing dist/*
