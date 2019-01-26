@@ -18,6 +18,12 @@ try:
 	# Or
 	# Disarm Arlo.
 	# arlo.Disarm(basestations[0])
+        # Or
+        # Change Mode to some custom mode you created.
+        # arlo.CustomMode(basestations[0], "mode3") # 'mode3' is the id of a custom mode you created.
+        # Or
+        # Change Mode to Schedule.
+        # arlo.CustomMode(basestations[0], mode=None, schedules=['schedules.1']) # 'schedules.1' is the id of my default schedule."
 
 except Exception as e:
     print(e)
