@@ -1,9 +1,4 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module arlo</title>
-<meta charset="utf-8">
-</head><body bgcolor="#f0f0f8">
-
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
@@ -342,4 +337,3 @@ Data and other attributes defined here:<br>
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>string_types</strong> = (&lt;type 'basestring'&gt;,)</td></tr></table>
-</body></html>
