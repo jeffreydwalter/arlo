@@ -8,8 +8,8 @@ def readme():
 
 setup(
     name='arlo',
-    py_modules=['Arlo'],
-    version='1.2.11',
+    py_modules=['arlo'],
+    version='1.2.12',
     description='Python Arlo is a library written in Python 2.7/3x ' +
                 'which exposes the Netgear Arlo cameras via the apis that are consumed by their website.',
     long_description=readme(),
