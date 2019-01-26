@@ -1,11 +1,4 @@
-
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
-<tr bgcolor="#7799ee">
-<td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>arlo</strong></big></big></font></td
-><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/jeff_walter/Code/github/jeffreydwalter/arlo/arlo.py">/Users/jeff_walter/Code/github/jeffreydwalter/arlo/arlo.py</a></font></td></tr></table>
-    <p><tt>##<br>
+<p><tt>##<br>
 #&nbsp;Copyright&nbsp;2016&nbsp;Jeffrey&nbsp;D.&nbsp;Walter<br>
 #<br>
 #&nbsp;Licensed&nbsp;under&nbsp;the&nbsp;Apache&nbsp;License,&nbsp;Version&nbsp;2.0&nbsp;(the&nbsp;"License");<br>
