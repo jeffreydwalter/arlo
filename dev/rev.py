@@ -1,6 +1,11 @@
 import fileinput
+import os
 import re
 import sys
+
+if(len(sys.argv) != 2 or not os.path.isfile(sys.argv[1])):
+    print("Usage: {0} <path to setup.py>".format(os.path.basename(sys.argv[0])))
+    sys.exit(1)
 
 pattern = re.compile("\s*version='([0-9.]+)',")
 line = ""
@@ -8,7 +13,7 @@ maj = ""
 min = "" 
 ver = "" 
 
-for line in fileinput.FileInput("setup.py", inplace=1):
+for line in fileinput.FileInput(sys.argv[1], inplace=1):
     m = pattern.match(line) 
     if m:
         version = m.groups()[0]

@@ -15,14 +15,14 @@ doc:
 	#pydoc -w ../arlo/arlo.py
 	#mv arlo.html arlo_api_doc.md
 	#git add arlo_api_doc.md
-	pdoc --overwrite --html --html-dir docs arlo.py
+	pdoc --overwrite --html --html-no-source --html-dir docs arlo.py
 	sed -i'.bak' 's/#sidebar{width:30%}#content{width:70%;/#sidebar{width:45%}#content{width:55%;/g' docs/arlo.html
 	rm docs/arlo.html.bak
-	cp docs/arlo.html docs/README.md
+	python dev/html2text.py docs/arlo.html > docs/README.md
 	git add docs/*
 
 rev:
-	python rev.py
+	python dev/rev.py setup.py
 	git add setup.py
 
 commit:
@@ -31,6 +31,8 @@ ifndef message
 endif
 
 	git add Makefile
+
+	git add dev/*
 
 	git add arlo.py
 	git add request.py
