@@ -12,7 +12,7 @@ clean:
 	rm -rf arlo.egg-info
 
 docs:
-	pydoc ../arlo/Arlo.py > pydoc.md
+	pydoc -w ../arlo/arlo.py
 
 commit: docs
 ifndef message
