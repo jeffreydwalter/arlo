@@ -18,8 +18,8 @@
 # 17 Jul 2017, Andreas Jakl: Port to Python 3 (https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/)
 
 # Import helper classes that are part of this library.
-from request import Request 
-from eventstream import EventStream 
+from request import Request
+from eventstream import EventStream
 
 # Import all of the other stuff.
 from six import string_types, text_type
@@ -62,7 +62,11 @@ class Arlo(object):
         os._exit(1)
 
     def to_timestamp(self, dt):
-        return int(dt.strftime("%s")) * 1000
+        if sys.version[0] == '2':
+            epoch = datetime.utcfromtimestamp(0)
+            return int((dt - epoch).total_seconds() * 1e3)
+        else:
+            return int(dt.timestamp() * 1e3)
 
     def genTransId(self, trans_type=TRANSID_PREFIX):
         def float2hex(f):

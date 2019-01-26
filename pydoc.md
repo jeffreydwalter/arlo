@@ -210,7 +210,7 @@ CLASSES
      |  
      |  SetNightLightTimerOff(self, basestation, time=0, timediff=300)
      |  
-     |  SetNightLightTimerOn(self, basestation, time=1548483547, timediff=0)
+     |  SetNightLightTimerOn(self, basestation, time=1548488749, timediff=0)
      |  
      |  SetOCProfile(self, firstName, lastName, country='United States', language='en', spam_me=0)
      |  
@@ -222,7 +222,7 @@ CLASSES
      |  
      |  SetSleepTimerOff(self, basestation, time=0, timediff=300)
      |  
-     |  SetSleepTimerOn(self, basestation, time=1548483547, timediff=0)
+     |  SetSleepTimerOn(self, basestation, time=1548488749, timediff=0)
      |  
      |  SetTempAlertOff(self, basestation)
      |  

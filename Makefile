@@ -25,7 +25,7 @@ endif
 	git add arlo.py
 	git add request.py
 	git add eventstream.py
-	git add MakeFile
+	git add Makefile
 	git add pydoc.md
 
 	git commit -m "$(message)"
