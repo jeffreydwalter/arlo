@@ -17,22 +17,23 @@
 # 14 Sep 2016, Len Shustek: Added Logout()
 # 17 Jul 2017, Andreas Jakl: Port to Python 3 (https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/)
 
-import datetime
-#import logging
+# Import helper classes that are part of this library.
+from request import Request 
+from eventstream import EventStream 
+
+# Import all of the other stuff.
+from six import string_types, text_type
+from datetime import datetime
+
+import calendar
 import json
+#import logging
 import math
-import monotonic
 import os
 import random
-import requests
-from requests.exceptions import HTTPError
 import signal
-import sseclient
-import threading
 import time
-import calendar
 import sys
-from six import string_types, text_type
 
 if sys.version[0] == '2':
     import Queue as queue
@@ -40,124 +41,6 @@ else:
     import queue as queue
 
 #logging.basicConfig(level=logging.DEBUG,format='[%(levelname)s] (%(threadName)-10s) %(message)s',)
-
-class EventStream(object):
-    def __init__(self, event_handler, heartbeat_handler, args):
-        self.connected = False
-        self.registered = False
-        self.queue = queue.Queue()
-        self.heartbeat_stop_event = threading.Event()
-        self.event_stream_stop_event = threading.Event()
-        self.arlo = args[0]
-        self.heartbeat_handler = heartbeat_handler
-
-        try:
-            event_stream = sseclient.SSEClient('https://arlo.netgear.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get('Authorization'), session=self.arlo.request.session)
-            self.event_stream_thread = threading.Thread(name="EventStream", target=event_handler, args=(self.arlo, event_stream, self.event_stream_stop_event, ))
-            self.event_stream_thread.setDaemon(True)
-        except Exception as e:
-            raise Exception('Failed to subscribe to eventstream: {0}'.format(e))
-
-    def __del__(self):
-        self.Disconnect()
-
-    def Get(self, block=True, timeout=None):
-        if sys.version[0] == '2' and block:
-            if timeout:
-                timeout += monotonic.monotonic()
-            # If timeout is None, then just pick some arbitrarily large # for the timeout value.
-            else:
-                timeout = 1000000 + monotonic.monotonic()
-
-            while True:
-                try:
-                    # Allow check for Ctrl-C every second
-                    item = self.queue.get(timeout=min(1, timeout - monotonic.monotonic()))
-                    self.queue.task_done()
-                    return item
-                except queue.Empty:
-                    if monotonic.monotonic() > timeout:
-                        return None
-                    else:
-                        pass
-        else:
-            try:
-                item = self.queue.get(block=block, timeout=timeout)
-                self.queue.task_done()
-                return item
-            except queue.Empty as e:
-                return None
-            except Exception as e:
-                return None
-
-    def Start(self):
-        self.event_stream_thread.start()
-        return self
-
-    def Connect(self):
-        self.connected = True
-
-    def Disconnect(self):
-        self.connected = False
-        self.Unregister()
-
-    def Register(self):
-        self.heartbeat_thread = threading.Thread(name='HeartbeatThread', target=self.heartbeat_handler, args=(self.arlo, self.heartbeat_stop_event, ))
-        self.heartbeat_thread.setDaemon(True)
-        self.heartbeat_thread.start()
-        self.registered = True
-
-    def Unregister(self):
-        self.registered = False
-
-        if self.queue:
-            self.queue.put(None)
-
-        self.event_stream_stop_event.set()
-        self.heartbeat_stop_event.set()
-
-        if self.event_stream_thread != threading.current_thread():
-            self.event_stream_thread.join()
-
-        if self.heartbeat_thread != threading.current_thread():
-            self.heartbeat_thread.join()
-
-class Request(object):
-    """HTTP helper class"""
-
-    def __init__(self):
-        self.session = requests.Session()
-
-    def _request(self, url, method='GET', params={}, headers={}, stream=False, raw=False):
-        if method == 'GET':
-            r = self.session.get(url, params=params, headers=headers, stream=stream)
-            if stream is True:
-                return r
-        elif method == 'PUT':
-            r = self.session.put(url, json=params, headers=headers)
-        elif method == 'POST':
-            r = self.session.post(url, json=params, headers=headers)
-
-        r.raise_for_status()
-        body = r.json()
-
-        if raw:
-            return body
-        else:
-            if body['success'] == True:
-                if 'data' in body:
-                    return body['data']
-            else:
-                raise HTTPError('Request ({0} {1}) failed: {2}'.format(method, url, r.json()), response=r)
-
-    def get(self, url, params={}, headers={}, stream=False, raw=False):
-        return self._request(url, 'GET', params, headers, stream, raw)
-
-    def put(self, url, params={}, headers={}, raw=False):
-        return self._request(url, 'PUT', params, headers, raw)
-
-    def post(self, url, params={}, headers={}, raw=False):
-        return self._request(url, 'POST', params, headers, raw)
 
 class Arlo(object):
     TRANSID_PREFIX = 'web'
@@ -214,7 +97,7 @@ class Arlo(object):
 
             return result
 
-        now = datetime.datetime.today()
+        now = datetime.today()
         return trans_type+"!" + float2hex(random.random() * math.pow(2, 32)).lower() + "!" + str(int((time.mktime(now.timetuple())*1e3 + now.microsecond/1e3)))
 
     """
@@ -321,7 +204,7 @@ class Arlo(object):
         if not self.event_streams[basestation_id].registered:
             Register(self)
 
-    # This method stops the EventStream subscription and removes it from the event_stream collection.
+    """ This method stops the EventStream subscription and removes it from the event_stream collection. """
     def Unsubscribe(self, basestation):
         if isinstance(basestation, (text_type, string_types)):
             basestation_id = basestation
@@ -513,7 +396,7 @@ class Arlo(object):
     def GetCalendar(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"schedule","publishResponse":False})
 
-    # device can be any object that has parentId == deviceId. i.e., not a camera
+    """ device can be any object that has parentId == deviceId. i.e., not a camera """
     def DeleteMode(self, device, mode):
         parentId = device.get('parentId', None)
         if device['deviceType'] == 'arlobridge':
@@ -537,9 +420,9 @@ class Arlo(object):
     def GetModesV2(self):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/automation/active')
 
-    # device can be any object that has parentId == deviceId. i.e., not a camera
+    """ device can be any object that has parentId == deviceId. i.e., not a camera """
     def CustomMode(self, device, mode, schedules=[]):
-        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
+        return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
 
     def Arm(self, device):
         return self.CustomMode(device, "mode1")
@@ -592,7 +475,7 @@ class Arlo(object):
     def PushToTalk(self, camera):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('uniqueId')+'/pushtotalk')
 
-    # General alert toggles
+    """ General alert toggles """
     def SetMotionAlertsOn(self, basestation, sensitivity=5):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"motionDetection":{"armed":True,"sensitivity":sensitivity,"zones":[]}}})
 
@@ -605,15 +488,15 @@ class Arlo(object):
     def SetAudioAlertsOff(self, basestation, sensitivity=3):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"audioDetection":{"armed":False,"sensitivity":sensitivity}}})
 
-    # actiontype: disabled OR recordSnapshot OR recordVideo
+    """ actiontype: disabled OR recordSnapshot OR recordVideo """
     def AlertNotificationMethods(self, basestation, action="disabled", email=False, push=False):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"eventAction":{"actionType":action,"stopType":"timeout","timeout":15,"emailNotification":{"enabled":email,"emailList":["__OWNER_EMAIL__"]},"pushNotification":push}}})
 
-    # Arlo Baby Audio Control
+    """ Arlo Baby Audio Control """
     def GetAudioPlayback(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"audioPlayback","publishResponse":False})
 
-    # defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all
+    """ Defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all. """
     def PlayTrack(self, basestation, track_id="2391d620-e491-4412-99f6-e9a40d6046ed", position=0):
         return self.Notify(basestation, {"action":"playTrack","resource":"audioPlayback/player","properties":{"trackId":track_id,"position":position}})
 
@@ -644,7 +527,7 @@ class Arlo(object):
     def SetVolume(self, basestation, mute=False, volume=50):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"speaker":{"mute":mute,"volume":volume}}})
 
-    # Baby Arlo Nightlight, (current state is in the arlo.GetCameraState(cameras[0]["properties"][0]["nightLight"])
+    """  Baby Arlo Nightlight, (current state is in the arlo.GetCameraState(cameras[0]["properties"][0]["nightLight"]) """
     def SetNightLightOn(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"enabled":True}}})
 
@@ -654,7 +537,7 @@ class Arlo(object):
     def SetNightLightBrightness(self, basestation, level=200):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"brightness":level}}})
 
-    # either rainbow or rgb
+    """ Either rainbow or rgb. """
     def SetNightLightMode(self, basestation, mode="rainbow"):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"mode":mode}}})
 
@@ -667,7 +550,7 @@ class Arlo(object):
     def SetNightLightTimerOff(self, basestation, time=0, timediff=300):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"sleepTime":time,"sleepTimeRel":timediff}}})
 
-    # Baby Arlo Sensors
+    """ Baby Arlo Sensors """
     def GetCameraTempReading(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/history","publishResponse":False})
 
@@ -1332,6 +1215,6 @@ class Arlo(object):
     def StopRecording(self, camera):
         return self.request.post('https://arlo.netgear.com/hmsweb/users/devices/stopRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
 
-    # This function downloads a Cvr Playlist file for the period fromDate to toDate.
+    """ This function downloads a Cvr Playlist file for the period fromDate to toDate. """
     def GetCvrPlaylist(self, camera, fromDate, toDate):
         return self.request.get('https://arlo.netgear.com/hmsweb/users/devices/'+camera.get('deviceId')+'/playlist?fromDate='+fromDate+'&toDate='+toDate)
