@@ -244,7 +244,7 @@
 
 <dl><dt><a name="Arlo-SetNightLightTimerOff"><strong>SetNightLightTimerOff</strong></a>(self, basestation, time<font color="#909090">=0</font>, timediff<font color="#909090">=300</font>)</dt></dl>
 
-<dl><dt><a name="Arlo-SetNightLightTimerOn"><strong>SetNightLightTimerOn</strong></a>(self, basestation, time<font color="#909090">=1548529407</font>, timediff<font color="#909090">=0</font>)</dt></dl>
+<dl><dt><a name="Arlo-SetNightLightTimerOn"><strong>SetNightLightTimerOn</strong></a>(self, basestation, time<font color="#909090">=1548529573</font>, timediff<font color="#909090">=0</font>)</dt></dl>
 
 <dl><dt><a name="Arlo-SetOCProfile"><strong>SetOCProfile</strong></a>(self, firstName, lastName, country<font color="#909090">='United States'</font>, language<font color="#909090">='en'</font>, spam_me<font color="#909090">=0</font>)</dt></dl>
 
@@ -256,7 +256,7 @@
 
 <dl><dt><a name="Arlo-SetSleepTimerOff"><strong>SetSleepTimerOff</strong></a>(self, basestation, time<font color="#909090">=0</font>, timediff<font color="#909090">=300</font>)</dt></dl>
 
-<dl><dt><a name="Arlo-SetSleepTimerOn"><strong>SetSleepTimerOn</strong></a>(self, basestation, time<font color="#909090">=1548529407</font>, timediff<font color="#909090">=0</font>)</dt></dl>
+<dl><dt><a name="Arlo-SetSleepTimerOn"><strong>SetSleepTimerOn</strong></a>(self, basestation, time<font color="#909090">=1548529573</font>, timediff<font color="#909090">=0</font>)</dt></dl>
 
 <dl><dt><a name="Arlo-SetTempAlertOff"><strong>SetTempAlertOff</strong></a>(self, basestation)</dt></dl>
 

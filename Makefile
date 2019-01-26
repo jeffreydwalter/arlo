@@ -13,7 +13,8 @@ clean:
 
 docs:
 	pydoc -w ../arlo/arlo.py
-	git add arlo.html
+	mv arlo.html arlo_api_doc.md
+	git add arlo_api_doc.md
 
 rev:
 	python rev.py
