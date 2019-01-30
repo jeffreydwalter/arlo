@@ -1,4 +1,4 @@
-from Arlo import Arlo
+from arlo import Arlo
 
 from subprocess import call
 

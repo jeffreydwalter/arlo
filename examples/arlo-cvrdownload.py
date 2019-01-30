@@ -1,7 +1,7 @@
 import sys, os
 sys.path.append('..')
 import requests
-from Arlo import Arlo
+from arlo import Arlo
 from datetime import timedelta, date
 import datetime
 import json

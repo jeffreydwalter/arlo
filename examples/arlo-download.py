@@ -1,4 +1,4 @@
-from Arlo import Arlo
+from arlo import Arlo
 
 from datetime import timedelta, date
 import datetime
