@@ -424,7 +424,10 @@ class Arlo(object):
 
     def CustomMode(self, device, mode, schedules=[]):
         """ device can be any object that has parentId == deviceId. i.e., not a camera """
-        return self.request.post('https://my.arlo.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
+        if(device["deviceType"] == "arloqs"):
+            return self.NotifyAndGetResponse(device, {"from":self.user_id+"_web", "to": device.get("parentId"), "action":"set","resource":"modes", "transId": self.genTransId(),"publishResponse":True,"properties":{"active":mode}})
+        else:
+            return self.request.post('https://my.arlo.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
 
     def Arm(self, device):
         return self.CustomMode(device, "mode1")
