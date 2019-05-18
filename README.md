@@ -26,6 +26,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Awesomely Smart Contributors (Thank you!)
+* [m3ntalsp00n](https://github.com/m3ntalsp00n) - May 18, 2019 - Expanded ArloQ device support.
 * [kimc78](https://github.com/kimc78) - Aug 16, 2018 - Added method to get CVR recording list.
 * [jurgenweber](https://github.com/jurgenweber) - Apr 25, 2018 - Added Arlo Baby APIs!
 * [pliablepixels](https://github.com/pliablepixels) - Apr 3, 2018 - Fixed up issues with the README.
