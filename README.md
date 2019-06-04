@@ -26,6 +26,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Awesomely Smart Contributors (Thank you!)
+* [pabloNZ](https://github.com/pabloNZ) - Jun 4, 2019 - Added the Arlo doorbell, Ultra camera and basestation schemas to the wiki.
 * [m3ntalsp00n](https://github.com/m3ntalsp00n) - May 18, 2019 - Expanded ArloQ device support.
 * [burken-](https://github.com/burken-) - Apr 17, 2019 - Fixed arming/disarming ArloQ devices.
 * [m0urs](https://github.com/m0urs) - Apr 16, 2019 - Updated fqdn to new Arlo domain.
