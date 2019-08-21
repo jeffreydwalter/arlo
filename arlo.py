@@ -834,7 +834,7 @@ class Arlo(object):
         If you pass in a valid device type, as a string or a list, this method will return an array of just those devices that match that type. An example would be ['basestation', 'camera']
         To filter provisioned or unprovisioned devices pass in a True/False value for filter_provisioned. By default both types are returned. 
         """
-        devices = self.request.get('https://arlo.netgear.com/hmsweb/users/devices')
+        devices = self.request.get('https://my.arlo.com/hmsweb/users/devices')
         if device_type:
             if not isinstance(device_type,list):
                 device_type = [device_type]
