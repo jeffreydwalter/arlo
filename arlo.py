@@ -828,14 +828,24 @@ class Arlo(object):
         """
         return self.request.put('https://my.arlo.com/hmsweb/users/locations/'+location_id, {'geoEnabled':active})
 
-    def GetDevices(self, device_type=None):
+    def GetDevices(self, device_type=None, device_state=None):
         """
         This method returns an array that contains the basestation, cameras, etc. and their metadata.
-        If you pass in a valid device type ('basestation', 'camera', etc.), this method will return an array of just those devices that match that type.
+        If you pass in a valid device type, as a string or a list, this method will return an array of just those devices that match that type. An example would be ['basestation', 'camera']
+        If you pass in a valid device state, as a string or list, this method can also filter on the devices that match that state. An example would be ['provisioned']
         """
-        devices = self.request.get('https://my.arlo.com/hmsweb/users/devices')
+        devices = self.request.get('https://arlo.netgear.com/hmsweb/users/devices')
         if device_type:
-            return [ device for device in devices if device['deviceType'] == device_type]
+            if not isinstance(device_type,list):
+                device_type = [device_type]
+
+            devices = [ device for device in devices if device['deviceType'] in device_type]
+
+        if device_state:
+            if not isinstance(device_state,list):
+                device_state = [device_state]
+
+            devices = [ device for device in devices if device.get("state") in device_state]
 
         return devices
 
