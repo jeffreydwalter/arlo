@@ -836,12 +836,9 @@ class Arlo(object):
         """
         devices = self.request.get('https://my.arlo.com/hmsweb/users/devices')
         if device_type:
-            if not isinstance(device_type,list):
-                device_type = [device_type]
-
             devices = [ device for device in devices if device['deviceType'] in device_type]
 
-        if filter_provisioned != None:
+        if filter_provisioned is not None:
             if filter_provisioned:
                 devices = [ device for device in devices if device.get("state") == 'provisioned']
             else:
