@@ -828,15 +828,22 @@ class Arlo(object):
         """
         return self.request.put('https://my.arlo.com/hmsweb/users/locations/'+location_id, {'geoEnabled':active})
 
-    def GetDevices(self, device_type=None):
+    def GetDevices(self, device_type=None, filter_provisioned=None):
         """
         This method returns an array that contains the basestation, cameras, etc. and their metadata.
-        If you pass in a valid device type ('basestation', 'camera', etc.), this method will return an array of just those devices that match that type.
+        If you pass in a valid device type, as a string or a list, this method will return an array of just those devices that match that type. An example would be ['basestation', 'camera']
+        To filter provisioned or unprovisioned devices pass in a True/False value for filter_provisioned. By default both types are returned. 
         """
         devices = self.request.get('https://my.arlo.com/hmsweb/users/devices')
         if device_type:
-            return [ device for device in devices if device['deviceType'] == device_type]
+            devices = [ device for device in devices if device['deviceType'] in device_type]
 
+        if filter_provisioned is not None:
+            if filter_provisioned:
+                devices = [ device for device in devices if device.get("state") == 'provisioned']
+            else:
+                devices = [ device for device in devices if device.get("state") != 'provisioned']
+                
         return devices
 
     def GetDeviceSupport(self):
