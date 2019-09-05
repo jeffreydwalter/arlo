@@ -25,13 +25,13 @@ class Request(object):
 
     def _request(self, url, method='GET', params={}, headers={}, stream=False, raw=False):
         if method == 'GET':
-            r = self.session.get(url, params=params, headers=headers, stream=stream)
+            r = self.session.get(url, params=params, headers=headers, stream=stream, timeout=60)
             if stream is True:
                 return r
         elif method == 'PUT':
-            r = self.session.put(url, json=params, headers=headers)
+            r = self.session.put(url, json=params, headers=headers, timeout=60)
         elif method == 'POST':
-            r = self.session.post(url, json=params, headers=headers)
+            r = self.session.post(url, json=params, headers=headers, timeout=60)
 
         r.raise_for_status()
         body = r.json()
