@@ -642,11 +642,12 @@ It returns something like the following:
 }</p></section>
 </dd>
 <dt id="arlo.Arlo.GetDevices"><code class="name flex">
-<span>def <span class="ident">GetDevices</span></span>(<span>self, device_type=None)</span>
+<span>def <span class="ident">GetDevices</span></span>(<span>self, device_type=None, filter_provisioned=None)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>This method returns an array that contains the basestation, cameras, etc. and their metadata.
-If you pass in a valid device type ('basestation', 'camera', etc.), this method will return an array of just those devices that match that type.</p></section>
+If you pass in a valid device type, as a string or a list, this method will return an array of just those devices that match that type. An example would be ['basestation', 'camera']
+To filter provisioned or unprovisioned devices pass in a True/False value for filter_provisioned. By default both types are returned.</p></section>
 </dd>
 <dt id="arlo.Arlo.GetEmergencyLocations"><code class="name flex">
 <span>def <span class="ident">GetEmergencyLocations</span></span>(<span>self)</span>
@@ -1150,7 +1151,7 @@ color: 45136 - the color for your bounding box.</p></section>
 <section class="desc"></section>
 </dd>
 <dt id="arlo.Arlo.SetNightLightTimerOn"><code class="name flex">
-<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1558393556, timediff=0)</span>
+<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1569256407, timediff=0)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -1277,7 +1278,7 @@ color: 45136 - the color for your bounding box.</p></section>
 <section class="desc"></section>
 </dd>
 <dt id="arlo.Arlo.SetSleepTimerOn"><code class="name flex">
-<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1558393556, timediff=0)</span>
+<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1569256407, timediff=0)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>

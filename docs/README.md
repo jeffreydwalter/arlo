@@ -384,14 +384,16 @@ It returns something like the following: { "devices": [ { "deviceType":
 "selectBgLt.html" }, "baseUrl": "https://vzs3-prod-
 common.s3.amazonaws.com/static/v2/html/en/" }
 
-` def GetDevices(self, device_type=None) `
+` def GetDevices(self, device_type=None, filter_provisioned=None) `
 
     
 
 This method returns an array that contains the basestation, cameras, etc. and
-their metadata. If you pass in a valid device type ('basestation', 'camera',
-etc.), this method will return an array of just those devices that match that
-type.
+their metadata. If you pass in a valid device type, as a string or a list,
+this method will return an array of just those devices that match that type.
+An example would be ['basestation', 'camera'] To filter provisioned or
+unprovisioned devices pass in a True/False value for filter_provisioned. By
+default both types are returned.
 
 ` def GetEmergencyLocations(self) `
 
@@ -778,7 +780,7 @@ mode: rainbow or rgb.
 ` def SetNightLightTimerOff(self, basestation, time=0, timediff=300) `
 
     
-` def SetNightLightTimerOn(self, basestation, time=1558393556, timediff=0) `
+` def SetNightLightTimerOn(self, basestation, time=1569256407, timediff=0) `
 
     
 ` def SetOCProfile(self, firstName, lastName, country='United States',
@@ -816,7 +818,7 @@ watch the schema that gets sent.
 ` def SetSleepTimerOff(self, basestation, time=0, timediff=300) `
 
     
-` def SetSleepTimerOn(self, basestation, time=1558393556, timediff=0) `
+` def SetSleepTimerOn(self, basestation, time=1569256407, timediff=0) `
 
     
 ` def SetTempAlertOff(self, basestation) `
