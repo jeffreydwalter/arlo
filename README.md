@@ -60,10 +60,12 @@ $ pip install arlo
 $ pip install git+https://github.com/jeffreydwalter/arlo
 ```
 
-**NOTE 1:** my.arlo.com requires TLS 1.2 for their API. So, if you're getting ssl errors, it's most likely related to your version of openssl. You may need to upgrade your openssl library.
+**IMPORTANT:** my.arlo.com requires TLS 1.2 for their API. So, if you're getting ssl errors, it's most likely related to your version of openssl. You may need to upgrade your openssl library.
 If you're running this library on OSX or macOS, they ship with `openssl v0.9.x` which does not support TLS 1.2. You should follow the instructions found [here](https://comeroutewithme.com/2016/03/13/python-osx-openssl-issue/) to upgrade your openssl library.
 
-**NOTE 2:** Please ensure you don't have ANY other `sseclient` packages installed in addition to `sseclient 0.0.18`! This may cause this package to fail in unexpected ways. A common one that is known to cause issues is the `sseclient-py 1.7` package. If you have a hard requirement to have more than one, please let me know and we can look into making that work.
+**IMPORTANT:** Please ensure you don't have ANY other `sseclient` packages installed in addition to `sseclient 0.0.22`! This may cause this package to fail in unexpected ways. A common one that is known to cause issues is the `sseclient-py 1.7` package. If you have a hard requirement to have more than one, please let me know and we can look into making that work.
+
+**IMPORTANT:** There is a regression in sseclient 0.0.24 that breaks this package. Please ensure you have seeclient 0.0.22 installed.
 
 After installing all of the required libraries, you can import and use this library like so:
 
