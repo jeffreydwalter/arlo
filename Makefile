@@ -37,6 +37,7 @@ endif
 	git add arlo.py
 	git add request.py
 	git add eventstream.py
+	git add requirements.txt
 
 	git commit -m "$(message)"
 	git push

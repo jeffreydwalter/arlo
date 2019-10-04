@@ -9,7 +9,7 @@ def readme():
 setup(
     name='arlo',
     py_modules=['arlo', 'request', 'eventstream'],
-    version='1.2.29',
+    version='1.2.30',
     description='Python Arlo is a library written in Python 2.7/3x ' +
                 'which exposes the Netgear Arlo cameras via the apis that are consumed by their website.',
     long_description=readme(),
@@ -19,7 +19,7 @@ setup(
     url='https://github.com/jeffreydwalter/arlo',
     license='Apache Software License',
     include_package_data=True,
-    install_requires=['monotonic', 'requests', 'sseclient', 'PySocks'],
+    install_requires=['monotonic', 'requests', 'sseclient==0.0.22', 'PySocks'],
     keywords=[
         'arlo',
         'camera',
