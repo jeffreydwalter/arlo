@@ -11,6 +11,7 @@
 Check out the [API DOCS](https://github.com/jeffreydwalter/arlo/tree/master/docs)
 
 **IMPORTANT:** There is a regression in `sseclient 0.0.24` that breaks this package. Please ensure you have `seeclient 0.0.22` installed.
+
 **IMPORTANT:** Please ensure you don't have ANY other `sseclient` packages installed in addition to `sseclient 0.0.22`! This may cause this package to fail in unexpected ways. A common one that is known to cause issues is the `sseclient-py 1.7` package. If you have a hard requirement to have more than one, please let me know and we can look into making that work.
 
 **IMPORTANT:** my.arlo.com requires TLS 1.2 for their API. So, if you're getting ssl errors, it's most likely related to your version of openssl. You may need to upgrade your openssl library.
