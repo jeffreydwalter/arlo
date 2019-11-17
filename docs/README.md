@@ -66,7 +66,7 @@ email=False, push=False) `
 ` def Arm(self, device) `
 
     
-` def BatchDeleteRecordings(self, recording_metadata) `
+` def BatchDeleteRecordings(self, recordings) `
 
     
 
@@ -105,7 +105,7 @@ device can be any object that has parentId == deviceId. i.e., not a camera
 
 device can be any object that has parentId == deviceId. i.e., not a camera
 
-` def DeleteRecording(self, camera, created_date, utc_created_date) `
+` def DeleteRecording(self, recording) `
 
     
 
@@ -780,7 +780,7 @@ mode: rainbow or rgb.
 ` def SetNightLightTimerOff(self, basestation, time=0, timediff=300) `
 
     
-` def SetNightLightTimerOn(self, basestation, time=1570204395, timediff=0) `
+` def SetNightLightTimerOn(self, basestation, time=1574026907, timediff=0) `
 
     
 ` def SetOCProfile(self, firstName, lastName, country='United States',
@@ -818,7 +818,7 @@ watch the schema that gets sent.
 ` def SetSleepTimerOff(self, basestation, time=0, timediff=300) `
 
     
-` def SetSleepTimerOn(self, basestation, time=1570204395, timediff=0) `
+` def SetSleepTimerOn(self, basestation, time=1574026907, timediff=0) `
 
     
 ` def SetTempAlertOff(self, basestation) `

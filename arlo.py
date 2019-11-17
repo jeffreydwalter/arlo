@@ -1351,14 +1351,14 @@ class Arlo(object):
         """
         return self.request.post('https://my.arlo.com/hmsweb/users/library', {'dateFrom':from_date, 'dateTo':to_date})
 
-    def DeleteRecording(self, camera, created_date, utc_created_date):
+    def DeleteRecording(self, recording):
         """
         Delete a single video recording from Arlo.
         All of the date info and device id you need to pass into this method are given in the results of the GetLibrary() call.
         """
-        return self.request.post('https://my.arlo.com/hmsweb/users/library/recycle', {'data':[{'createdDate':created_date,'utcCreatedDate':utc_created_date,'deviceId':camera.get('deviceId')}]})
+        return self.request.post('https://my.arlo.com/hmsweb/users/library/recycle', {'data':[{'createdDate':recording.get('createdDate'),'utcCreatedDate':recording.get('createdDate'),'deviceId':recording.get('deviceId')}]})
 
-    def BatchDeleteRecordings(self, recording_metadata):
+    def BatchDeleteRecordings(self, recordings):
         """
         Delete a batch of video recordings from Arlo.
 
@@ -1379,7 +1379,7 @@ class Arlo(object):
         ]
         """
         if recording_metadata:
-            return self.request.post('https://my.arlo.com/hmsweb/users/library/recycle', {'data':recording_metadata})
+            return self.request.post('https://my.arlo.com/hmsweb/users/library/recycle', {'data':recordings})
 
     def GetRecording(self, url, chunk_size=4096):
         """ Returns the whole video from the presignedContentUrl. """

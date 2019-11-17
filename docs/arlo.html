@@ -102,7 +102,7 @@ Setting it to an invalid value has no effect.</p>
 <section class="desc"></section>
 </dd>
 <dt id="arlo.Arlo.BatchDeleteRecordings"><code class="name flex">
-<span>def <span class="ident">BatchDeleteRecordings</span></span>(<span>self, recording_metadata)</span>
+<span>def <span class="ident">BatchDeleteRecordings</span></span>(<span>self, recordings)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Delete a batch of video recordings from Arlo.</p>
@@ -142,7 +142,7 @@ You should probably do the same, although, the UI reflects the switch from calen
 <section class="desc"><p>device can be any object that has parentId == deviceId. i.e., not a camera</p></section>
 </dd>
 <dt id="arlo.Arlo.DeleteRecording"><code class="name flex">
-<span>def <span class="ident">DeleteRecording</span></span>(<span>self, camera, created_date, utc_created_date)</span>
+<span>def <span class="ident">DeleteRecording</span></span>(<span>self, recording)</span>
 </code></dt>
 <dd>
 <section class="desc"><p>Delete a single video recording from Arlo.
@@ -1151,7 +1151,7 @@ color: 45136 - the color for your bounding box.</p></section>
 <section class="desc"></section>
 </dd>
 <dt id="arlo.Arlo.SetNightLightTimerOn"><code class="name flex">
-<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1570204395, timediff=0)</span>
+<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1574026907, timediff=0)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -1278,7 +1278,7 @@ color: 45136 - the color for your bounding box.</p></section>
 <section class="desc"></section>
 </dd>
 <dt id="arlo.Arlo.SetSleepTimerOn"><code class="name flex">
-<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1570204395, timediff=0)</span>
+<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1574026907, timediff=0)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
