@@ -780,7 +780,7 @@ mode: rainbow or rgb.
 ` def SetNightLightTimerOff(self, basestation, time=0, timediff=300) `
 
     
-` def SetNightLightTimerOn(self, basestation, time=1574026907, timediff=0) `
+` def SetNightLightTimerOn(self, basestation, time=1574623861, timediff=0) `
 
     
 ` def SetOCProfile(self, firstName, lastName, country='United States',
@@ -818,7 +818,7 @@ watch the schema that gets sent.
 ` def SetSleepTimerOff(self, basestation, time=0, timediff=300) `
 
     
-` def SetSleepTimerOn(self, basestation, time=1574026907, timediff=0) `
+` def SetSleepTimerOn(self, basestation, time=1574623861, timediff=0) `
 
     
 ` def SetTempAlertOff(self, basestation) `
@@ -968,6 +968,9 @@ intending to stream. Use TriggerFullFrameSnapshot() instead.
 
 NOTE: Use DownloadSnapshot() to download the actual image file.
 
+` def UnPauseTrack(self, basestation) `
+
+    
 ` def Unsubscribe(self, basestation) `
 
     
@@ -1141,6 +1144,7 @@ This is an example of the json you would pass in the body: {
       * `TriggerAndHandleEvent`
       * `TriggerFullFrameSnapshot`
       * `TriggerStreamSnapshot`
+      * `UnPauseTrack`
       * `Unsubscribe`
       * `UpdateDeviceName`
       * `UpdateDisplayOrder`

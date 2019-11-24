@@ -1151,7 +1151,7 @@ color: 45136 - the color for your bounding box.</p></section>
 <section class="desc"></section>
 </dd>
 <dt id="arlo.Arlo.SetNightLightTimerOn"><code class="name flex">
-<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1574026907, timediff=0)</span>
+<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1574623861, timediff=0)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -1278,7 +1278,7 @@ color: 45136 - the color for your bounding box.</p></section>
 <section class="desc"></section>
 </dd>
 <dt id="arlo.Arlo.SetSleepTimerOn"><code class="name flex">
-<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1574026907, timediff=0)</span>
+<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1574623861, timediff=0)</span>
 </code></dt>
 <dd>
 <section class="desc"></section>
@@ -1447,6 +1447,12 @@ and taking a snapshot may fail (since it requires the stream to be active).</p>
 <p>NOTE: You should not use this function is you just want a snapshot and aren't intending to stream.
 Use TriggerFullFrameSnapshot() instead.</p>
 <p>NOTE: Use DownloadSnapshot() to download the actual image file.</p></section>
+</dd>
+<dt id="arlo.Arlo.UnPauseTrack"><code class="name flex">
+<span>def <span class="ident">UnPauseTrack</span></span>(<span>self, basestation)</span>
+</code></dt>
+<dd>
+<section class="desc"></section>
 </dd>
 <dt id="arlo.Arlo.Unsubscribe"><code class="name flex">
 <span>def <span class="ident">Unsubscribe</span></span>(<span>self, basestation)</span>
@@ -1659,6 +1665,7 @@ Use TriggerFullFrameSnapshot() instead.</p>
 <li><code><a title="arlo.Arlo.TriggerAndHandleEvent" href="#arlo.Arlo.TriggerAndHandleEvent">TriggerAndHandleEvent</a></code></li>
 <li><code><a title="arlo.Arlo.TriggerFullFrameSnapshot" href="#arlo.Arlo.TriggerFullFrameSnapshot">TriggerFullFrameSnapshot</a></code></li>
 <li><code><a title="arlo.Arlo.TriggerStreamSnapshot" href="#arlo.Arlo.TriggerStreamSnapshot">TriggerStreamSnapshot</a></code></li>
+<li><code><a title="arlo.Arlo.UnPauseTrack" href="#arlo.Arlo.UnPauseTrack">UnPauseTrack</a></code></li>
 <li><code><a title="arlo.Arlo.Unsubscribe" href="#arlo.Arlo.Unsubscribe">Unsubscribe</a></code></li>
 <li><code><a title="arlo.Arlo.UpdateDeviceName" href="#arlo.Arlo.UpdateDeviceName">UpdateDeviceName</a></code></li>
 <li><code><a title="arlo.Arlo.UpdateDisplayOrder" href="#arlo.Arlo.UpdateDisplayOrder">UpdateDisplayOrder</a></code></li>
