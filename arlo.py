@@ -599,6 +599,9 @@ class Arlo(object):
     def PauseTrack(self, basestation):
         return self.Notify(basestation, {"action":"pause","resource":"audioPlayback/player"})
 
+    def UnPauseTrack(self, basestation):
+        return self.Notify(basestation, {"action":"play","resource":"audioPlayback/player"})
+   
     def SkipTrack(self, basestation):
         return self.Notify(basestation, {"action":"nextTrack","resource":"audioPlayback/player"})
 
