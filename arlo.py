@@ -1381,7 +1381,7 @@ class Arlo(object):
           }
         ]
         """
-        if recording_metadata:
+        if recordings:
             return self.request.post('https://my.arlo.com/hmsweb/users/library/recycle', {'data':recordings})
 
     def GetRecording(self, url, chunk_size=4096):
