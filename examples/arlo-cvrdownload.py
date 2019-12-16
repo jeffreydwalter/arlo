@@ -17,7 +17,7 @@ datetimeTo = datetime.datetime.strptime('2018-08-11 04:00:00', '%Y-%m-%d %H:%M:%
 
 
 try:
-    print "Downloading cvr videos from " + datetimeFrom.strftime("%Y-%m-%d %H:%M:%S") + " to " + datetimeTo.strftime("%Y-%m-%d %H:%M:%S")
+    print("Downloading cvr videos from " + datetimeFrom.strftime("%Y-%m-%d %H:%M:%S") + " to " + datetimeTo.strftime("%Y-%m-%d %H:%M:%S"))
     # Instantiating the Arlo object automatically calls Login(), which returns an oAuth token that gets cached.
     # Subsequent successful calls to login will update the oAuth token.
     arlo = Arlo(USERNAME, PASSWORD)
@@ -36,7 +36,7 @@ try:
 
     # If no recordings are available exit
     if not playlist['playlist']:
-        print "No playlist found for camera for the period " + datetimeFrom.strftime("%Y-%m-%d %H:%M:%S") + " and " + datetimeTo.strftime("%Y-%m-%d %H:%M:%S")
+        print("No playlist found for camera for the period " + datetimeFrom.strftime("%Y-%m-%d %H:%M:%S") + " and " + datetimeTo.strftime("%Y-%m-%d %H:%M:%S"))
         arlo.Logout()
         print('Logged out')
         sys.exit()
@@ -73,7 +73,7 @@ try:
 
                         # Skip files already downloaded
                         if os.path.isfile(videopath + '/' + videofilename):
-                            print "Video " + videofilename + " already exists"
+                            print("Video " + videofilename + " already exists")
                         else:
                             print('Downloading video ' + videofilename)
                             with open(videopath + '/' + videofilename, 'wb') as f:
