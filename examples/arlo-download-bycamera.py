@@ -43,8 +43,6 @@ try:
 
     # Iterate through the recordings in the library.
     for recording in library:
-        # Get video as a chunked stream; this function returns a generator.
-        stream = arlo.StreamRecording(recording['presignedContentUrl'])
 
         # Set the extension based on the content type of the returned media
         content_type = recording['contentType']
@@ -53,16 +51,12 @@ try:
         # Grab the camera name to use for the filename from the cameras_by_id hash above
         camera_name = cameras_by_id[recording['deviceId']]
 
-        videofilename = camera_name + ' - ' + datetime.datetime.fromtimestamp(
-            int(recording['name']) // 1000).strftime(
-                '%Y-%m-%d %H-%M-%S') + extension
-        with open(videopath + '/' + videofilename, 'wb') as f:
-            for chunk in stream:
-                f.write(chunk)
-            f.close()
+        videofilename = camera_name + ' - ' + datetime.datetime.fromtimestamp(int(recording['name']) // 1000).strftime('%Y-%m-%d %H-%M-%S') + extension
+        
+        # Download the video and write it to the given path.
+        arlo.DownloadRecording(recording['presignedContentUrl'], videopath + '/' + videofilename)
 
-        print('Downloaded video ' + videofilename + ' from ' +
-              recording['createdDate'] + '.')
+        print('Downloaded video ' + videofilename + ' from ' + recording['createdDate'] + '.')
 
         # Use the following line to print all the data we got for the recording.
         #print(json.dumps(recording, indent = 4))
