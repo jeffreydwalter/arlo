@@ -36,14 +36,7 @@ class EventStream(object):
         self.event_stream_stop_event = threading.Event()
         self.arlo = args[0]
         self.heartbeat_handler = heartbeat_handler
-
-        try:
-            event_stream = sseclient.SSEClient('https://my.arlo.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get('Authorization'), session=self.arlo.request.session)
-            self.event_stream_thread = threading.Thread(name="EventStream", target=event_handler, args=(self.arlo, event_stream, self.event_stream_stop_event, ))
-            self.event_stream_thread.setDaemon(True)
-        except Exception as e:
-            raise Exception('Failed to subscribe to eventstream: {0}'.format(e))
-
+ 
     def __del__(self):
         self.Disconnect()
 
@@ -81,6 +74,13 @@ class EventStream(object):
         return self
 
     def Connect(self):
+        try:
+            event_stream = sseclient.SSEClient('https://my.arlo.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get('Authorization'), session=self.arlo.request.session)
+            self.event_stream_thread = threading.Thread(name="EventStream", target=event_handler, args=(self.arlo, event_stream, self.event_stream_stop_event, ))
+            self.event_stream_thread.setDaemon(True)
+        except Exception as e:
+            raise Exception('Failed to subscribe to eventstream: {0}'.format(e))
+
         self.connected = True
 
     def Disconnect(self):
