@@ -43,6 +43,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Generous Benefactors (Thank you!)
+* [apsteinmetz](https://github.com/apsteinmetz) - 🍺
 * [mhallikainen](https://github.com/mhallikainen) - 🍺🍺
 * [tinsheep](https://github.com/tinsheep) - 🍺🍺
 * [cubewot](https://github.com/cubewot) - 🍺🍺 
