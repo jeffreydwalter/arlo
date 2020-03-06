@@ -29,6 +29,7 @@ else:
 class EventStream(object):
     """This class provides a queue-based EventStream object."""
     def __init__(self, event_handler, heartbeat_handler, args):
+        self.event_handler = event_handler
         self.connected = False
         self.registered = False
         self.queue = queue.Queue()
@@ -70,17 +71,18 @@ class EventStream(object):
                 return None
 
     def Start(self):
-        self.event_stream_thread.start()
+        try:
+            event_stream = sseclient.SSEClient('https://my.arlo.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get('Authorization'), session=self.arlo.request.session)
+            self.event_stream_thread = threading.Thread(name="EventStream", target=self.event_handler, args=(self.arlo, event_stream, self.event_stream_stop_event, ))
+            self.event_stream_thread.setDaemon(True)
+            self.event_stream_thread.start()
+        except Exception as e:
+            raise Exception('Failed to start eventstream thread: {0}'.format(e))
+
+
         return self
 
     def Connect(self):
-        try:
-            event_stream = sseclient.SSEClient('https://my.arlo.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get('Authorization'), session=self.arlo.request.session)
-            self.event_stream_thread = threading.Thread(name="EventStream", target=event_handler, args=(self.arlo, event_stream, self.event_stream_stop_event, ))
-            self.event_stream_thread.setDaemon(True)
-        except Exception as e:
-            raise Exception('Failed to subscribe to eventstream: {0}'.format(e))
-
         self.connected = True
 
     def Disconnect(self):
@@ -88,10 +90,13 @@ class EventStream(object):
         self.Unregister()
 
     def Register(self):
-        self.heartbeat_thread = threading.Thread(name='HeartbeatThread', target=self.heartbeat_handler, args=(self.arlo, self.heartbeat_stop_event, ))
-        self.heartbeat_thread.setDaemon(True)
-        self.heartbeat_thread.start()
-        self.registered = True
+        try:
+            self.heartbeat_thread = threading.Thread(name='HeartbeatThread', target=self.heartbeat_handler, args=(self.arlo, self.heartbeat_stop_event, ))
+            self.heartbeat_thread.setDaemon(True)
+            self.heartbeat_thread.start()
+            self.registered = True
+        except Exception as e:
+            raise Exception('Failed to start to heartbeat thread: {0}'.format(e))
 
     def Unregister(self):
         self.registered = False
