@@ -126,9 +126,7 @@ class Arlo(object):
         self.password = password
 
         self.request = Request()
-
-        body = self.request.post('https://my.arlo.com/hmsweb/login/v2', {'email': self.username, 'password': self.password})
-
+        
         headers = {
             'DNT': '1',
             'schemaVersion': '1',
@@ -136,8 +134,12 @@ class Arlo(object):
             'Content-Type': 'application/json; charset=utf-8;',
             'Referer': 'https://my.arlo.com/',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
-            'Authorization': body['token']
         }
+
+        body = self.request.post('https://my.arlo.com/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
+
+        headers['Authorization'] = body['token']
+      
         self.request.session.headers.update(headers)
 
         self.user_id = body['userId']
