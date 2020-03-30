@@ -408,7 +408,7 @@ class Arlo(object):
         if device['deviceType'] == 'arlobridge':
             return self.request.delete('https://my.arlo.com/hmsweb/users/locations/'+device.get('uniqueId')+'/modes/'+mode)
         elif not parentId or device.get('deviceId') == parentId:
-            return self.NotifyAndGetResponse(basestation, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
+            return self.NotifyAndGetResponse(device, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
         else:
             raise Exception('Only parent device modes and schedules can be deleted.');
 
@@ -832,6 +832,11 @@ class Arlo(object):
         You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
         """
         return self.request.put('https://my.arlo.com/hmsweb/users/locations/'+location_id, {'geoEnabled':active})
+
+    def GetDevice(self, device_name):
+        def is_device(device):
+            return device['deviceName'] == device_name
+        return list(filter(is_device, self.GetDevices()))[0]
 
     def GetDevices(self, device_type=None, filter_provisioned=None):
         """
