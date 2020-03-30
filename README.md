@@ -56,6 +56,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Awesomely Smart Contributors (Thank you!)
+* [fleicher](https://github.com/fleicher) - Mar 29, 2020 - Added a helper method to get devices by name.
 * [apsteinmetz](https://github.com/apsteinmetz) - Feb 12, 2020 - Added an example of timestamping Arlo snapshots to the wiki.
 * [alvin-chang](https://github.com/alvin-chang) - Dec 15, 2019 - Updated some print statements to work with Python 3 in an example script.
 * [pabloNZ](https://github.com/pabloNZ) - Jun 4, 2019 - Added the Arlo doorbell, Ultra camera and basestation schemas to the wiki.
