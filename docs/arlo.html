@@ -3,27 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.5.1" />
+<meta name="generator" content="pdoc 0.9.1" />
 <title>arlo API documentation</title>
 <meta name="description" content="Copyright 2016 Jeffrey D. Walter …" />
-<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
-<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
-<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id=^header-]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:1px solid #ddd;margin:1em 0 1em 4ch}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{font-weight:bold}#index h4 + ul{margin-bottom:.6em}#index .two-column{column-count:2}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.name small{font-weight:normal}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary{background:#ffc;font-weight:400;font-size:.8em;width:11em;text-transform:uppercase;padding:0px 8px;border:1px solid #fd6;border-radius:5px;cursor:pointer}.source summary:hover{background:#fe9 !important}.source[open] summary{background:#fda}.source pre{max-height:500px;overflow-y:scroll;margin-bottom:15px}.hlist{list-syle:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink;]</style>
-<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:45%}#content{width:55%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
-<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a,a:visited{text-decoration:underline}a[href]:after{content:" (" attr(href) ")"}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
 </head>
 <body>
 <main>
 <article id="content">
 <header>
-<h1 class="title"><code>arlo</code> module</h1>
+<h1 class="title">Module <code>arlo</code></h1>
 </header>
 <section id="section-intro">
 <p>Copyright 2016 Jeffrey D. Walter</p>
 <p>Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at</p>
-<p>http://www.apache.org/licenses/LICENSE-2.0</p>
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
 <p>Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS ISBASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,38 +44,32 @@ limitations under the License.</p>
 <dl>
 <dt id="arlo.Arlo"><code class="flex name class">
 <span>class <span class="ident">Arlo</span></span>
+<span>(</span><span>username, password)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 <h3>Class variables</h3>
 <dl>
 <dt id="arlo.Arlo.TRANSID_PREFIX"><code class="name">var <span class="ident">TRANSID_PREFIX</span></code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="arlo.Arlo.__init__"><code class="name flex">
-<span>def <span class="ident">__init__</span></span>(<span>self, username, password)</span>
-</code></dt>
-<dd>
-<section class="desc"><p>Initialize self.
-See help(type(self)) for accurate signature.</p></section>
-</dd>
 <dt id="arlo.Arlo.AddFriend"><code class="name flex">
 <span>def <span class="ident">AddFriend</span></span>(<span>self, firstname, lastname, email, devices={}, admin=False)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This API will send an email to a user and if they accept, will give them access to the devices you specify.
+<div class="desc"><p>This API will send an email to a user and if they accept, will give them access to the devices you specify.
 NOTE: XXX-XXXXXXX_XXXXXXXXXXXX is the uniqueId field in your device object.</p>
-<p>{adminUser:false,firstName:John,lastName:Doe,email:john.doe@example.com,devices:{XXX-XXXXXXX_XXXXXXXXXXXX:Camera1,XXX-XXXXXXX_XXXXXXXXXXXX:Camera2}}</p></section>
+<p>{adminUser:false,firstName:John,lastName:Doe,email:john.doe@example.com,devices:{XXX-XXXXXXX_XXXXXXXXXXXX:Camera1,XXX-XXXXXXX_XXXXXXXXXXXX:Camera2}}</p></div>
 </dd>
 <dt id="arlo.Arlo.AdjustBrightness"><code class="name flex">
 <span>def <span class="ident">AdjustBrightness</span></span>(<span>self, basestation, camera, brightness=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>NOTE: Brightness is between -2 and 2 in increments of 1 (-2, -1, 0, 1, 2).
+<div class="desc"><p>NOTE: Brightness is between -2 and 2 in increments of 1 (-2, -1, 0, 1, 2).
 Setting it to an invalid value has no effect.</p>
 <p>Returns:
 {
@@ -84,28 +81,25 @@ Setting it to an invalid value has no effect.</p>
 "resource": "cameras/XXXXXXXXXXXXX",
 "to": "336-XXXXXXX_web",
 "transId": "web!XXXXXXXX.389518!1514956240683"
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.AlertNotificationMethods"><code class="name flex">
-<span>def <span class="ident">AlertNotificationMethods</span></span>(<span>self, basestation, action=&#39;disabled&#39;, email=False, push=False)</span>
+<span>def <span class="ident">AlertNotificationMethods</span></span>(<span>self, basestation, action='disabled', email=False, push=False)</span>
 </code></dt>
 <dd>
-<section class="desc"><dl>
-<dt><strong><code>action</code></strong> :&ensp;<code>disabled</code> <code>OR</code> <code>recordSnapshot</code> <code>OR</code> <code>recordVideo</code></dt>
-<dd>&nbsp;</dd>
-</dl></section>
+<div class="desc"><p>action : disabled OR recordSnapshot OR recordVideo</p></div>
 </dd>
 <dt id="arlo.Arlo.Arm"><code class="name flex">
 <span>def <span class="ident">Arm</span></span>(<span>self, device)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.BatchDeleteRecordings"><code class="name flex">
 <span>def <span class="ident">BatchDeleteRecordings</span></span>(<span>self, recordings)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Delete a batch of video recordings from Arlo.</p>
+<div class="desc"><p>Delete a batch of video recordings from Arlo.</p>
 <p>The GetLibrary() call response json can be passed directly to this method if you'd like to delete the same list of videos you queried for.
 If you want to delete some other batch of videos, then you need to send an array of objects representing each video you want to delete.</p>
 <p>[
@@ -119,138 +113,130 @@ If you want to delete some other batch of videos, then you need to send an array
 "utcCreatedDate":1473010280395,
 "deviceId":"XXXXXXXXXXXXX"
 }
-]</p></section>
+]</p></div>
 </dd>
 <dt id="arlo.Arlo.Calendar"><code class="name flex">
 <span>def <span class="ident">Calendar</span></span>(<span>self, basestation, active=True)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>DEPRECATED: This API appears to still do stuff, but I don't see it called in the web UI anymore when switching the mode to a schedule.</p>
+<div class="desc"><p>DEPRECATED: This API appears to still do stuff, but I don't see it called in the web UI anymore when switching the mode to a schedule.</p>
 <p>NOTE: The Arlo API seems to disable calendar mode when switching to other modes, if it's enabled.
-You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.</p></section>
+You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.</p></div>
 </dd>
 <dt id="arlo.Arlo.CustomMode"><code class="name flex">
 <span>def <span class="ident">CustomMode</span></span>(<span>self, device, mode, schedules=[])</span>
 </code></dt>
 <dd>
-<section class="desc"><p>device can be any object that has parentId == deviceId. i.e., not a camera</p></section>
+<div class="desc"><p>device can be any object that has parentId == deviceId. i.e., not a camera</p></div>
 </dd>
 <dt id="arlo.Arlo.DeleteMode"><code class="name flex">
 <span>def <span class="ident">DeleteMode</span></span>(<span>self, device, mode)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>device can be any object that has parentId == deviceId. i.e., not a camera</p></section>
+<div class="desc"><p>device can be any object that has parentId == deviceId. i.e., not a camera</p></div>
 </dd>
 <dt id="arlo.Arlo.DeleteRecording"><code class="name flex">
 <span>def <span class="ident">DeleteRecording</span></span>(<span>self, recording)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Delete a single video recording from Arlo.
-All of the date info and device id you need to pass into this method are given in the results of the GetLibrary() call.</p></section>
+<div class="desc"><p>Delete a single video recording from Arlo.
+All of the date info and device id you need to pass into this method are given in the results of the GetLibrary() call.</p></div>
 </dd>
 <dt id="arlo.Arlo.Disarm"><code class="name flex">
 <span>def <span class="ident">Disarm</span></span>(<span>self, device)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.DownloadRecording"><code class="name flex">
 <span>def <span class="ident">DownloadRecording</span></span>(<span>self, url, to)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Writes a video to a given local file path.</p>
-<dl>
-<dt><strong><code>url</code></strong> :&ensp;<code>presignedContentUrl</code></dt>
-<dd>&nbsp;</dd>
-<dt><strong><code>to</code></strong> :&ensp;<code>path</code> <code>where</code> <code>the</code> <code>file</code> <code>should</code> <code>be</code> <code>written</code></dt>
-<dd>&nbsp;</dd>
-</dl></section>
+<div class="desc"><p>Writes a video to a given local file path.</p>
+<p>url: presignedContentUrl
+to: path where the file should be written</p></div>
 </dd>
 <dt id="arlo.Arlo.DownloadSnapshot"><code class="name flex">
 <span>def <span class="ident">DownloadSnapshot</span></span>(<span>self, url, to, chunk_size=4096)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Writes a snapshot to a given local file path.</p>
-<dl>
-<dt><strong><code>url</code></strong> :&ensp;<code>presignedContentUrl</code> or <code>presignedFullFrameSnapshotUrl</code></dt>
-<dd>&nbsp;</dd>
-<dt><strong><code>to</code></strong> :&ensp;<code>path</code> <code>where</code> <code>the</code> <code>file</code> <code>should</code> <code>be</code> <code>written</code></dt>
-<dd>&nbsp;</dd>
-</dl></section>
+<div class="desc"><p>Writes a snapshot to a given local file path.</p>
+<p>url: presignedContentUrl or presignedFullFrameSnapshotUrl
+to: path where the file should be written</p></div>
 </dd>
 <dt id="arlo.Arlo.Geofencing"><code class="name flex">
 <span>def <span class="ident">Geofencing</span></span>(<span>self, location_id, active=True)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Get location_id is the id field from the return of GetLocations()
+<div class="desc"><p>Get location_id is the id field from the return of GetLocations()
 NOTE: The Arlo API seems to disable geofencing mode when switching to other modes, if it's enabled.
-You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.</p></section>
+You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetAudioPlayback"><code class="name flex">
 <span>def <span class="ident">GetAudioPlayback</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetAutomationActivityZones"><code class="name flex">
 <span>def <span class="ident">GetAutomationActivityZones</span></span>(<span>self, camera)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetAutomationDefinitions"><code class="name flex">
 <span>def <span class="ident">GetAutomationDefinitions</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetBaseStationState"><code class="name flex">
 <span>def <span class="ident">GetBaseStationState</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetCalendar"><code class="name flex">
 <span>def <span class="ident">GetCalendar</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetCameraState"><code class="name flex">
 <span>def <span class="ident">GetCameraState</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetCameraTempReading"><code class="name flex">
 <span>def <span class="ident">GetCameraTempReading</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetCvrPlaylist"><code class="name flex">
 <span>def <span class="ident">GetCvrPlaylist</span></span>(<span>self, camera, fromDate, toDate)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This function downloads a Cvr Playlist file for the period fromDate to toDate.</p></section>
+<div class="desc"><p>This function downloads a Cvr Playlist file for the period fromDate to toDate.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetDevice"><code class="name flex">
 <span>def <span class="ident">GetDevice</span></span>(<span>self, device_name)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetDeviceCapabilities"><code class="name flex">
 <span>def <span class="ident">GetDeviceCapabilities</span></span>(<span>self, device)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetDeviceSupport"><code class="name flex">
 <span>def <span class="ident">GetDeviceSupport</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p>
+<div class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p>
 <p>This API looks like it's mainly used by the website, but I'm including it for completeness sake.
 It returns something like the following:
 {
@@ -293,13 +279,13 @@ amazonaws.com/static/html/en/arloqs/poe_setup.html",
 }
 }
 ]
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.GetDeviceSupportV3"><code class="name flex">
 <span>def <span class="ident">GetDeviceSupportV3</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This is the latest version of the device support api.
+<div class="desc"><p>This is the latest version of the device support api.
 It returns something like the following:
 {
 "data": {
@@ -457,13 +443,13 @@ It returns something like the following:
 }
 },
 "success":true
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.GetDeviceSupportv2"><code class="name flex">
 <span>def <span class="ident">GetDeviceSupportv2</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p>
+<div class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p>
 <p>It returns something like the following:
 {
 "devices": [
@@ -645,33 +631,33 @@ It returns something like the following:
 "selectLights": "selectBgLt.html"
 },
 "baseUrl": "https://vzs3-prod-common.s3.amazonaws.com/static/v2/html/en/"
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.GetDevices"><code class="name flex">
 <span>def <span class="ident">GetDevices</span></span>(<span>self, device_type=None, filter_provisioned=None)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This method returns an array that contains the basestation, cameras, etc. and their metadata.
+<div class="desc"><p>This method returns an array that contains the basestation, cameras, etc. and their metadata.
 If you pass in a valid device type, as a string or a list, this method will return an array of just those devices that match that type. An example would be ['basestation', 'camera']
-To filter provisioned or unprovisioned devices pass in a True/False value for filter_provisioned. By default both types are returned.</p></section>
+To filter provisioned or unprovisioned devices pass in a True/False value for filter_provisioned. By default both types are returned.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetEmergencyLocations"><code class="name flex">
 <span>def <span class="ident">GetEmergencyLocations</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetFriends"><code class="name flex">
 <span>def <span class="ident">GetFriends</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetLibrary"><code class="name flex">
 <span>def <span class="ident">GetLibrary</span></span>(<span>self, from_date, to_date)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This call returns the following:
+<div class="desc"><p>This call returns the following:
 presignedContentUrl is a link to the actual video in Amazon AWS.
 presignedThumbnailUrl is a link to the thumbnail .jpg of the actual video in Amazon AWS.</p>
 <p>[
@@ -693,19 +679,19 @@ presignedThumbnailUrl is a link to the thumbnail .jpg of the actual video in Ama
 "currentState": "new",
 "mediaDuration": "00:00:30"
 }
-]</p></section>
+]</p></div>
 </dd>
 <dt id="arlo.Arlo.GetLibraryMetaData"><code class="name flex">
 <span>def <span class="ident">GetLibraryMetaData</span></span>(<span>self, from_date, to_date)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetLocations"><code class="name flex">
 <span>def <span class="ident">GetLocations</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This call returns the following:
+<div class="desc"><p>This call returns the following:
 {
 "id":"XXX-XXXXXXX_20160823042047",
 "name":"Home",
@@ -727,117 +713,117 @@ presignedThumbnailUrl is a link to the thumbnail .jpg of the actual video in Ama
 "pushNotifyDevices":[
 "XXXXXXXXXX"
 ]
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.GetModes"><code class="name flex">
 <span>def <span class="ident">GetModes</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>DEPRECATED: This is the older API for getting the "mode". It still works, but GetModesV2 is the way the Arlo software does it these days.</p></section>
+<div class="desc"><p>DEPRECATED: This is the older API for getting the "mode". It still works, but GetModesV2 is the way the Arlo software does it these days.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetModesV2"><code class="name flex">
 <span>def <span class="ident">GetModesV2</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This is the newer API for getting the "mode". This method also returns the schedules.
+<div class="desc"><p>This is the newer API for getting the "mode". This method also returns the schedules.
 Set a non-schedule mode to be active: {"activeAutomations":[{"deviceId":"XXXXXXXXXXXXX","timestamp":1532015622105,"activeModes":["mode1"],"activeSchedules":[]}]}
-Set a schedule to be active: {"activeAutomations":[{"deviceId":"XXXXXXXXXXXXX","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}</p></section>
+Set a schedule to be active: {"activeAutomations":[{"deviceId":"XXXXXXXXXXXXX","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}</p></div>
 </dd>
 <dt id="arlo.Arlo.GetOCProfile"><code class="name flex">
 <span>def <span class="ident">GetOCProfile</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetPaymentBilling"><code class="name flex">
 <span>def <span class="ident">GetPaymentBilling</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetPaymentOffers"><code class="name flex">
 <span>def <span class="ident">GetPaymentOffers</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></section>
+<div class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetPaymentOffersV2"><code class="name flex">
 <span>def <span class="ident">GetPaymentOffersV2</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></section>
+<div class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetPaymentOffersV3"><code class="name flex">
 <span>def <span class="ident">GetPaymentOffersV3</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></section>
+<div class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetPaymentOffersV4"><code class="name flex">
 <span>def <span class="ident">GetPaymentOffersV4</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetProfile"><code class="name flex">
 <span>def <span class="ident">GetProfile</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetRecording"><code class="name flex">
 <span>def <span class="ident">GetRecording</span></span>(<span>self, url, chunk_size=4096)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Returns the whole video from the presignedContentUrl.</p></section>
+<div class="desc"><p>Returns the whole video from the presignedContentUrl.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetRules"><code class="name flex">
 <span>def <span class="ident">GetRules</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetSensorConfig"><code class="name flex">
 <span>def <span class="ident">GetSensorConfig</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetServiceLevel"><code class="name flex">
 <span>def <span class="ident">GetServiceLevel</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetServiceLevelSettings"><code class="name flex">
 <span>def <span class="ident">GetServiceLevelSettings</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetServiceLevelV2"><code class="name flex">
 <span>def <span class="ident">GetServiceLevelV2</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></section>
+<div class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetServiceLevelV3"><code class="name flex">
 <span>def <span class="ident">GetServiceLevelV3</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></section>
+<div class="desc"><p>DEPRECATED: This API still works, but I don't see it being called in the web UI anymore.</p></div>
 </dd>
 <dt id="arlo.Arlo.GetServiceLevelV4"><code class="name flex">
 <span>def <span class="ident">GetServiceLevelV4</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetSession"><code class="name flex">
 <span>def <span class="ident">GetSession</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Returns something like the following:
+<div class="desc"><p>Returns something like the following:
 {
 "userId": "XXX-XXXXXXX",
 "email": "jeffreydwalter@gmail.com",
@@ -851,38 +837,38 @@ Set a schedule to be active: {"activeAutomations":[{"deviceId":"XXXXXXXXXXXXX","
 "validEmail": true,
 "arlo": true,
 "dateCreated": 1463975008658
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.GetSmartAlerts"><code class="name flex">
 <span>def <span class="ident">GetSmartAlerts</span></span>(<span>self, camera)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetSmartFeatures"><code class="name flex">
 <span>def <span class="ident">GetSmartFeatures</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.GetUpdateFeatures"><code class="name flex">
 <span>def <span class="ident">GetUpdateFeatures</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.HandleEvents"><code class="name flex">
 <span>def <span class="ident">HandleEvents</span></span>(<span>self, basestation, callback, timeout=120)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Use this method to subscribe to the event stream and provide a callback that will be called for event event received.
-This function will allow you to potentially write a callback that can handle all of the events received from the event stream.</p></section>
+<div class="desc"><p>Use this method to subscribe to the event stream and provide a callback that will be called for event event received.
+This function will allow you to potentially write a callback that can handle all of the events received from the event stream.</p></div>
 </dd>
 <dt id="arlo.Arlo.Login"><code class="name flex">
 <span>def <span class="ident">Login</span></span>(<span>self, username, password)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This call returns the following:
+<div class="desc"><p>This call returns the following:
 {
 "userId":"XXX-XXXXXXX",
 "email":"user@example.com",
@@ -895,26 +881,23 @@ This function will allow you to potentially write a callback that can handle all
 "tocUpdate":false,
 "policyUpdate":false,
 "validEmail":true
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.Logout"><code class="name flex">
 <span>def <span class="ident">Logout</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.Notify"><code class="name flex">
 <span>def <span class="ident">Notify</span></span>(<span>self, basestation, body)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>The following are examples of the json you would need to pass in the body of the Notify() call to interact with Arlo:</p>
+<div class="desc"><p>The following are examples of the json you would need to pass in the body of the Notify() call to interact with Arlo:</p>
 <h6 id="_1"></h6>
 <h6 id="_2"></h6>
-<dl>
-<dt><strong><code>NOTE</code></strong> :&ensp;<code>While</code> <code>you</code> <code>can</code> <code>call</code> <code>Notify</code>() <code>directly</code>, <code>responses</code> <code>from</code> <code>these</code> <code>notify</code> <code>calls</code> <code>are</code> <code>sent</code> <code>to</code> <code>the</code> <code>EventStream</code> (<code>see</code> <code>Subscribe</code>()),</dt>
-<dd>&nbsp;</dd>
-</dl>
-<p>and so it's better to use the Get/Set methods that are implemented using the NotifyAndGetResponse() method.</p>
+<p>NOTE: While you can call Notify() directly, responses from these notify calls are sent to the EventStream (see Subscribe()),
+and so it's better to use the Get/Set methods that are implemented using the NotifyAndGetResponse() method.</p>
 <h6 id="_3"></h6>
 <h6 id="_4"></h6>
 <p>Set System Mode (Armed, Disarmed) - {"from":"XXX-XXXXXXX_web","to":"XXXXXXXXXXXXX","action":"set","resource":"modes","transId":"web!XXXXXXXX.XXXXXXXXXXXXXXXXXXXX","publishResponse":true,"properties":{"active":"mode0"}}
@@ -940,239 +923,236 @@ flip (bool) - Flip Image Vertically
 nightVisionMode (int) - Night Mode Enabled/Disabled (1, 0)
 powerSaveMode (int) - PowerSaver Mode (3 = Best Video, 2 = Optimized, 1 = Best Battery Life)
 motionSetupModeEnabled (bool) - Motion Detection Setup Enabled/Disabled
-motionSetupModeSensitivity (int 0-100) - Motion Detection Sensitivity</p></section>
+motionSetupModeSensitivity (int 0-100) - Motion Detection Sensitivity</p></div>
 </dd>
 <dt id="arlo.Arlo.NotifyAndGetResponse"><code class="name flex">
 <span>def <span class="ident">NotifyAndGetResponse</span></span>(<span>self, basestation, body, timeout=120)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.PauseTrack"><code class="name flex">
 <span>def <span class="ident">PauseTrack</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.Ping"><code class="name flex">
 <span>def <span class="ident">Ping</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.PlayTrack"><code class="name flex">
-<span>def <span class="ident">PlayTrack</span></span>(<span>self, basestation, track_id=&#39;2391d620-e491-4412-99f6-e9a40d6046ed&#39;, position=0)</span>
+<span>def <span class="ident">PlayTrack</span></span>(<span>self, basestation, track_id='2391d620-e491-4412-99f6-e9a40d6046ed', position=0)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all.</p></section>
+<div class="desc"><p>Defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all.</p></div>
 </dd>
 <dt id="arlo.Arlo.PushToTalk"><code class="name flex">
 <span>def <span class="ident">PushToTalk</span></span>(<span>self, camera)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.RemoveFriend"><code class="name flex">
 <span>def <span class="ident">RemoveFriend</span></span>(<span>self, email)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Removes a person you've granted access to.</p>
-<p>email: email of user you want to revoke access from.</p></section>
+<div class="desc"><p>Removes a person you've granted access to.</p>
+<p>email: email of user you want to revoke access from.</p></div>
 </dd>
 <dt id="arlo.Arlo.ResendFriendInvite"><code class="name flex">
 <span>def <span class="ident">ResendFriendInvite</span></span>(<span>self, friend)</span>
 </code></dt>
 <dd>
-<section class="desc"><dl>
-<dt>This API will resend an invitation email to a user that you've AddFriend'd. You will need to get the friend object by calling GetFriend() because it includes a token that must be passed to this API.</dt>
-<dt><strong><code>friend</code></strong> :&ensp;{<code>"ownerId"</code>:<code>"XXX</code>-<code>XXXXXXX"</code>,<code>"token"</code>:<code>"really</code> <code>long</code> <code>string</code> <code>that</code> <code>you</code> <code>get</code> <code>from</code> <code>the</code> <code>GetFriends</code>() <code>API"</code>,<code>"firstName"</code>:<code>"John"</code>,<code>"lastName"</code>:<code>"Doe"</code>,<code>"devices"</code>:{<code>"XXX</code>-<code>XXXXXXX_XXXXXXXXXXXX"</code>:<code>"Camera1"</code>,<code>"XXX</code>-<code>XXXXXXX_XXXXXXXXXXXX"</code>:<code>"Camera2"</code>},<code>"lastModified"</code>:<code>1548470485419</code>,<code>"adminUser"</code>:<code>false</code>,<code>"email"</code>:<code>"john.doe</code>@<code>example.com"</code>}</dt>
-<dd>&nbsp;</dd>
-</dl></section>
+<div class="desc"><p>This API will resend an invitation email to a user that you've AddFriend'd. You will need to get the friend object by calling GetFriend() because it includes a token that must be passed to this API.
+friend: {"ownerId":"XXX-XXXXXXX","token":"really long string that you get from the GetFriends() API","firstName":"John","lastName":"Doe","devices":{"XXX-XXXXXXX_XXXXXXXXXXXX":"Camera1","XXX-XXXXXXX_XXXXXXXXXXXX":"Camera2"},"lastModified":1548470485419,"adminUser":false,"email":"john.doe@example.com"}</p></div>
 </dd>
 <dt id="arlo.Arlo.Reset"><code class="name flex">
 <span>def <span class="ident">Reset</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.RestartBasestation"><code class="name flex">
 <span>def <span class="ident">RestartBasestation</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetAirQualityAlertOff"><code class="name flex">
 <span>def <span class="ident">SetAirQualityAlertOff</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetAirQualityAlertOn"><code class="name flex">
 <span>def <span class="ident">SetAirQualityAlertOn</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetAirQualityAlertThresholdMax"><code class="name flex">
 <span>def <span class="ident">SetAirQualityAlertThresholdMax</span></span>(<span>self, basestation, number=700)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetAirQualityAlertThresholdMin"><code class="name flex">
 <span>def <span class="ident">SetAirQualityAlertThresholdMin</span></span>(<span>self, basestation, number=400)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetAirQualityRecordingOff"><code class="name flex">
 <span>def <span class="ident">SetAirQualityRecordingOff</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetAirQualityRecordingOn"><code class="name flex">
 <span>def <span class="ident">SetAirQualityRecordingOn</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetAudioAlertsOff"><code class="name flex">
 <span>def <span class="ident">SetAudioAlertsOff</span></span>(<span>self, basestation, sensitivity=3)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetAudioAlertsOn"><code class="name flex">
 <span>def <span class="ident">SetAudioAlertsOn</span></span>(<span>self, basestation, sensitivity=3)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetAutomationActivityZones"><code class="name flex">
 <span>def <span class="ident">SetAutomationActivityZones</span></span>(<span>self, camera, zone, coords, color)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>An activity zone is the area you draw in your video in the UI to tell Arlo what part of the scene to "watch".
+<div class="desc"><p>An activity zone is the area you draw in your video in the UI to tell Arlo what part of the scene to "watch".
 This method takes 4 arguments.
 camera: the camera you want to set an activity zone for.
 name: "Zone 1" - the name of your activity zone.
 coords: [{"x":0.37946943483275664,"y":0.3790983606557377},{"x":0.8685121107266436,"y":0.3790983606557377},{"x":0.8685121107266436,"y":1},{"x":0.37946943483275664,"y":1}] - these coordinates are the bonding box for the activity zone.
-color: 45136 - the color for your bounding box.</p></section>
+color: 45136 - the color for your bounding box.</p></div>
 </dd>
 <dt id="arlo.Arlo.SetHumidityAlertOff"><code class="name flex">
 <span>def <span class="ident">SetHumidityAlertOff</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetHumidityAlertOn"><code class="name flex">
 <span>def <span class="ident">SetHumidityAlertOn</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetHumidityAlertThresholdMax"><code class="name flex">
 <span>def <span class="ident">SetHumidityAlertThresholdMax</span></span>(<span>self, basestation, number=800)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetHumidityAlertThresholdMin"><code class="name flex">
 <span>def <span class="ident">SetHumidityAlertThresholdMin</span></span>(<span>self, basestation, number=400)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetHumidityRecordingOff"><code class="name flex">
 <span>def <span class="ident">SetHumidityRecordingOff</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetHumidityRecordingOn"><code class="name flex">
 <span>def <span class="ident">SetHumidityRecordingOn</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetLoopBackModeContinuous"><code class="name flex">
 <span>def <span class="ident">SetLoopBackModeContinuous</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetLoopBackModeSingleTrack"><code class="name flex">
 <span>def <span class="ident">SetLoopBackModeSingleTrack</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetMotionAlertsOff"><code class="name flex">
 <span>def <span class="ident">SetMotionAlertsOff</span></span>(<span>self, basestation, sensitivity=5)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetMotionAlertsOn"><code class="name flex">
 <span>def <span class="ident">SetMotionAlertsOn</span></span>(<span>self, basestation, sensitivity=5)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetNightLightBrightness"><code class="name flex">
 <span>def <span class="ident">SetNightLightBrightness</span></span>(<span>self, basestation, level=200)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetNightLightColor"><code class="name flex">
 <span>def <span class="ident">SetNightLightColor</span></span>(<span>self, basestation, red=255, green=255, blue=255)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetNightLightMode"><code class="name flex">
-<span>def <span class="ident">SetNightLightMode</span></span>(<span>self, basestation, mode=&#39;rainbow&#39;)</span>
+<span>def <span class="ident">SetNightLightMode</span></span>(<span>self, basestation, mode='rainbow')</span>
 </code></dt>
 <dd>
-<section class="desc"><p>mode: rainbow or rgb.</p></section>
+<div class="desc"><p>mode: rainbow or rgb.</p></div>
 </dd>
 <dt id="arlo.Arlo.SetNightLightOff"><code class="name flex">
 <span>def <span class="ident">SetNightLightOff</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetNightLightOn"><code class="name flex">
 <span>def <span class="ident">SetNightLightOn</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetNightLightTimerOff"><code class="name flex">
 <span>def <span class="ident">SetNightLightTimerOff</span></span>(<span>self, basestation, time=0, timediff=300)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetNightLightTimerOn"><code class="name flex">
-<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1585592475, timediff=0)</span>
+<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1602803448, timediff=0)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetOCProfile"><code class="name flex">
-<span>def <span class="ident">SetOCProfile</span></span>(<span>self, firstName, lastName, country=&#39;United States&#39;, language=&#39;en&#39;, spam_me=0)</span>
+<span>def <span class="ident">SetOCProfile</span></span>(<span>self, firstName, lastName, country='United States', language='en', spam_me=0)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetSchedule"><code class="name flex">
 <span>def <span class="ident">SetSchedule</span></span>(<span>self, basestation, schedule)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>The following json is what was sent to the API when I edited my schedule. It contains all of the data necessary to configure a whole week. It's a little convoluted, but you can just play around with the scheduler in Chrome and watch the schema that gets sent.</p>
+<div class="desc"><p>The following json is what was sent to the API when I edited my schedule. It contains all of the data necessary to configure a whole week. It's a little convoluted, but you can just play around with the scheduler in Chrome and watch the schema that gets sent.</p>
 <p>{
 "schedule": [
 {
@@ -1263,142 +1243,139 @@ color: 45136 - the color for your bounding box.</p></section>
 "name": "",
 "id": "schedule.1",
 "enabled": true
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.SetShuffleOff"><code class="name flex">
 <span>def <span class="ident">SetShuffleOff</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetShuffleOn"><code class="name flex">
 <span>def <span class="ident">SetShuffleOn</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetSleepTimerOff"><code class="name flex">
 <span>def <span class="ident">SetSleepTimerOff</span></span>(<span>self, basestation, time=0, timediff=300)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetSleepTimerOn"><code class="name flex">
-<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1585592475, timediff=0)</span>
+<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1602803448, timediff=0)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetTempAlertOff"><code class="name flex">
 <span>def <span class="ident">SetTempAlertOff</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetTempAlertOn"><code class="name flex">
 <span>def <span class="ident">SetTempAlertOn</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetTempAlertThresholdMax"><code class="name flex">
 <span>def <span class="ident">SetTempAlertThresholdMax</span></span>(<span>self, basestation, number=240)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetTempAlertThresholdMin"><code class="name flex">
 <span>def <span class="ident">SetTempAlertThresholdMin</span></span>(<span>self, basestation, number=200)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetTempRecordingOff"><code class="name flex">
 <span>def <span class="ident">SetTempRecordingOff</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetTempRecordingOn"><code class="name flex">
 <span>def <span class="ident">SetTempRecordingOn</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetTempUnit"><code class="name flex">
-<span>def <span class="ident">SetTempUnit</span></span>(<span>self, uniqueId, unit=&#39;C&#39;)</span>
+<span>def <span class="ident">SetTempUnit</span></span>(<span>self, uniqueId, unit='C')</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetVolume"><code class="name flex">
 <span>def <span class="ident">SetVolume</span></span>(<span>self, basestation, mute=False, volume=50)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SirenOff"><code class="name flex">
 <span>def <span class="ident">SirenOff</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SirenOn"><code class="name flex">
 <span>def <span class="ident">SirenOn</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SkipTrack"><code class="name flex">
 <span>def <span class="ident">SkipTrack</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.StartRecording"><code class="name flex">
 <span>def <span class="ident">StartRecording</span></span>(<span>self, basestation, camera)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This function causes the camera to start recording.
-You can get the timezone from GetDevices().</p></section>
+<div class="desc"><p>This function causes the camera to start recording.
+You can get the timezone from GetDevices().</p></div>
 </dd>
 <dt id="arlo.Arlo.StartStream"><code class="name flex">
 <span>def <span class="ident">StartStream</span></span>(<span>self, basestation, camera)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This function returns the url of the rtsp video stream.
+<div class="desc"><p>This function returns the url of the rtsp video stream.
 This stream needs to be called within 30 seconds or else it becomes invalid.
 It can be streamed with: ffmpeg -re -i 'rtsps://<url>' -acodec copy -vcodec copy test.mp4
-The request to /users/devices/startStream returns: { url:rtsp://<url>:443/vzmodulelive?egressToken=b<xx>&amp;userAgent=iOS&amp;cameraId=<camid>}</p></section>
+The request to /users/devices/startStream returns: { url:rtsp://<url>:443/vzmodulelive?egressToken=b<xx>&amp;userAgent=iOS&amp;cameraId=<camid>}</p></div>
 </dd>
 <dt id="arlo.Arlo.StopRecording"><code class="name flex">
 <span>def <span class="ident">StopRecording</span></span>(<span>self, camera)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This function causes the camera to stop recording.
-You can get the timezone from GetDevices().</p></section>
+<div class="desc"><p>This function causes the camera to stop recording.
+You can get the timezone from GetDevices().</p></div>
 </dd>
 <dt id="arlo.Arlo.StopStream"><code class="name flex">
 <span>def <span class="ident">StopStream</span></span>(<span>self, basestation, camera)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.StreamRecording"><code class="name flex">
 <span>def <span class="ident">StreamRecording</span></span>(<span>self, url, chunk_size=4096)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Returns a generator that is the chunked video stream from the presignedContentUrl.</p>
-<dl>
-<dt><strong><code>url</code></strong> :&ensp;<code>presignedContentUrl</code></dt>
-<dd>&nbsp;</dd>
-</dl></section>
+<div class="desc"><p>Returns a generator that is the chunked video stream from the presignedContentUrl.</p>
+<p>url: presignedContentUrl</p></div>
 </dd>
 <dt id="arlo.Arlo.Subscribe"><code class="name flex">
 <span>def <span class="ident">Subscribe</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Arlo uses the EventStream interface in the browser to do pub/sub style messaging.
+<div class="desc"><p>Arlo uses the EventStream interface in the browser to do pub/sub style messaging.
 Unfortunately, this appears to be the only way Arlo communicates these messages.</p>
 <p>This function makes the initial GET request to /subscribe, which returns the EventStream socket.
 Once we have that socket, the API requires a POST request to /notify with the "subscriptionsresource.
@@ -1407,76 +1384,76 @@ when subsequent calls to /notify are made.</p>
 <p>Since this interface is asynchronous, and this is a quick and dirty hack to get this working, I'm using a thread
 to listen to the EventStream. This thread puts events into a queue. Some polling is required (see NotifyAndGetResponse()) because
 the event messages aren't guaranteed to be delivered in any specific order, but I wanted to maintain a synchronous style API.</p>
-<p>You generally shouldn't need to call Subscribe() directly, although I'm leaving it "publicfor now.</p></section>
+<p>You generally shouldn't need to call Subscribe() directly, although I'm leaving it "publicfor now.</p></div>
 </dd>
 <dt id="arlo.Arlo.SubscribeToMotionEvents"><code class="name flex">
 <span>def <span class="ident">SubscribeToMotionEvents</span></span>(<span>self, basestation, callback, timeout=120)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Use this method to subscribe to motion events. You must provide a callback function which will get called once per motion event.</p>
+<div class="desc"><p>Use this method to subscribe to motion events. You must provide a callback function which will get called once per motion event.</p>
 <p>The callback function should have the following signature:
 def callback(self, event)</p>
 <p>This is an example of handling a specific event, in reality, you'd probably want to write a callback for HandleEvents()
-that has a big switch statement in it to handle all the various events Arlo produces.</p></section>
+that has a big switch statement in it to handle all the various events Arlo produces.</p></div>
 </dd>
 <dt id="arlo.Arlo.ToggleCamera"><code class="name flex">
 <span>def <span class="ident">ToggleCamera</span></span>(<span>self, basestation, camera, active=True)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>active: True - Camera is off.
-active: False - Camera is on.</p></section>
+<div class="desc"><p>active: True - Camera is off.
+active: False - Camera is on.</p></div>
 </dd>
 <dt id="arlo.Arlo.TriggerAndHandleEvent"><code class="name flex">
 <span>def <span class="ident">TriggerAndHandleEvent</span></span>(<span>self, basestation, trigger, callback, timeout=120)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>Use this method to subscribe to the event stream and provide a callback that will be called for event event received.
+<div class="desc"><p>Use this method to subscribe to the event stream and provide a callback that will be called for event event received.
 This function will allow you to potentially write a callback that can handle all of the events received from the event stream.
-NOTE: Use this function if you need to run some code after subscribing to the eventstream, but before your callback to handle the events runs.</p></section>
+NOTE: Use this function if you need to run some code after subscribing to the eventstream, but before your callback to handle the events runs.</p></div>
 </dd>
 <dt id="arlo.Arlo.TriggerFullFrameSnapshot"><code class="name flex">
 <span>def <span class="ident">TriggerFullFrameSnapshot</span></span>(<span>self, basestation, camera)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This function causes the camera to record a fullframe snapshot.
+<div class="desc"><p>This function causes the camera to record a fullframe snapshot.
 The presignedFullFrameSnapshotUrl url is returned.
-Use DownloadSnapshot() to download the actual image file.</p></section>
+Use DownloadSnapshot() to download the actual image file.</p></div>
 </dd>
 <dt id="arlo.Arlo.TriggerStreamSnapshot"><code class="name flex">
 <span>def <span class="ident">TriggerStreamSnapshot</span></span>(<span>self, basestation, camera)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This function causes the camera to snapshot while recording.
+<div class="desc"><p>This function causes the camera to snapshot while recording.
 NOTE: You MUST call StartStream() before calling this function.
 If you call StartStream(), you have to start reading data from the stream, or streaming will be cancelled
 and taking a snapshot may fail (since it requires the stream to be active).</p>
 <p>NOTE: You should not use this function is you just want a snapshot and aren't intending to stream.
 Use TriggerFullFrameSnapshot() instead.</p>
-<p>NOTE: Use DownloadSnapshot() to download the actual image file.</p></section>
+<p>NOTE: Use DownloadSnapshot() to download the actual image file.</p></div>
 </dd>
 <dt id="arlo.Arlo.UnPauseTrack"><code class="name flex">
 <span>def <span class="ident">UnPauseTrack</span></span>(<span>self, basestation)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.Unsubscribe"><code class="name flex">
-<span>def <span class="ident">Unsubscribe</span></span>(<span>self, basestation)</span>
+<span>def <span class="ident">Unsubscribe</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This method stops the EventStream subscription and removes it from the event_stream collection.</p></section>
+<div class="desc"><p>This method stops the EventStream subscription and removes it from the event_stream collection.</p></div>
 </dd>
 <dt id="arlo.Arlo.UpdateDeviceName"><code class="name flex">
 <span>def <span class="ident">UpdateDeviceName</span></span>(<span>self, device, name)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.UpdateDisplayOrder"><code class="name flex">
 <span>def <span class="ident">UpdateDisplayOrder</span></span>(<span>self, body)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This is an example of the json you would pass in the body to UpdateDisplayOrder() of your devices in the UI.</p>
+<div class="desc"><p>This is an example of the json you would pass in the body to UpdateDisplayOrder() of your devices in the UI.</p>
 <p>XXXXXXXXXXXXX is the device id of each camera. You can get this from GetDevices().
 {
 "devices":{
@@ -1484,13 +1461,13 @@ Use TriggerFullFrameSnapshot() instead.</p>
 "XXXXXXXXXXXXX":2,
 "XXXXXXXXXXXXX":3
 }
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.UpdateFriend"><code class="name flex">
 <span>def <span class="ident">UpdateFriend</span></span>(<span>self, body)</span>
 </code></dt>
 <dd>
-<section class="desc"><p>This is an example of the json you would pass in the body:
+<div class="desc"><p>This is an example of the json you would pass in the body:
 {
 "firstName":"Some",
 "lastName":"Body",
@@ -1503,37 +1480,37 @@ Use TriggerFullFrameSnapshot() instead.</p>
 "adminUser":true,
 "email":"user@example.com",
 "id":"XXX-XXXXXXX"
-}</p></section>
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.UpdatePassword"><code class="name flex">
 <span>def <span class="ident">UpdatePassword</span></span>(<span>self, password)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.UpdateProfile"><code class="name flex">
 <span>def <span class="ident">UpdateProfile</span></span>(<span>self, first_name, last_name)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.genTransId"><code class="name flex">
-<span>def <span class="ident">genTransId</span></span>(<span>self, trans_type=&#39;web&#39;)</span>
+<span>def <span class="ident">genTransId</span></span>(<span>self, trans_type='web')</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.interrupt_handler"><code class="name flex">
 <span>def <span class="ident">interrupt_handler</span></span>(<span>self, signum, frame)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.to_timestamp"><code class="name flex">
 <span>def <span class="ident">to_timestamp</span></span>(<span>self, dt)</span>
 </code></dt>
 <dd>
-<section class="desc"></section>
+<div class="desc"></div>
 </dd>
 </dl>
 </dd>
@@ -1550,7 +1527,7 @@ Use TriggerFullFrameSnapshot() instead.</p>
 <ul>
 <li>
 <h4><code><a title="arlo.Arlo" href="#arlo.Arlo">Arlo</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="arlo.Arlo.AddFriend" href="#arlo.Arlo.AddFriend">AddFriend</a></code></li>
 <li><code><a title="arlo.Arlo.AdjustBrightness" href="#arlo.Arlo.AdjustBrightness">AdjustBrightness</a></code></li>
 <li><code><a title="arlo.Arlo.AlertNotificationMethods" href="#arlo.Arlo.AlertNotificationMethods">AlertNotificationMethods</a></code></li>
@@ -1679,7 +1656,6 @@ Use TriggerFullFrameSnapshot() instead.</p>
 <li><code><a title="arlo.Arlo.UpdateFriend" href="#arlo.Arlo.UpdateFriend">UpdateFriend</a></code></li>
 <li><code><a title="arlo.Arlo.UpdatePassword" href="#arlo.Arlo.UpdatePassword">UpdatePassword</a></code></li>
 <li><code><a title="arlo.Arlo.UpdateProfile" href="#arlo.Arlo.UpdateProfile">UpdateProfile</a></code></li>
-<li><code><a title="arlo.Arlo.__init__" href="#arlo.Arlo.__init__">__init__</a></code></li>
 <li><code><a title="arlo.Arlo.genTransId" href="#arlo.Arlo.genTransId">genTransId</a></code></li>
 <li><code><a title="arlo.Arlo.interrupt_handler" href="#arlo.Arlo.interrupt_handler">interrupt_handler</a></code></li>
 <li><code><a title="arlo.Arlo.to_timestamp" href="#arlo.Arlo.to_timestamp">to_timestamp</a></code></li>
@@ -1691,7 +1667,7 @@ Use TriggerFullFrameSnapshot() instead.</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.5.1</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.1</a>.</p>
 </footer>
 </body>
 </html>

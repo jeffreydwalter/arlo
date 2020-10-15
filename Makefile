@@ -15,7 +15,8 @@ doc:
 	#pydoc -w ../arlo/arlo.py
 	#mv arlo.html arlo_api_doc.md
 	#git add arlo_api_doc.md
-	pdoc --overwrite --html --html-no-source --html-dir docs arlo.py
+	#pdoc --overwrite --html --html-no-source --html-dir docs arlo.py
+	pdoc -f --html -c show_source_code=False --output-dir docs arlo.py
 	sed -i'.bak' 's/#sidebar{width:30%}#content{width:70%;/#sidebar{width:45%}#content{width:55%;/g' docs/arlo.html
 	rm docs/arlo.html.bak
 	python dev/html2text.py docs/arlo.html > docs/README.md

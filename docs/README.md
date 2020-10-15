@@ -1,4 +1,4 @@
-# `arlo` module
+# Module `arlo`
 
 Copyright 2016 Jeffrey D. Walter
 
@@ -6,7 +6,7 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this file except in compliance with the License. You may obtain a copy of
 the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+<http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS ISBASIS, WITHOUT
@@ -16,7 +16,7 @@ the License.
 
 ## Classes
 
-` class Arlo `
+` class Arlo (username, password) `
 
     
 
@@ -27,12 +27,6 @@ the License.
     
 
 ### Methods
-
-` def __init__(self, username, password) `
-
-    
-
-Initialize self. See help(type(self)) for accurate signature.
 
 ` def AddFriend(self, firstname, lastname, email, devices={}, admin=False) `
 
@@ -61,11 +55,12 @@ email=False, push=False) `
 
     
 
-**`action`** : `disabled` `OR` `recordSnapshot` `OR` `recordVideo`
-     
+action : disabled OR recordSnapshot OR recordVideo
+
 ` def Arm(self, device) `
 
     
+
 ` def BatchDeleteRecordings(self, recordings) `
 
     
@@ -116,26 +111,24 @@ call.
 ` def Disarm(self, device) `
 
     
+
 ` def DownloadRecording(self, url, to) `
 
     
 
 Writes a video to a given local file path.
 
-**`url`** : `presignedContentUrl`
-     
-**`to`** : `path` `where` `the` `file` `should` `be` `written`
-     
+url: presignedContentUrl to: path where the file should be written
+
 ` def DownloadSnapshot(self, url, to, chunk_size=4096) `
 
     
 
 Writes a snapshot to a given local file path.
 
-**`url`** : `presignedContentUrl` or `presignedFullFrameSnapshotUrl`
-     
-**`to`** : `path` `where` `the` `file` `should` `be` `written`
-     
+url: presignedContentUrl or presignedFullFrameSnapshotUrl to: path where the
+file should be written
+
 ` def Geofencing(self, location_id, active=True) `
 
     
@@ -149,24 +142,31 @@ calendar mode to inactive.
 ` def GetAudioPlayback(self, basestation) `
 
     
+
 ` def GetAutomationActivityZones(self, camera) `
 
     
+
 ` def GetAutomationDefinitions(self) `
 
     
+
 ` def GetBaseStationState(self, basestation) `
 
     
+
 ` def GetCalendar(self, basestation) `
 
     
+
 ` def GetCameraState(self, basestation) `
 
     
+
 ` def GetCameraTempReading(self, basestation) `
 
     
+
 ` def GetCvrPlaylist(self, camera, fromDate, toDate) `
 
     
@@ -176,9 +176,11 @@ This function downloads a Cvr Playlist file for the period fromDate to toDate.
 ` def GetDevice(self, device_name) `
 
     
+
 ` def GetDeviceCapabilities(self, device) `
 
     
+
 ` def GetDeviceSupport(self) `
 
     
@@ -401,9 +403,11 @@ default both types are returned.
 ` def GetEmergencyLocations(self) `
 
     
+
 ` def GetFriends(self) `
 
     
+
 ` def GetLibrary(self, from_date, to_date) `
 
     
@@ -430,6 +434,7 @@ XXXXXXXX", "reason": "motionRecord", "deviceId": "XXXXXXXXXXXXX", "createdBy":
 ` def GetLibraryMetaData(self, from_date, to_date) `
 
     
+
 ` def GetLocations(self) `
 
     
@@ -463,9 +468,11 @@ Schedules":[]}]} Set a schedule to be active: {"activeAutomations":[{"deviceId
 ` def GetOCProfile(self) `
 
     
+
 ` def GetPaymentBilling(self) `
 
     
+
 ` def GetPaymentOffers(self) `
 
     
@@ -490,9 +497,11 @@ UI anymore.
 ` def GetPaymentOffersV4(self) `
 
     
+
 ` def GetProfile(self) `
 
     
+
 ` def GetRecording(self, url, chunk_size=4096) `
 
     
@@ -502,15 +511,19 @@ Returns the whole video from the presignedContentUrl.
 ` def GetRules(self, basestation) `
 
     
+
 ` def GetSensorConfig(self, basestation) `
 
     
+
 ` def GetServiceLevel(self) `
 
     
+
 ` def GetServiceLevelSettings(self) `
 
     
+
 ` def GetServiceLevelV2(self) `
 
     
@@ -528,6 +541,7 @@ UI anymore.
 ` def GetServiceLevelV4(self) `
 
     
+
 ` def GetSession(self) `
 
     
@@ -542,12 +556,15 @@ true, "arlo": true, "dateCreated": 1463975008658 }
 ` def GetSmartAlerts(self, camera) `
 
     
+
 ` def GetSmartFeatures(self) `
 
     
+
 ` def GetUpdateFeatures(self) `
 
     
+
 ` def HandleEvents(self, basestation, callback, timeout=120) `
 
     
@@ -573,6 +590,7 @@ Wnt9F7D82uN1f4cXXXXX-FMUsWF_6tMBqwn6DpzOaIB7ciJrnr2QJyKewbQouGM6",
 ` def Logout(self) `
 
     
+
 ` def Notify(self, basestation, body) `
 
     
@@ -584,11 +602,9 @@ the Notify() call to interact with Arlo:
 
 ######
 
-**`NOTE`** : `While` `you` `can` `call` `Notify`() `directly`, `responses` `from` `these` `notify` `calls` `are` `sent` `to` `the` `EventStream` (`see` `Subscribe`()),
-     
-
-and so it's better to use the Get/Set methods that are implemented using the
-NotifyAndGetResponse() method.
+NOTE: While you can call Notify() directly, responses from these notify calls
+are sent to the EventStream (see Subscribe()), and so it's better to use the
+Get/Set methods that are implemented using the NotifyAndGetResponse() method.
 
 ######
 
@@ -655,12 +671,15 @@ Best Video, 2 = Optimized, 1 = Best Battery Life) motionSetupModeEnabled
 ` def NotifyAndGetResponse(self, basestation, body, timeout=120) `
 
     
+
 ` def PauseTrack(self, basestation) `
 
     
+
 ` def Ping(self, basestation) `
 
     
+
 ` def PlayTrack(self, basestation,
 track_id='2391d620-e491-4412-99f6-e9a40d6046ed', position=0) `
 
@@ -672,6 +691,7 @@ the same for all.
 ` def PushToTalk(self, camera) `
 
     
+
 ` def RemoveFriend(self, email) `
 
     
@@ -686,40 +706,52 @@ email: email of user you want to revoke access from.
 
 This API will resend an invitation email to a user that you've AddFriend'd.
 You will need to get the friend object by calling GetFriend() because it
-includes a token that must be passed to this API.
+includes a token that must be passed to this API. friend: {"ownerId":"XXX-
+XXXXXXX","token":"really long string that you get from the GetFriends()
+API","firstName":"John","lastName":"Doe","devices":{"XXX-
+XXXXXXX_XXXXXXXXXXXX":"Camera1","XXX-XXXXXXX_XXXXXXXXXXXX":"Camera2"},"lastMod
+ified":1548470485419,"adminUser":false,"email":"john.doe@example.com"}
 
-**`friend`** : {`"ownerId"`:`"XXX`-`XXXXXXX"`,`"token"`:`"really` `long` `string` `that` `you` `get` `from` `the` `GetFriends`() `API"`,`"firstName"`:`"John"`,`"lastName"`:`"Doe"`,`"devices"`:{`"XXX`-`XXXXXXX_XXXXXXXXXXXX"`:`"Camera1"`,`"XXX`-`XXXXXXX_XXXXXXXXXXXX"`:`"Camera2"`},`"lastModified"`:`1548470485419`,`"adminUser"`:`false`,`"email"`:`"john.doe`@`example.com"`}
-     
 ` def Reset(self) `
 
     
+
 ` def RestartBasestation(self, basestation) `
 
     
+
 ` def SetAirQualityAlertOff(self, basestation) `
 
     
+
 ` def SetAirQualityAlertOn(self, basestation) `
 
     
+
 ` def SetAirQualityAlertThresholdMax(self, basestation, number=700) `
 
     
+
 ` def SetAirQualityAlertThresholdMin(self, basestation, number=400) `
 
     
+
 ` def SetAirQualityRecordingOff(self, basestation) `
 
     
+
 ` def SetAirQualityRecordingOn(self, basestation) `
 
     
+
 ` def SetAudioAlertsOff(self, basestation, sensitivity=3) `
 
     
+
 ` def SetAudioAlertsOn(self, basestation, sensitivity=3) `
 
     
+
 ` def SetAutomationActivityZones(self, camera, zone, coords, color) `
 
     
@@ -735,39 +767,51 @@ activity zone. color: 45136 - the color for your bounding box.
 ` def SetHumidityAlertOff(self, basestation) `
 
     
+
 ` def SetHumidityAlertOn(self, basestation) `
 
     
+
 ` def SetHumidityAlertThresholdMax(self, basestation, number=800) `
 
     
+
 ` def SetHumidityAlertThresholdMin(self, basestation, number=400) `
 
     
+
 ` def SetHumidityRecordingOff(self, basestation) `
 
     
+
 ` def SetHumidityRecordingOn(self, basestation) `
 
     
+
 ` def SetLoopBackModeContinuous(self, basestation) `
 
     
+
 ` def SetLoopBackModeSingleTrack(self, basestation) `
 
     
+
 ` def SetMotionAlertsOff(self, basestation, sensitivity=5) `
 
     
+
 ` def SetMotionAlertsOn(self, basestation, sensitivity=5) `
 
     
+
 ` def SetNightLightBrightness(self, basestation, level=200) `
 
     
+
 ` def SetNightLightColor(self, basestation, red=255, green=255, blue=255) `
 
     
+
 ` def SetNightLightMode(self, basestation, mode='rainbow') `
 
     
@@ -777,19 +821,24 @@ mode: rainbow or rgb.
 ` def SetNightLightOff(self, basestation) `
 
     
+
 ` def SetNightLightOn(self, basestation) `
 
     
+
 ` def SetNightLightTimerOff(self, basestation, time=0, timediff=300) `
 
     
-` def SetNightLightTimerOn(self, basestation, time=1585592475, timediff=0) `
+
+` def SetNightLightTimerOn(self, basestation, time=1602803448, timediff=0) `
 
     
+
 ` def SetOCProfile(self, firstName, lastName, country='United States',
 language='en', spam_me=0) `
 
     
+
 ` def SetSchedule(self, basestation, schedule) `
 
     
@@ -815,48 +864,63 @@ watch the schema that gets sent.
 ` def SetShuffleOff(self, basestation) `
 
     
+
 ` def SetShuffleOn(self, basestation) `
 
     
+
 ` def SetSleepTimerOff(self, basestation, time=0, timediff=300) `
 
     
-` def SetSleepTimerOn(self, basestation, time=1585592475, timediff=0) `
+
+` def SetSleepTimerOn(self, basestation, time=1602803448, timediff=0) `
 
     
+
 ` def SetTempAlertOff(self, basestation) `
 
     
+
 ` def SetTempAlertOn(self, basestation) `
 
     
+
 ` def SetTempAlertThresholdMax(self, basestation, number=240) `
 
     
+
 ` def SetTempAlertThresholdMin(self, basestation, number=200) `
 
     
+
 ` def SetTempRecordingOff(self, basestation) `
 
     
+
 ` def SetTempRecordingOn(self, basestation) `
 
     
+
 ` def SetTempUnit(self, uniqueId, unit='C') `
 
     
+
 ` def SetVolume(self, basestation, mute=False, volume=50) `
 
     
+
 ` def SirenOff(self, basestation) `
 
     
+
 ` def SirenOn(self, basestation) `
 
     
+
 ` def SkipTrack(self, basestation) `
 
     
+
 ` def StartRecording(self, basestation, camera) `
 
     
@@ -884,6 +948,7 @@ from GetDevices().
 ` def StopStream(self, basestation, camera) `
 
     
+
 ` def StreamRecording(self, url, chunk_size=4096) `
 
     
@@ -891,8 +956,8 @@ from GetDevices().
 Returns a generator that is the chunked video stream from the
 presignedContentUrl.
 
-**`url`** : `presignedContentUrl`
-     
+url: presignedContentUrl
+
 ` def Subscribe(self, basestation) `
 
     
@@ -974,7 +1039,8 @@ NOTE: Use DownloadSnapshot() to download the actual image file.
 ` def UnPauseTrack(self, basestation) `
 
     
-` def Unsubscribe(self, basestation) `
+
+` def Unsubscribe(self) `
 
     
 
@@ -984,6 +1050,7 @@ event_stream collection.
 ` def UpdateDeviceName(self, device, name) `
 
     
+
 ` def UpdateDisplayOrder(self, body) `
 
     
@@ -1008,15 +1075,19 @@ This is an example of the json you would pass in the body: {
 ` def UpdatePassword(self, password) `
 
     
+
 ` def UpdateProfile(self, first_name, last_name) `
 
     
+
 ` def genTransId(self, trans_type='web') `
 
     
+
 ` def interrupt_handler(self, signum, frame) `
 
     
+
 ` def to_timestamp(self, dt) `
 
     
@@ -1155,10 +1226,9 @@ This is an example of the json you would pass in the body: {
       * `UpdateFriend`
       * `UpdatePassword`
       * `UpdateProfile`
-      * `__init__`
       * `genTransId`
       * `interrupt_handler`
       * `to_timestamp`
 
-Generated by [pdoc 0.5.1](https://pdoc3.github.io/pdoc).
+Generated by [pdoc 0.9.1](https://pdoc3.github.io/pdoc).
 
