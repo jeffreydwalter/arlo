@@ -53,7 +53,7 @@ class Arlo(object):
         except:
             pass
 
-        self.event_streams = {}
+        self.event_stream = None
         self.request = None
 
         self.Login(username, password)
@@ -146,9 +146,7 @@ class Arlo(object):
         return body
 
     def Logout(self):
-        event_streams = self.event_streams.copy()
-        for basestation_id in event_streams.keys():
-            self.Unsubscribe(basestation_id)
+        self.Unsubscribe()
         return self.request.put('https://my.arlo.com/hmsweb/logout')
 
     def Subscribe(self, basestation):
@@ -170,13 +168,13 @@ class Arlo(object):
         basestation_id = basestation.get('deviceId')
 
         def Register(self):
-            if basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
+            if self.event_stream and self.event_stream.connected and not self.event_stream.registered:
                 self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
-                event = self.event_streams[basestation_id].Get()
-                if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
+                event = self.event_stream.Get()
+                if event is None or self.event_stream.event_stream_stop_event.is_set():
                     return None
                 elif event:
-                    self.event_streams[basestation_id].Register()
+                    self.event_stream.Register()
                 return event
 
         def QueueEvents(self, event_stream, stop_event):
@@ -185,15 +183,14 @@ class Arlo(object):
                     return None
 
                 response = json.loads(event.data)
-                if basestation_id in self.event_streams:
-                    if self.event_streams[basestation_id].connected:
-                        if response.get('action') == 'logout':
-                            self.event_streams[basestation_id].Disconnect()
-                            return None
-                        else:
-                            self.event_streams[basestation_id].queue.put(response)
-                    elif response.get('status') == 'connected':
-                        self.event_streams[basestation_id].Connect()
+                if self.event_stream and self.event_stream.connected:
+                    if response.get('action') == 'logout':
+                        self.event_stream.Disconnect()
+                        return None
+                    else:
+                        self.event_stream.queue.put(response)
+                elif response.get('status') == 'connected':
+                    self.event_stream.Connect()
 
         def Heartbeat(self, stop_event):
             while not stop_event.wait(30.0):
@@ -202,27 +199,22 @@ class Arlo(object):
                 except:
                     pass
 
-        if basestation_id not in self.event_streams or not self.event_streams[basestation_id].connected:
-            self.event_streams[basestation_id] = EventStream(QueueEvents, Heartbeat, args=(self, ))
-            self.event_streams[basestation_id].Start()
-            while not self.event_streams[basestation_id].connected and not self.event_streams[basestation_id].event_stream_stop_event.is_set():
+        if not self.event_stream or not self.event_stream.connected:
+            self.event_stream = EventStream(QueueEvents, Heartbeat, args=(self, ))
+            self.event_stream.Start()
+            while not self.event_stream.connected and not self.event_stream.event_stream_stop_event.is_set():
                 time.sleep(0.5)
 
-        if not self.event_streams[basestation_id].registered:
+        if not self.event_stream.registered:
             Register(self)
 
-    def Unsubscribe(self, basestation):
+    def Unsubscribe(self):
         """ This method stops the EventStream subscription and removes it from the event_stream collection. """
-        if isinstance(basestation, (text_type, string_types)):
-            basestation_id = basestation
-        else:
-            basestation_id = basestation.get('deviceId')
-        if basestation_id in self.event_streams:
-            if self.event_streams[basestation_id].connected:
-                self.request.get('https://my.arlo.com/hmsweb/client/unsubscribe')
-                self.event_streams[basestation_id].Disconnect()
+        if self.event_stream and self.event_stream.connected:
+            self.request.get('https://my.arlo.com/hmsweb/client/unsubscribe')
+            self.event_stream.Disconnect()
 
-            del self.event_streams[basestation_id]
+        self.event_stream = None
 
     def Notify(self, basestation, body):
         """
@@ -278,21 +270,21 @@ class Arlo(object):
 
         self.Subscribe(basestation)
 
-        if basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
+        if self.event_stream and self.event_stream.connected and self.event_stream.registered:
             transId = self.Notify(basestation, body)
 
-            event = self.event_streams[basestation_id].Get(timeout=timeout)
-            if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
+            event = self.event_stream.Get(timeout=timeout)
+            if event is None or self.event_stream.event_stream_stop_event.is_set():
                 return None
 
-            while basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
+            while self.event_stream.connected and self.event_stream.registered:
                 tid = event.get('transId', '')
                 if tid != transId:
                     if tid.startswith(self.TRANSID_PREFIX):
-                        self.event_streams[basestation_id].queue.put(event)
+                        self.event_stream.queue.put(event)
 
-                    event = self.event_streams[basestation_id].Get(timeout=timeout)
-                    if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
+                    event = self.event_stream.Get(timeout=timeout)
+                    if event is None or self.event_stream.event_stream_stop_event.is_set():
                         return None
                 else: break
 
@@ -329,17 +321,17 @@ class Arlo(object):
         basestation_id = basestation.get('deviceId')
 
         self.Subscribe(basestation)
-        if basestation_id in self.event_streams and self.event_streams[basestation_id].connected and self.event_streams[basestation_id].registered:
-            while basestation_id in self.event_streams and self.event_streams[basestation_id].connected:
-                event = self.event_streams[basestation_id].Get(timeout=timeout)
-                if event is None or self.event_streams[basestation_id].event_stream_stop_event.is_set():
+        if self.event_stream and self.event_stream.connected and self.event_stream.registered:
+            while self.event_stream.connected:
+                event = self.event_stream.Get(timeout=timeout)
+                if event is None or self.event_stream.event_stream_stop_event.is_set():
                     return None
 
                 # If this event has is of resource type "subscriptions", then it's a ping reply event.
                 # For now, these types of events will be requeued, since they are generated in response to and expected as a reply by the Ping() method.
                 # HACK: Take a quick nap here to give the Ping() method's thread a chance to get the queued event.
                 if event.get('resource', '').startswith('subscriptions'):
-                    self.event_streams[basestation_id].queue.put(event)
+                    self.event_stream.queue.put(event)
                     time.sleep(0.05)
                 else:
                     response = callback(self, event)
