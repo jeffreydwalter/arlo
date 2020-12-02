@@ -24,6 +24,17 @@ class Request(object):
         self.session = requests.Session()
 
     def _request(self, url, method='GET', params={}, headers={}, stream=False, raw=False):
+
+        ## uncomment for debug logging
+        # import logging
+        # import http.client
+        # http.client.HTTPConnection.debuglevel = 1
+        # logging.basicConfig()
+        # logging.getLogger().setLevel(logging.DEBUG)
+        # req_log = logging.getLogger('requests.packages.urllib3')
+        # req_log.setLevel(logging.DEBUG)
+        # req_log.propagate = True
+
         if method == 'GET':
             r = self.session.get(url, params=params, headers=headers, stream=stream)
             if stream is True:
@@ -46,10 +57,10 @@ class Request(object):
                 raise HTTPError('Request ({0} {1}) failed: {2}'.format(method, url, r.json()), response=r)
 
     def get(self, url, params={}, headers={}, stream=False, raw=False):
-        return self._request(url, 'GET', params, headers, stream, raw)
+        return self._request(url, 'GET', params=params, headers=headers, stream=stream, raw=raw)
 
     def put(self, url, params={}, headers={}, raw=False):
-        return self._request(url, 'PUT', params, headers, raw)
+        return self._request(url, 'PUT', params=params, headers=headers, raw=raw)
 
     def post(self, url, params={}, headers={}, raw=False):
-        return self._request(url, 'POST', params, headers, raw)
+        return self._request(url, 'POST', params=params, headers=headers, raw=raw)

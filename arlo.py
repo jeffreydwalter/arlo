@@ -18,6 +18,7 @@ limitations under the License.
 # 17 Jul 2017, Andreas Jakl: Port to Python 3 (https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/)
 
 # Import helper classes that are part of this library.
+from requests.api import request
 from request import Request
 from eventstream import EventStream
 
@@ -25,16 +26,23 @@ from eventstream import EventStream
 from six import string_types, text_type
 from datetime import datetime
 
+import base64
 import calendar
 import json
 #import logging
 import math
 import os
+import pickle
 import random
+import re
 import requests
 import signal
 import time
 import sys
+
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+
 
 if sys.version[0] == '2':
     import Queue as queue
@@ -45,7 +53,7 @@ else:
 
 class Arlo(object):
     TRANSID_PREFIX = 'web'
-    def __init__(self, username, password):
+    def __init__(self, username, password, google_credential_file=None):
 
         # signals only work in main thread
         try:
@@ -56,7 +64,10 @@ class Arlo(object):
         self.event_stream = None
         self.request = None
 
-        self.Login(username, password)
+        if google_credential_file:
+          self.LoginMFA(username, password, google_credential_file)
+        else:
+          self.Login(username, password)
 
     def interrupt_handler(self, signum, frame):
         print("Caught Ctrl-C, exiting.")
@@ -126,7 +137,7 @@ class Arlo(object):
         self.password = password
 
         self.request = Request()
-        
+
         headers = {
             'DNT': '1',
             'schemaVersion': '1',
@@ -139,11 +150,105 @@ class Arlo(object):
         body = self.request.post('https://my.arlo.com/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
 
         headers['Authorization'] = body['token']
-      
+
         self.request.session.headers.update(headers)
 
         self.user_id = body['userId']
         return body
+
+    def LoginMFA(self, username, password, google_credential_file):
+      BASE_URL = 'https://ocapi-app.arlo.com'
+      self.username = username
+      self.password = password
+      self.google_credentials = pickle.load(open(google_credential_file, 'rb'))
+      self.request = Request()
+
+      # request MFA token
+      request_start_time = int(time.time())
+
+      headers = {
+        'Accept': 'application/json, text/plain, */*',
+        'Origin': 'https://my.arlo.com',
+        'Host': 'ocapi-app.arlo.com',
+        'Referer': 'https://my.arlo.com/',
+        'source': 'arloCamWeb',
+        'TE': 'Trailers',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:83.0) Gecko/20100101 Firefox/83.0'
+      }
+
+      # Authenticate
+      auth_body = self.request.post(
+        f'{BASE_URL}/api/auth',
+        {
+          'email': self.username,
+          'password': str(base64.b64encode(self.password.encode('utf-8')), 'utf-8'),
+          'language': 'en',
+          'EnvSource': 'prod'
+        },
+        headers=headers,
+        raw=True
+      )
+      self.userId = auth_body['data']['userId']
+      self.request.session.headers.update({'Authorization': base64.b64encode(auth_body['data']['token'].encode('utf-8'))})
+
+      # Retrieve email factor id
+      factors_body = self.request.get(
+        f"{BASE_URL}/api/getFactors",
+        params={'data': auth_body['data']['issued']},
+        headers=headers,
+        raw=True
+      )
+      email_factor_id = next(i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL')['factorId']
+
+      # Start factor auth
+      start_auth_body = self.request.post(
+        f'{BASE_URL}/api/startAuth',
+        {'factorId': email_factor_id},
+        headers=headers,
+        raw=True
+      )
+      factor_auth_code = start_auth_body['data']['factorAuthCode']
+
+      # search for MFA token in latest emails
+      pattern = '\d{6}'
+      code = None
+      service = build('gmail', 'v1', credentials = self.google_credentials)
+
+      for i in range(0, 10):
+        time.sleep(5)
+        messages = service.users().messages().list(
+          userId='me',
+          q=f'Arlo one-time authentication code after:{request_start_time}'
+        ).execute()
+
+        if messages['resultSizeEstimate'] == 0:
+          print('no matching emails found')
+          continue
+
+        # only check the latest message
+        message = service.users().messages().get(userId='me', id=messages['messages'][0]['id']).execute()
+        search = re.search(pattern, message['snippet'])
+        if not search:
+          print('no matching code in email found')
+          continue
+
+        code = search.group(0)
+        break
+
+      # Complete auth
+      finish_auth_body = self.request.post(
+        f'{BASE_URL}/api/finishAuth',
+        {
+          'factorAuthCode': factor_auth_code,
+          'otp': code
+        },
+        headers=headers,
+        raw=True
+      )
+
+      # Update Authorization code with new code
+      self.request.session.headers.update({'Authorization': base64.b64encode(finish_auth_body['data']['token'].encode('utf-8'))})
+
 
     def Logout(self):
         self.Unsubscribe()
@@ -595,7 +700,7 @@ class Arlo(object):
 
     def UnPauseTrack(self, basestation):
         return self.Notify(basestation, {"action":"play","resource":"audioPlayback/player"})
-   
+
     def SkipTrack(self, basestation):
         return self.Notify(basestation, {"action":"nextTrack","resource":"audioPlayback/player"})
 
@@ -834,7 +939,7 @@ class Arlo(object):
         """
         This method returns an array that contains the basestation, cameras, etc. and their metadata.
         If you pass in a valid device type, as a string or a list, this method will return an array of just those devices that match that type. An example would be ['basestation', 'camera']
-        To filter provisioned or unprovisioned devices pass in a True/False value for filter_provisioned. By default both types are returned. 
+        To filter provisioned or unprovisioned devices pass in a True/False value for filter_provisioned. By default both types are returned.
         """
         devices = self.request.get('https://my.arlo.com/hmsweb/users/devices')
         if device_type:
@@ -845,7 +950,7 @@ class Arlo(object):
                 devices = [ device for device in devices if device.get("state") == 'provisioned']
             else:
                 devices = [ device for device in devices if device.get("state") != 'provisioned']
-                
+
         return devices
 
     def GetDeviceSupport(self):
