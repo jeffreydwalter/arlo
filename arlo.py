@@ -587,7 +587,9 @@ class Arlo(object):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"audioPlayback","publishResponse":False})
 
     def PlayTrack(self, basestation, track_id="2391d620-e491-4412-99f6-e9a40d6046ed", position=0):
-        """ Defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all. """
+        """
+        Defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all
+        """
         return self.Notify(basestation, {"action":"playTrack","resource":"audioPlayback/player","properties":{"trackId":track_id,"position":position}})
 
     def PauseTrack(self, basestation):
@@ -761,7 +763,74 @@ class Arlo(object):
         return self.request.get('https://my.arlo.com/hmsweb/users/ocprofile')
 
     def GetProfile(self):
+        """
+        This call returns the following:
+        {
+          "data": {
+              "_type": "User",
+              "firstName": "Joe",
+              "lastName": "Bloggs",
+              "language": "en",
+              "country": "GB",
+              "acceptedPolicy": 1,
+              "currentPolicy": 1,
+              "validEmail": true
+          },
+          "success": true
+        }
+        """
         return self.request.get('https://my.arlo.com/hmsweb/users/profile')
+
+    def GetAccount(self):
+        """
+        This call returns the following:
+        {
+          "data": {
+            "userId": "XXX-XXXXXXX",
+            "email": "joe.bloggs@gmail.com",
+            "dateCreated": 1585157000819,
+            "dateDeviceRegistered": 1585161139527,
+            "countryCode": "GB",
+            "language": "en-gb",
+            "firstName": "Joe",
+            "lastName": "Bloggs",
+            "s3StorageId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            "tosVersion": "5",
+            "tosAgreeDate": 1593126066795,
+            "tosShownVersion": "5",
+            "lastModified": 1585161137898,
+            "accountStatus": "registered",
+            "paymentId": "xxxxxxxx",
+            "serialNumber": "xxxxxxxxxxxxx",
+            "mobilePushData": {
+                "mobilePushOsMap": {
+                    "android": [
+                        {
+                            "token": "xxxxxxxxxxxxxxxxxxx",
+                            "endpoint": "arn:aws:sns:eu-west-1:xxxxxxxxxxxx:endpoint/GCM/Arlo_Android_Prod/xxxxxxxxxxxxxxxxxxxxxx",
+                            "createdDate": "20201310_0622",
+                            "iosDebugModeFlag": false
+                        },
+                        {
+                            "token": "xxxxxxxxxxxxxxxxxxxx",
+                            "endpoint": "arn:aws:sns:eu-west-1:xxxxxxxxxxxx:endpoint/GCM/Arlo_Android_Prod/xxxxxxxxxxxxxxxxxxxxxxx",
+                            "createdDate": "20210801_0335",
+                            "iosDebugModeFlag": false
+                        }
+                    ]
+                }
+            },
+            "recycleBinQuota": 0,
+            "favoriteQuota": 0,
+            "validEmail": true,
+            "locationCreated": false,
+            "readyToClose": false,
+            "lastMessageTimeToBS": 1608375685602
+          },
+          "success": true
+        }
+        """
+        return self.request.get('https://my.arlo.com/hmsweb/users/account')
 
     def GetSession(self):
         """
