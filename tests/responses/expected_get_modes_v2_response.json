@@ -1,0 +1,16 @@
+{
+    "success": true,
+    "data": [
+        {
+            "type": "activeAutomations",
+            "schemaVersion": 1,
+            "activeModes": [],
+            "activeSchedules": [
+                "schedule.1"
+            ],
+            "timestamp": 1602513328215,
+            "uniqueId": "XXXXXXXX-XXX-XXXXXXXXXXXXXXXXXXXXXX",
+            "gatewayId": "XXXXXXXXXXXXX"
+        }
+    ]
+}

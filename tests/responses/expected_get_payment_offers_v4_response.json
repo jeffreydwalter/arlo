@@ -1,0 +1,180 @@
+{
+    "data": [
+        {
+            "isBusinessPlan": true,
+            "defaultPlan": false,
+            "currencySymbol": "£",
+            "amount": 18.99,
+            "planDurationMonths": 1,
+            "planId": "12345678",
+            "planName": "Professional",
+            "planType": "SERVICE",
+            "groupName": "Professional",
+            "groupNumber": 0,
+            "legalEntityName": "Arlo Technologies International Limited",
+            "country": "UK",
+            "countryCode": "GB",
+            "languageCode": "en",
+            "validateVatLocally": false,
+            "isTrialPlan": false,
+            "trialDurationDays": 0,
+            "e911": false,
+            "cloudActivityZones": false,
+            "callAFriend": false,
+            "noCamsSupported": 24,
+            "maxStorageDays": 30,
+            "perDeviceLevel": false,
+            "isPrepaidPlan": false,
+            "isPaidPlanPromotionAllowed": true,
+            "animalDetectionCameras": 0,
+            "vehicleDetectionCameras": 0,
+            "personDetectionCameras": 0,
+            "packageDetectionCameras": 0,
+            "licensePlateDetectionCameras": 0,
+            "glassBreakDetectionCameras": 0,
+            "smokeCOAlarmDetectionCameras": 0,
+            "faceRecognitionCameras": 0,
+            "isRecommended": false,
+            "addonsAvailableToBeAdded": [
+                {
+                    "addonId": "10163453",
+                    "addonName": "Arlo Smart",
+                    "planType": "ANALYTICS",
+                    "amount": 1.99,
+                    "cvrEnabled": false,
+                    "cvrAccessDays": 0,
+                    "mvnoDeviceEnabled": false,
+                    "mvnoPlanCapacityMB": 0,
+                    "mvnoPlanMinutes": 0,
+                    "addOnTrial": false,
+                    "planDurationMonths": 1,
+                    "tieredAmount": 0.0,
+                    "cloudActivityZones": true,
+                    "callAFriend": true,
+                    "isPaidPlanPromotionAllowed": true,
+                    "animalDetectionCameras": -1,
+                    "vehicleDetectionCameras": -1,
+                    "personDetectionCameras": -1,
+                    "packageDetectionCameras": 1,
+                    "licensePlateDetectionCameras": 0,
+                    "glassBreakDetectionCameras": 0,
+                    "smokeCOAlarmDetectionCameras": -1,
+                    "faceRecognitionCameras": 0,
+                    "isRecommended": false,
+                    "groupName": "Analytics",
+                    "modelCapabilities": [
+                        {
+                            "VMC4040P": {
+                                "alertLowBattery": true,
+                                "cloudActivityZones": true,
+                                "cloudLiveStreaming": true,
+                                "cloudLiveStreamingResolution": {
+                                    "VMB4540": "1080p"
+                                },
+                                "dailySummary": false,
+                                "emailNotificationAddressCount": -1,
+                                "eventReporting": true,
+                                "lastImageUpload": false,
+                                "libraryAccessDays": 30,
+                                "localLiveStreaming": true,
+                                "localLiveStreamingResolution": {
+                                    "VMB4540": "2K"
+                                },
+                                "eventRecording": true,
+                                "eventRecordingResolution": {
+                                    "VMB4540": "1080p"
+                                },
+                                "partnerAccess": true,
+                                "pushNotificationClientCount": -1,
+                                "localRecording": true,
+                                "localRecordingResolution": {
+                                    "VMB4540": "2K"
+                                },
+                                "shareCamera": true,
+                                "sirenPlayback": true,
+                                "storageAutoDelete": true,
+                                "twoWayAudio": false,
+                                "voicemail": false,
+                                "maxLiveStreamSecs": 300,
+                                "maxManualRecordingSecs": 300,
+                                "animalDetection": true,
+                                "vehicleDetection": true,
+                                "personDetection": true,
+                                "packageDetection": true,
+                                "licensePlateDetection": false,
+                                "glassBreakDetection": false,
+                                "smokeCOAlarmDetection": true,
+                                "faceRecognition": false,
+                                "lastModified": 0,
+                                "cvrResolution": {}
+                            }
+                        }
+                    ],
+                    "isBusinessPlan": false,
+                    "defaultPlan": false,
+                    "country": "UK",
+                    "countryCode": "GB",
+                    "isTrialPlan": false,
+                    "trialDurationDays": 0,
+                    "e911": false,
+                    "noCamsSupported": 1,
+                    "perDeviceLevel": true,
+                    "isPrepaidPlan": false,
+                    "libraryAccessDays": 30,
+                    "legacyPlan": true
+                }
+            ],
+            "modelCapabilities": [
+                {
+                    "VMC4040P": {
+                        "alertLowBattery": true,
+                        "cloudActivityZones": false,
+                        "cloudLiveStreaming": true,
+                        "cloudLiveStreamingResolution": {
+                            "VMB4540": "1080p"
+                        },
+                        "dailySummary": false,
+                        "emailNotificationAddressCount": -1,
+                        "eventReporting": true,
+                        "lastImageUpload": false,
+                        "libraryAccessDays": 30,
+                        "localLiveStreaming": true,
+                        "localLiveStreamingResolution": {
+                            "VMB4540": "2K"
+                        },
+                        "eventRecording": true,
+                        "eventRecordingResolution": {
+                            "VMB4540": "1080p"
+                        },
+                        "partnerAccess": true,
+                        "pushNotificationClientCount": -1,
+                        "localRecording": true,
+                        "localRecordingResolution": {
+                            "VMB4540": "2K"
+                        },
+                        "shareCamera": true,
+                        "sirenPlayback": true,
+                        "storageAutoDelete": true,
+                        "twoWayAudio": false,
+                        "voicemail": false,
+                        "maxLiveStreamSecs": 300,
+                        "maxManualRecordingSecs": 300,
+                        "animalDetection": false,
+                        "vehicleDetection": false,
+                        "personDetection": false,
+                        "packageDetection": false,
+                        "licensePlateDetection": false,
+                        "glassBreakDetection": false,
+                        "smokeCOAlarmDetection": false,
+                        "faceRecognition": false,
+                        "lastModified": 0,
+                        "cvrResolution": {}
+                    }
+                }
+            ],
+            "libraryAccessDays": 30,
+            "legacyPlan": true
+        }
+    ],
+    "success": true
+}
