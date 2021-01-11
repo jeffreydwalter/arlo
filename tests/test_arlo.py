@@ -169,3 +169,47 @@ class TestArlo(unittest.TestCase):
         response = arlo.GetServiceLevelV4()
         
         assert response["planDetails"]["planId"] == mock_json["data"]["planDetails"]["planId"]
+
+    @responses.activate
+    def test_get_payment_offers_v4(self):
+        """
+        """
+        mocked_url = "https://my.arlo.com/hmsweb/users/payment/offers/v4"
+        mock_json = {}
+
+        with open('tests/responses/expected_get_payment_offers_v4_response.json') as json_file:
+            mock_json = json.load(json_file)
+
+        responses.add(
+            method = responses.GET,
+            url = mocked_url,
+            json = mock_json,
+            status = 200
+        )
+
+        arlo = Arlo(USERNAME, PASSWORD)
+        response = arlo.GetPaymentOffersV4()
+        
+        assert response[0]["planId"] == mock_json["data"][0]["planId"]
+
+    @responses.activate
+    def test_get_modes_v2(self):
+        """
+        """
+        mocked_url = "https://my.arlo.com/hmsweb/users/devices/automation/active"
+        mock_json = {}
+
+        with open('tests/responses/expected_get_modes_v2_response.json') as json_file:
+            mock_json = json.load(json_file)
+
+        responses.add(
+            method = responses.GET,
+            url = mocked_url,
+            json = mock_json,
+            status = 200
+        )
+
+        arlo = Arlo(USERNAME, PASSWORD)
+        response = arlo.GetModesV2()
+        
+        assert response[0]["uniqueId"] == mock_json["data"][0]["uniqueId"]
