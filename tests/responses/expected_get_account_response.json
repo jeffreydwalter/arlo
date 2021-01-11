@@ -1,0 +1,45 @@
+{
+    "data": {
+      "userId": "XXX-XXXXXXX",
+      "email": "joe.bloggs@gmail.com",
+      "dateCreated": 1585157000819,
+      "dateDeviceRegistered": 1585161139527,
+      "countryCode": "GB",
+      "language": "en-gb",
+      "firstName": "Joe",
+      "lastName": "Bloggs",
+      "s3StorageId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "tosVersion": "5",
+      "tosAgreeDate": 1593126066795,
+      "tosShownVersion": "5",
+      "lastModified": 1585161137898,
+      "accountStatus": "registered",
+      "paymentId": "xxxxxxxx",
+      "serialNumber": "xxxxxxxxxxxxx",
+      "mobilePushData": {
+          "mobilePushOsMap": {
+              "android": [
+                  {
+                      "token": "xxxxxxxxxxxxxxxxxxx",
+                      "endpoint": "arn:aws:sns:eu-west-1:xxxxxxxxxxxx:endpoint/GCM/Arlo_Android_Prod/xxxxxxxxxxxxxxxxxxxxxx",
+                      "createdDate": "20201310_0622",
+                      "iosDebugModeFlag": false
+                  },
+                  {
+                      "token": "xxxxxxxxxxxxxxxxxxxx",
+                      "endpoint": "arn:aws:sns:eu-west-1:xxxxxxxxxxxx:endpoint/GCM/Arlo_Android_Prod/xxxxxxxxxxxxxxxxxxxxxxx",
+                      "createdDate": "20210801_0335",
+                      "iosDebugModeFlag": false
+                  }
+              ]
+          }
+      },
+      "recycleBinQuota": 0,
+      "favoriteQuota": 0,
+      "validEmail": true,
+      "locationCreated": false,
+      "readyToClose": false,
+      "lastMessageTimeToBS": 1608375685602
+    },
+    "success": true
+  }
