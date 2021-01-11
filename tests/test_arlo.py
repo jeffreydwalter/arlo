@@ -13,7 +13,7 @@ from arlo import Arlo
 
 USERNAME = 'user@example.com'
 PASSWORD = 'supersecretpassword'
-LOGIN_JSON = json.load(open('tests/responses/expected_login_response.json'))
+LOGIN_JSON = json.load(open('./responses/expected_login_response.json'))
 
 class TestArlo(unittest.TestCase):
     def setUp(self):
@@ -44,7 +44,7 @@ class TestArlo(unittest.TestCase):
         mocked_url = "https://my.arlo.com/hmsweb/users/profile"
         mock_json = {}
 
-        with open('tests/responses/expected_get_profile_response.json') as json_file:
+        with open('./responses/expected_get_profile_response.json') as json_file:
             mock_json = json.load(json_file)
 
         responses.add(
@@ -67,7 +67,7 @@ class TestArlo(unittest.TestCase):
         mocked_url = "https://my.arlo.com/hmsweb/users/account"
         mock_json = {}
 
-        with open('tests/responses/expected_get_account_response.json') as json_file:
+        with open('./responses/expected_get_account_response.json') as json_file:
             mock_json = json.load(json_file)
 
         responses.add(
@@ -89,7 +89,7 @@ class TestArlo(unittest.TestCase):
         mocked_url = "https://my.arlo.com/hmsweb/users/devices"
         mock_json = {}
 
-        with open('tests/responses/expected_get_devices_response.json') as json_file:
+        with open('./responses/expected_get_devices_response.json') as json_file:
             mock_json = json.load(json_file)
 
         responses.add(
@@ -111,7 +111,7 @@ class TestArlo(unittest.TestCase):
         mocked_url = "https://my.arlo.com/hmsweb/users/locations"
         mock_json = {}
 
-        with open('tests/responses/expected_get_locations_response.json') as json_file:
+        with open('./responses/expected_get_locations_response.json') as json_file:
             mock_json = json.load(json_file)
 
         responses.add(
@@ -133,7 +133,7 @@ class TestArlo(unittest.TestCase):
         mocked_url = "https://my.arlo.com/hmsweb/users/friends"
         mock_json = {}
 
-        with open('tests/responses/expected_get_friends_response.json') as json_file:
+        with open('./responses/expected_get_friends_response.json') as json_file:
             mock_json = json.load(json_file)
 
         responses.add(
@@ -155,7 +155,7 @@ class TestArlo(unittest.TestCase):
         mocked_url = "https://my.arlo.com/hmsweb/users/serviceLevel/v4"
         mock_json = {}
 
-        with open('tests/responses/expected_get_service_level_v4_response.json') as json_file:
+        with open('./responses/expected_get_service_level_v4_response.json') as json_file:
             mock_json = json.load(json_file)
 
         responses.add(
@@ -177,7 +177,7 @@ class TestArlo(unittest.TestCase):
         mocked_url = "https://my.arlo.com/hmsweb/users/payment/offers/v4"
         mock_json = {}
 
-        with open('tests/responses/expected_get_payment_offers_v4_response.json') as json_file:
+        with open('./responses/expected_get_payment_offers_v4_response.json') as json_file:
             mock_json = json.load(json_file)
 
         responses.add(
@@ -199,7 +199,7 @@ class TestArlo(unittest.TestCase):
         mocked_url = "https://my.arlo.com/hmsweb/users/devices/automation/active"
         mock_json = {}
 
-        with open('tests/responses/expected_get_modes_v2_response.json') as json_file:
+        with open('./responses/expected_get_modes_v2_response.json') as json_file:
             mock_json = json.load(json_file)
 
         responses.add(
