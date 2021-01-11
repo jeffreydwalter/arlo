@@ -18,9 +18,13 @@ limitations under the License.
 # 17 Jul 2017, Andreas Jakl: Port to Python 3 (https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/)
 
 # Import helper classes that are part of this library.
-from request import Request
-from eventstream import EventStream
-
+if sys.version[0] == '2':
+   from request import Request
+   from eventstream import EventStream
+else:
+   from .request import Request
+   from .eventstream import EventStream
+   
 # Import all of the other stuff.
 from six import string_types, text_type
 from datetime import datetime
