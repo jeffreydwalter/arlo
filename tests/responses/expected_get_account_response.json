@@ -1,7 +1,7 @@
 {
     "data": {
       "userId": "XXX-XXXXXXX",
-      "email": "joe.bloggs@gmail.com",
+      "email": "user@example.com",
       "dateCreated": 1585157000819,
       "dateDeviceRegistered": 1585161139527,
       "countryCode": "GB",
