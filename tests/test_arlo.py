@@ -38,10 +38,32 @@ class TestArlo(unittest.TestCase):
         assert response["token"] == LOGIN_JSON["data"]["token"]
 
     @responses.activate
+    def test_get_profile(self):
+        """
+        """
+        mocked_url = "https://my.arlo.com/hmsweb/users/profile"
+        mock_json = {}
+
+        with open('tests/responses/expected_get_profile_response.json') as json_file:
+            mock_json = json.load(json_file)
+
+        responses.add(
+            method = responses.GET,
+            url = mocked_url,
+            json = mock_json,
+            status = 200
+        )
+
+        arlo = Arlo(USERNAME, PASSWORD)
+        response = arlo.GetProfile()
+        
+        assert response["firstName"] == mock_json["data"]["firstName"]
+        assert response["lastName"] == mock_json["data"]["lastName"]
+        
+    @responses.activate
     def test_get_account(self):
         """
         """
-
         mocked_url = "https://my.arlo.com/hmsweb/users/account"
         mock_json = {}
 
@@ -59,3 +81,91 @@ class TestArlo(unittest.TestCase):
         response = arlo.GetAccount()
         
         assert response["email"] == mock_json["data"]["email"]
+
+    @responses.activate
+    def test_get_devices(self):
+        """
+        """
+        mocked_url = "https://my.arlo.com/hmsweb/users/devices"
+        mock_json = {}
+
+        with open('tests/responses/expected_get_devices_response.json') as json_file:
+            mock_json = json.load(json_file)
+
+        responses.add(
+            method = responses.GET,
+            url = mocked_url,
+            json = mock_json,
+            status = 200
+        )
+
+        arlo = Arlo(USERNAME, PASSWORD)
+        response = arlo.GetDevices()
+        
+        assert response[0]["deviceName"] == mock_json["data"][0]["deviceName"]
+
+    @responses.activate
+    def test_get_locations(self):
+        """
+        """
+        mocked_url = "https://my.arlo.com/hmsweb/users/locations"
+        mock_json = {}
+
+        with open('tests/responses/expected_get_locations_response.json') as json_file:
+            mock_json = json.load(json_file)
+
+        responses.add(
+            method = responses.GET,
+            url = mocked_url,
+            json = mock_json,
+            status = 200
+        )
+
+        arlo = Arlo(USERNAME, PASSWORD)
+        response = arlo.GetLocations()
+        
+        assert response[0]["latitude"] == mock_json["data"][0]["latitude"]
+
+    @responses.activate
+    def test_get_friends(self):
+        """
+        """
+        mocked_url = "https://my.arlo.com/hmsweb/users/friends"
+        mock_json = {}
+
+        with open('tests/responses/expected_get_friends_response.json') as json_file:
+            mock_json = json.load(json_file)
+
+        responses.add(
+            method = responses.GET,
+            url = mocked_url,
+            json = mock_json,
+            status = 200
+        )
+
+        arlo = Arlo(USERNAME, PASSWORD)
+        response = arlo.GetFriends()
+        
+        assert response[0]["email"] == mock_json["data"][0]["email"]
+
+    @responses.activate
+    def test_get_service_level_v4(self):
+        """
+        """
+        mocked_url = "https://my.arlo.com/hmsweb/users/serviceLevel/v4"
+        mock_json = {}
+
+        with open('tests/responses/expected_get_service_level_v4_response.json') as json_file:
+            mock_json = json.load(json_file)
+
+        responses.add(
+            method = responses.GET,
+            url = mocked_url,
+            json = mock_json,
+            status = 200
+        )
+
+        arlo = Arlo(USERNAME, PASSWORD)
+        response = arlo.GetServiceLevelV4()
+        
+        assert response["planDetails"]["planId"] == mock_json["data"]["planDetails"]["planId"]

@@ -1,0 +1,42 @@
+{
+  "data": [
+      {
+          "userId": "XXXXXXXX-XXX-XXXXXXXX",
+          "deviceId": "A0E1997LA1CE0",
+          "uniqueId": "XXXXXXXX-XXX-XXXXXXXXXXXXXXXXXXXXXX",
+          "deviceType": "basestation",
+          "deviceName": "Test Device",
+          "lastModified": 1610377719561,
+          "firmwareVersion": "1.16.3.4_707_c289687",
+          "xCloudId": "XXXX-XXXX-XXX-XXXXXXXXX",
+          "userRole": "OWNER",
+          "displayOrder": 2,
+          "mediaObjectCount": 0,
+          "state": "provisioned",
+          "modelId": "VMB4540",
+          "cvrEnabled": false,
+          "dateCreated": 1585161137955,
+          "interfaceVersion": "i006",
+          "interfaceSchemaVer": "14",
+          "owner": {
+              "firstName": "Joe",
+              "lastName": "Bloggs",
+              "ownerId": "XXXXXXXX-XXX-XXXXXXXX"
+          },
+          "properties": {
+              "modelId": "VMB4540",
+              "olsonTimeZone": "Europe/London",
+              "hwVersion": "VMB4540r2"
+          },
+          "connectivity": {
+              "type": "ethernet",
+              "connected": true,
+              "mepStatus": "unknown"
+          },
+          "certAvailable": true,
+          "automationRevision": 24,
+          "migrateActivityZone": false
+      }
+  ],
+  "success": true
+}
