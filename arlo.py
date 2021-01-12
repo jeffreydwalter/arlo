@@ -21,11 +21,11 @@ limitations under the License.
 
 import sys
 
-if sys.version[0] == '2':
+try:
     from request import Request
     from eventstream import EventStream
     import Queue as queue
-else:
+except ImportError:
     from .request import Request
     from .eventstream import EventStream
     import queue as queue
