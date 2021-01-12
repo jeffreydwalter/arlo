@@ -18,12 +18,17 @@ limitations under the License.
 # 17 Jul 2017, Andreas Jakl: Port to Python 3 (https://www.andreasjakl.com/using-netgear-arlo-security-cameras-for-periodic-recording/)
 
 # Import helper classes that are part of this library.
+
+import sys
+
 if sys.version[0] == '2':
-   from request import Request
-   from eventstream import EventStream
+    from request import Request
+    from eventstream import EventStream
+    import Queue as queue
 else:
-   from .request import Request
-   from .eventstream import EventStream
+    from .request import Request
+    from .eventstream import EventStream
+    import queue as queue
    
 # Import all of the other stuff.
 from six import string_types, text_type
@@ -38,12 +43,6 @@ import random
 import requests
 import signal
 import time
-import sys
-
-if sys.version[0] == '2':
-    import Queue as queue
-else:
-    import queue as queue
 
 #logging.basicConfig(level=logging.DEBUG,format='[%(levelname)s] (%(threadName)-10s) %(message)s',)
 
