@@ -5,7 +5,6 @@ import pytest
 import json
 import responses
 import unittest
-from http import HTTPStatus
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
