@@ -34,7 +34,7 @@ $ pip install git+https://github.com/jeffreydwalter/arlo
 ```
 
 ---
-This just a personal utility that I created out of necessity. It is by no means complete, although it does expose quite a bit of the Arlo interface in an easy to use Python pacakge. As such, this package does not come with unit tests (feel free to add them) or guarantees.
+This just a personal utility that I created out of necessity. It is by no means complete, although it does expose quite a bit of the Arlo interface in an easy to use Python package. As such, this package does not come with unit tests (feel free to add them) or guarantees.
 **All [contributions](https://github.com/jeffreydwalter/arlo/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) are welcome and appreciated!**
 --
 **If you have a specific Arlo device that you want to improve support for, please consider sending me one! Since this project is solely maintained by yours truely and I don't have unlimited funds to support it, I can only really test and debug the code with the first gen Arlo cameras and basestation that I have. I also highly encourage and appreciate Pull Requests!**
@@ -74,7 +74,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 * [cemeyer2](https://github.com/cemeyer2) - Nov 26, 2016 - Fixed setup issues.
 * [LenShustek](https://github.com/LenShustek) - Sep 14, 2016, - Added Logout().
 
-If You'd like to make a diffrence in the world and get your name on this most prestegious list, have a look at our [help wanted](https://github.com/jeffreydwalter/arlo/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) section!
+If You'd like to make a difference in the world and get your name on this most prestigious list, have a look at our [help wanted](https://github.com/jeffreydwalter/arlo/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) section!
 
 After installing all of the required libraries, you can import and use this library like so:
 
