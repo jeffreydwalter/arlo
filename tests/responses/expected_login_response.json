@@ -1,0 +1,25 @@
+{
+    "data": {
+        "userId": "XXXXXXXXX-XXX-XXXXXXXX",
+        "email": "user@example.com",
+        "token": "xxxxxxxxxxxxxxxxxxxxxxx",
+        "paymentId": "XXXXXXXX",
+        "authenticated": 1111111111,
+        "accountStatus": "registered",
+        "serialNumber": "XXXXXXXXXXXXX",
+        "countryCode": "GB",
+        "tocUpdate": false,
+        "policyUpdate": false,
+        "appStore": {
+            "updateLink": "https://play.google.com/store/apps/details?id=com.arlo.app",
+            "enforce": true,
+            "latestVersion": "2.16",
+            "enforceDate": 1584169199
+        },
+        "validEmail": true,
+        "arlo": true,
+        "dateCreated": 1585157000819,
+        "mailProgramChecked": true
+    },
+    "success": true
+}

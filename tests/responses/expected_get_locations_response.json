@@ -1,0 +1,28 @@
+{
+    "data": [
+        {
+            "id": "XXXXXXXX-XXX-XXXXXXXX",
+            "name": "Home",
+            "ownerId": "XXXXXXXX-XXX-XXXXXXXX",
+            "longitude": -12.3456789,
+            "latitude": 12.3456789,
+            "address": "Test",
+            "homeMode": "schedule",
+            "awayMode": "mode1",
+            "geoEnabled": true,
+            "geoRadius": 150.0,
+            "uniqueIds": [
+                "XXXXXXXX-XXX-XXXXXXXX"
+            ],
+            "smartDevices": [
+                "XXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXX"
+            ],
+            "pushNotifyDevices": [
+                "XXXXXXXXXXXXXXXX",
+                "XXXXXXXXXXXXXXXX"
+            ]
+        }
+    ],
+    "success": true
+}

@@ -1,0 +1,25 @@
+{
+    "data": [
+        {
+            "ownerId": "XXXXXXXX-XXX-XXXXXXXX",
+            "createdDate": 1586022923551,
+            "token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "firstName": "Joe",
+            "lastName": "Bloggs",
+            "devices": [
+                {
+                    "deviceId": "XXXXXXXXXXXXX",
+                    "modifiedDate": 1586024040971,
+                    "deviceName": "Test",
+                    "uniqueId": "XXXXXXXX-XXX-XXXXXXXXXXXXXXXXXXXXXX"
+                }
+            ],
+            "lastModified": 1586024040965,
+            "status": "ACCEPTED",
+            "adminUser": true,
+            "email": "user@example.com",
+            "id": "XXXXXXXX-XXX-XXXXXXXX"
+        }
+    ],
+    "success": true
+}

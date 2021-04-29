@@ -1,0 +1,13 @@
+{
+    "data": {
+        "_type": "User",
+        "firstName": "Joe",
+        "lastName": "Bloggs",
+        "language": "en",
+        "country": "GB",
+        "acceptedPolicy": 1,
+        "currentPolicy": 1,
+        "validEmail": true
+    },
+    "success": true
+  }

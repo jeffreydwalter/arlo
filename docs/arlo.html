@@ -172,6 +172,57 @@ to: path where the file should be written</p></div>
 NOTE: The Arlo API seems to disable geofencing mode when switching to other modes, if it's enabled.
 You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.</p></div>
 </dd>
+<dt id="arlo.Arlo.GetAccount"><code class="name flex">
+<span>def <span class="ident">GetAccount</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This call returns the following:
+{
+"data": {
+"userId": "XXX-XXXXXXX",
+"email": "joe.bloggs@gmail.com",
+"dateCreated": 1585157000819,
+"dateDeviceRegistered": 1585161139527,
+"countryCode": "GB",
+"language": "en-gb",
+"firstName": "Joe",
+"lastName": "Bloggs",
+"s3StorageId": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"tosVersion": "5",
+"tosAgreeDate": 1593126066795,
+"tosShownVersion": "5",
+"lastModified": 1585161137898,
+"accountStatus": "registered",
+"paymentId": "xxxxxxxx",
+"serialNumber": "xxxxxxxxxxxxx",
+"mobilePushData": {
+"mobilePushOsMap": {
+"android": [
+{
+"token": "xxxxxxxxxxxxxxxxxxx",
+"endpoint": "arn:aws:sns:eu-west-1:xxxxxxxxxxxx:endpoint/GCM/Arlo_Android_Prod/xxxxxxxxxxxxxxxxxxxxxx",
+"createdDate": "20201310_0622",
+"iosDebugModeFlag": false
+},
+{
+"token": "xxxxxxxxxxxxxxxxxxxx",
+"endpoint": "arn:aws:sns:eu-west-1:xxxxxxxxxxxx:endpoint/GCM/Arlo_Android_Prod/xxxxxxxxxxxxxxxxxxxxxxx",
+"createdDate": "20210801_0335",
+"iosDebugModeFlag": false
+}
+]
+}
+},
+"recycleBinQuota": 0,
+"favoriteQuota": 0,
+"validEmail": true,
+"locationCreated": false,
+"readyToClose": false,
+"lastMessageTimeToBS": 1608375685602
+},
+"success": true
+}</p></div>
+</dd>
 <dt id="arlo.Arlo.GetAudioPlayback"><code class="name flex">
 <span>def <span class="ident">GetAudioPlayback</span></span>(<span>self, basestation)</span>
 </code></dt>
@@ -769,7 +820,20 @@ Set a schedule to be active: {"activeAutomations":[{"deviceId":"XXXXXXXXXXXXX","
 <span>def <span class="ident">GetProfile</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>This call returns the following:
+{
+"data": {
+"_type": "User",
+"firstName": "Joe",
+"lastName": "Bloggs",
+"language": "en",
+"country": "GB",
+"acceptedPolicy": 1,
+"currentPolicy": 1,
+"validEmail": true
+},
+"success": true
+}</p></div>
 </dd>
 <dt id="arlo.Arlo.GetRecording"><code class="name flex">
 <span>def <span class="ident">GetRecording</span></span>(<span>self, url, chunk_size=4096)</span>
@@ -947,7 +1011,7 @@ motionSetupModeSensitivity (int 0-100) - Motion Detection Sensitivity</p></div>
 <span>def <span class="ident">PlayTrack</span></span>(<span>self, basestation, track_id='2391d620-e491-4412-99f6-e9a40d6046ed', position=0)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all.</p></div>
+<div class="desc"><p>Defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all</p></div>
 </dd>
 <dt id="arlo.Arlo.PushToTalk"><code class="name flex">
 <span>def <span class="ident">PushToTalk</span></span>(<span>self, camera)</span>
@@ -1137,7 +1201,7 @@ color: 45136 - the color for your bounding box.</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetNightLightTimerOn"><code class="name flex">
-<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1602803448, timediff=0)</span>
+<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1619657388, timediff=0)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1264,7 +1328,7 @@ color: 45136 - the color for your bounding box.</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetSleepTimerOn"><code class="name flex">
-<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1602803448, timediff=0)</span>
+<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1619657388, timediff=0)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1541,6 +1605,7 @@ Use TriggerFullFrameSnapshot() instead.</p>
 <li><code><a title="arlo.Arlo.DownloadRecording" href="#arlo.Arlo.DownloadRecording">DownloadRecording</a></code></li>
 <li><code><a title="arlo.Arlo.DownloadSnapshot" href="#arlo.Arlo.DownloadSnapshot">DownloadSnapshot</a></code></li>
 <li><code><a title="arlo.Arlo.Geofencing" href="#arlo.Arlo.Geofencing">Geofencing</a></code></li>
+<li><code><a title="arlo.Arlo.GetAccount" href="#arlo.Arlo.GetAccount">GetAccount</a></code></li>
 <li><code><a title="arlo.Arlo.GetAudioPlayback" href="#arlo.Arlo.GetAudioPlayback">GetAudioPlayback</a></code></li>
 <li><code><a title="arlo.Arlo.GetAutomationActivityZones" href="#arlo.Arlo.GetAutomationActivityZones">GetAutomationActivityZones</a></code></li>
 <li><code><a title="arlo.Arlo.GetAutomationDefinitions" href="#arlo.Arlo.GetAutomationDefinitions">GetAutomationDefinitions</a></code></li>

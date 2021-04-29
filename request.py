@@ -37,20 +37,26 @@ class Request(object):
 
         if method == 'GET':
             r = self.session.get(url, params=params, headers=headers, stream=stream)
+            r.raise_for_status()
             if stream is True:
                 return r
         elif method == 'PUT':
             r = self.session.put(url, json=params, headers=headers)
+            r.raise_for_status()
         elif method == 'POST':
             r = self.session.post(url, json=params, headers=headers)
+            r.raise_for_status()
+        elif method == 'OPTIONS':
+            r = self.session.options(url, json=params, headers=headers)
+            r.raise_for_status()
+            return
 
-        r.raise_for_status()
         body = r.json()
 
         if raw:
             return body
         else:
-            if body['success'] == True:
+            if ('success' in body and body['success'] == True) or ('meta' in body and body['meta']['code'] == 200):
                 if 'data' in body:
                     return body['data']
             else:
@@ -64,3 +70,6 @@ class Request(object):
 
     def post(self, url, params={}, headers={}, raw=False):
         return self._request(url, 'POST', params=params, headers=headers, raw=raw)
+
+    def options(self, url, params={}, headers={}, raw=False):
+        return self._request(url, 'OPTIONS', params, headers, raw)
