@@ -34,6 +34,7 @@ except ImportError:
 from six import string_types, text_type
 from datetime import datetime
 
+import base64
 import calendar
 import json
 #import logging
@@ -126,20 +127,27 @@ class Arlo(object):
         }
         """
         self.username = username
-        self.password = password
+        self.password = base64.b64encode(password.encode()).decode()
 
         self.request = Request()
+
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
+        }
+        self.request.options('https://ocapi-app.arlo.com/api/auth', headers=headers)
         
         headers = {
             'DNT': '1',
-            'schemaVersion': '1',
-            'Host': 'my.arlo.com',
-            'Content-Type': 'application/json; charset=utf-8;',
-            'Referer': 'https://my.arlo.com/',
+            'Auth-Version': '2',
+            'Content-Type': 'application/json; charset=UTF-8',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
+            'Origin': 'https://my.arlo.com',
+            'Referer': 'https://my.arlo.com/',
+            'Source': 'arloCamWeb',
         }
 
-        body = self.request.post('https://my.arlo.com/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
+        #body = self.request.post('https://my.arlo.com/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
+        body = self.request.post('https://ocapi-app.arlo.com/api/auth', {'email': self.username, 'password': self.password, 'EnvSource': 'prod', 'language': 'en'}, headers=headers)
 
         headers['Authorization'] = body['token']
       
