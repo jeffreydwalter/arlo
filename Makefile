@@ -19,11 +19,11 @@ doc:
 	pdoc -f --html -c show_source_code=False --output-dir docs arlo.py
 	sed -i'.bak' 's/#sidebar{width:30%}#content{width:70%;/#sidebar{width:45%}#content{width:55%;/g' docs/arlo.html
 	rm docs/arlo.html.bak
-	python dev/html2text.py docs/arlo.html > docs/README.md
+	python3 dev/html2text.py docs/arlo.html > docs/README.md
 	git add docs/*
 
 rev:
-	python dev/rev.py setup.py
+	python3 dev/rev.py setup.py
 	git add setup.py
 
 commit:

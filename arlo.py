@@ -26,8 +26,8 @@ try:
     from eventstream import EventStream
     import Queue as queue
 except ImportError:
-    from .request import Request
-    from .eventstream import EventStream
+    from request import Request
+    from eventstream import EventStream
     import queue as queue
    
 # Import all of the other stuff.
