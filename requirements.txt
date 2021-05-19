@@ -9,7 +9,7 @@ chardet==3.0.4            # via requests
 idna==2.8                 # via requests
 monotonic==1.5
 pysocks==1.7.1
-requests==2.22.0
+requests==2.25.1
 six==1.12.0               # via sseclient
 sseclient==0.0.22
 urllib3==1.25.6           # via requests
