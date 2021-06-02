@@ -22,7 +22,7 @@ six==1.13.0
     # via sseclient
 sseclient==0.0.22
     # via arlo (setup.py)
-urllib3==1.24
+urllib3==1.26.5
     # via
     #   arlo (setup.py)
     #   requests

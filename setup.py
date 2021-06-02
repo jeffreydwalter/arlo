@@ -19,7 +19,7 @@ setup(
     url='https://github.com/jeffreydwalter/arlo',
     license='Apache Software License',
     include_package_data=True,
-    install_requires=['monotonic', 'requests', 'urllib3==1.24', 'sseclient==0.0.22', 'PySocks'],
+    install_requires=['monotonic', 'requests', 'urllib3==1.26.5', 'sseclient==0.0.22', 'PySocks'],
     keywords=[
         'arlo',
         'camera',
