@@ -17,6 +17,11 @@
 import requests
 from requests.exceptions import HTTPError
 
+#from requests_toolbelt.utils import dump
+#def print_raw_http(response):
+#    data = dump.dump_all(response, request_prefix=b'', response_prefix=b'')
+#    print('\n' * 2 + data.decode('utf-8'))
+
 class Request(object):
     """HTTP helper class"""
 
@@ -36,7 +41,7 @@ class Request(object):
             r = self.session.post(url, json=params, headers=headers)
             r.raise_for_status()
         elif method == 'OPTIONS':
-            r = self.session.options(url, json=params, headers=headers)
+            r = self.session.options(url, headers=headers)
             r.raise_for_status()
             return
 
@@ -52,13 +57,13 @@ class Request(object):
                 raise HTTPError('Request ({0} {1}) failed: {2}'.format(method, url, r.json()), response=r)
 
     def get(self, url, params={}, headers={}, stream=False, raw=False):
-        return self._request(url, 'GET', params, headers, stream, raw)
+        return self._request(url, 'GET', params=params, headers=headers, stream=stream, raw=raw)
 
     def put(self, url, params={}, headers={}, raw=False):
-        return self._request(url, 'PUT', params, headers, raw)
+        return self._request(url, 'PUT', params=params, headers=headers, raw=raw)
 
     def post(self, url, params={}, headers={}, raw=False):
-        return self._request(url, 'POST', params, headers, raw)
+        return self._request(url, 'POST', params=params, headers=headers, raw=raw)
 
-    def options(self, url, params={}, headers={}, raw=False):
-        return self._request(url, 'OPTIONS', params, headers, raw)
+    def options(self, url, headers={}, raw=False):
+        return self._request(url, 'OPTIONS', headers=headers, raw=raw)
