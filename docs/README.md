@@ -670,7 +670,7 @@ mode: rainbow or rgb.
 
 ` def SetNightLightTimerOff(self, basestation, time=0, timediff=300) `
 
-` def SetNightLightTimerOn(self, basestation, time=1622658646, timediff=0) `
+` def SetNightLightTimerOn(self, basestation, time=1622820848, timediff=0) `
 
 ` def SetOCProfile(self, firstName, lastName, country='United States',
 language='en', spam_me=0) `
@@ -701,7 +701,7 @@ watch the schema that gets sent.
 
 ` def SetSleepTimerOff(self, basestation, time=0, timediff=300) `
 
-` def SetSleepTimerOn(self, basestation, time=1622658646, timediff=0) `
+` def SetSleepTimerOn(self, basestation, time=1622820848, timediff=0) `
 
 ` def SetTempAlertOff(self, basestation) `
 
