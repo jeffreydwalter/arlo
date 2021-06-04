@@ -432,6 +432,7 @@ class Arlo(object):
         if(device["deviceType"].startswith("arloq")):
             return self.NotifyAndGetResponse(device, {"from":self.user_id+"_web", "to": device.get("parentId"), "action":"set","resource":"modes", "transId": self.genTransId(),"publishResponse":True,"properties":{"active":mode}})
         else:
+            self.request.session.headers["schemaVersion"] = "1"
             return self.request.post('https://my.arlo.com/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
 
     def Arm(self, device):
