@@ -141,7 +141,7 @@ class Arlo(object):
         headers = {
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
         }
-        self.request.options(f'https://{AUTH_URL}/api/auth', headers=headers)
+        self.request.options(f'https://{self.AUTH_URL}/api/auth', headers=headers)
         
         headers = {
             'DNT': '1',
@@ -149,14 +149,14 @@ class Arlo(object):
             'Auth-Version': '2',
             'Content-Type': 'application/json; charset=UTF-8',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
-            'Origin': f'https://{BASE_URL}',
-            'Referer': f'https://{BASE_URL}/',
+            'Origin': f'https://{self.BASE_URL}',
+            'Referer': f'https://{self.BASE_URL}/',
             'Source': 'arloCamWeb',
         }
 
-        #body = self.request.post(f'https://{BASE_URL}/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
+        #body = self.request.post(f'https://{self.BASE_URL}/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
         body = self.request.post(
-            f'{AUTH_URL}/api/auth',
+                f'https://{self.AUTH_URL}/api/auth',
             params={
                 'email': self.username,
                 'password': str(base64.b64encode(self.password.encode('utf-8')), 'utf-8'),
@@ -183,9 +183,9 @@ class Arlo(object):
 
         headers = {
             'Accept': 'application/json, text/plain, */*',
-            'Origin': f'https://{BASE_URL}',
-            'Host': AUTH_URL,
-            'Referer': f'https://{BASE_URL}/',
+            'Origin': f'https://{self.BASE_URL}',
+            'Host': self.AUTH_URL,
+            'Referer': f'https://{self.BASE_URL}/',
             'source': 'arloCamWeb',
             'TE': 'Trailers',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:83.0) Gecko/20100101 Firefox/83.0'
@@ -193,7 +193,7 @@ class Arlo(object):
 
         # Authenticate
         auth_body = self.request.post(
-            f'{AUTH_URL}/api/auth',
+                f'https://{self.AUTH_URL}/api/auth',
             params={
                 'email': self.username,
                 'password': str(base64.b64encode(self.password.encode('utf-8')), 'utf-8'),
@@ -208,7 +208,7 @@ class Arlo(object):
 
         # Retrieve email factor id
         factors_body = self.request.get(
-            f"{AUTH_URL}/api/getFactors",
+            f"{self.AUTH_URL}/api/getFactors",
             params={'data': auth_body['data']['issued']},
             headers=headers,
             raw=True
@@ -217,7 +217,7 @@ class Arlo(object):
 
         # Start factor auth
         start_auth_body = self.request.post(
-            f'{AUTH_URL}/api/startAuth',
+            f'https://{self.AUTH_URL}/api/startAuth',
             {'factorId': email_factor_id},
             headers=headers,
             raw=True
@@ -252,7 +252,7 @@ class Arlo(object):
 
         # Complete auth
         finish_auth_body = self.request.post(
-            f'{AUTH_URL}/api/finishAuth',
+            f'https://{self.AUTH_URL}/api/finishAuth',
             {
                 'factorAuthCode': factor_auth_code,
                 'otp': code
@@ -267,7 +267,7 @@ class Arlo(object):
 
     def Logout(self):
         self.Unsubscribe()
-        return self.request.put(f'https://{BASE_URL}/hmsweb/logout')
+        return self.request.put(f'https://{self.BASE_URL}/hmsweb/logout')
 
     def Subscribe(self, basestation):
         """
@@ -331,7 +331,7 @@ class Arlo(object):
     def Unsubscribe(self):
         """ This method stops the EventStream subscription and removes it from the event_stream collection. """
         if self.event_stream and self.event_stream.connected:
-            self.request.get(f'https://{BASE_URL}/hmsweb/client/unsubscribe')
+            self.request.get(f'https://{self.BASE_URL}/hmsweb/client/unsubscribe')
             self.event_stream.Disconnect()
 
         self.event_stream = None
@@ -382,7 +382,7 @@ class Arlo(object):
         body['from'] = self.user_id+'_web'
         body['to'] = basestation_id
 
-        self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/notify/'+body['to'], body, headers={"xcloudId":basestation.get('xCloudId')})
+        self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/notify/'+body['to'], body, headers={"xcloudId":basestation.get('xCloudId')})
         return body.get('transId')
 
     def NotifyAndGetResponse(self, basestation, body, timeout=120):
@@ -486,16 +486,16 @@ class Arlo(object):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"rules","publishResponse":False})
 
     def GetSmartFeatures(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/subscription/smart/features')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/subscription/smart/features')
 
     def GetSmartAlerts(self, camera):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/smartalerts')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/smartalerts')
 
     def GetAutomationActivityZones(self, camera):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/activityzones')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/activityzones')
 
     def RestartBasestation(self, basestation):
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/restart', {"deviceId":basestation.get('deviceId')})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/restart', {"deviceId":basestation.get('deviceId')})
 
     def SetAutomationActivityZones(self, camera, zone, coords, color):
         """
@@ -506,10 +506,10 @@ class Arlo(object):
         coords: [{"x":0.37946943483275664,"y":0.3790983606557377},{"x":0.8685121107266436,"y":0.3790983606557377},{"x":0.8685121107266436,"y":1},{"x":0.37946943483275664,"y":1}] - these coordinates are the bonding box for the activity zone.
         color: 45136 - the color for your bounding box.
         """
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/activityzones', {"name": zone,"coords": coords, "color": color})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/activityzones', {"name": zone,"coords": coords, "color": color})
 
     def GetAutomationDefinitions(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/automation/definitions', {'uniqueIds':'all'})
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/automation/definitions', {'uniqueIds':'all'})
 
     def GetCalendar(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"schedule","publishResponse":False})
@@ -518,7 +518,7 @@ class Arlo(object):
         """ device can be any object that has parentId == deviceId. i.e., not a camera """
         parentId = device.get('parentId', None)
         if device['deviceType'] == 'arlobridge':
-            return self.request.delete(f'https://{BASE_URL}/hmsweb/users/locations/'+device.get('uniqueId')+'/modes/'+mode)
+            return self.request.delete(f'https://{self.BASE_URL}/hmsweb/users/locations/'+device.get('uniqueId')+'/modes/'+mode)
         elif not parentId or device.get('deviceId') == parentId:
             return self.NotifyAndGetResponse(device, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
         else:
@@ -534,14 +534,14 @@ class Arlo(object):
         Set a non-schedule mode to be active: {"activeAutomations":[{"deviceId":"XXXXXXXXXXXXX","timestamp":1532015622105,"activeModes":["mode1"],"activeSchedules":[]}]}
         Set a schedule to be active: {"activeAutomations":[{"deviceId":"XXXXXXXXXXXXX","timestamp":1532015790139,"activeModes":[],"activeSchedules":["schedule.1"]}]}
         """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/devices/automation/active')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/automation/active')
 
     def CustomMode(self, device, mode, schedules=[]):
         """ device can be any object that has parentId == deviceId. i.e., not a camera """
         if(device["deviceType"].startswith("arloq")):
             return self.NotifyAndGetResponse(device, {"from":self.user_id+"_web", "to": device.get("parentId"), "action":"set","resource":"modes", "transId": self.genTransId(),"publishResponse":True,"properties":{"active":mode}})
         else:
-            return self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
+            return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
 
     def Arm(self, device):
         return self.CustomMode(device, "mode1")
@@ -654,7 +654,7 @@ class Arlo(object):
           "enabled": true
         }
         """
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/locations/'+basestation.get('uniqueId')+'/schedules', )
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/locations/'+basestation.get('uniqueId')+'/schedules', )
 
     def AdjustBrightness(self, basestation, camera, brightness=0):
         """
@@ -683,7 +683,7 @@ class Arlo(object):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"privacyActive":active}})
 
     def PushToTalk(self, camera):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/pushtotalk')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/pushtotalk')
 
     """ General alert toggles """
     def SetMotionAlertsOn(self, basestation, sensitivity=5):
@@ -827,7 +827,7 @@ class Arlo(object):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"recordingEnabled":False}}})
 
     def SetTempUnit(self, uniqueId, unit="C"):
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/'+uniqueId+'/tempUnit', {"tempUnit":unit})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/'+uniqueId+'/tempUnit', {"tempUnit":unit})
 
     def SirenOn(self, basestation):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"siren","publishResponse":True,"properties":{"sirenState":"on","duration":300,"volume":8,"pattern":"alarm"}})
@@ -836,51 +836,51 @@ class Arlo(object):
         return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"siren","publishResponse":True,"properties":{"sirenState":"off","duration":300,"volume":8,"pattern":"alarm"}})
 
     def Reset(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/library/reset')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/library/reset')
 
     def GetServiceLevelSettings(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/serviceLevel/settings')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/serviceLevel/settings')
 
     def GetServiceLevel(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/serviceLevel')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/serviceLevel')
 
     def GetServiceLevelV2(self):
         """ DEPRECATED: This API still works, but I don't see it being called in the web UI anymore. """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/serviceLevel/v2')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/serviceLevel/v2')
 
     def GetServiceLevelV3(self):
         """ DEPRECATED: This API still works, but I don't see it being called in the web UI anymore. """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/serviceLevel/v3')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/serviceLevel/v3')
 
     def GetServiceLevelV4(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/serviceLevel/v4')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/serviceLevel/v4')
 
     def GetUpdateFeatures(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/devices/updateFeatures/feature')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/updateFeatures/feature')
 
     def GetPaymentBilling(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/payment/billing/'+self.user_id)
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/payment/billing/'+self.user_id)
 
     def GetPaymentOffers(self):
         """ DEPRECATED: This API still works, but I don't see it being called in the web UI anymore. """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/payment/offers')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/payment/offers')
 
     def GetPaymentOffersV2(self):
         """ DEPRECATED: This API still works, but I don't see it being called in the web UI anymore. """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/payment/offers/v2')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/payment/offers/v2')
 
     def GetPaymentOffersV3(self):
         """ DEPRECATED: This API still works, but I don't see it being called in the web UI anymore. """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/payment/offers/v3')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/payment/offers/v3')
 
     def GetPaymentOffersV4(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/payment/offers/v4')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/payment/offers/v4')
 
     def SetOCProfile(self, firstName, lastName, country='United States', language='en', spam_me=0):
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/ocprofile', {"firstName":"Jeffrey","lastName":"Walter","country":country,"language":language,"mailProgram":spam_me})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/ocprofile', {"firstName":"Jeffrey","lastName":"Walter","country":country,"language":language,"mailProgram":spam_me})
 
     def GetOCProfile(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/ocprofile')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/ocprofile')
 
     def GetProfile(self):
         """
@@ -899,7 +899,7 @@ class Arlo(object):
           "success": true
         }
         """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/profile')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/profile')
 
     def GetAccount(self):
         """
@@ -950,7 +950,7 @@ class Arlo(object):
           "success": true
         }
         """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/account')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/account')
 
     def GetSession(self):
         """
@@ -970,10 +970,10 @@ class Arlo(object):
           "dateCreated": 1463975008658
         }
         """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/session')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/session')
 
     def GetFriends(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/friends')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/friends')
 
     def GetLocations(self):
         """
@@ -1001,10 +1001,10 @@ class Arlo(object):
           ]
         }
         """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/locations')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/locations')
 
     def GetEmergencyLocations(self):
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/emergency/locations')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/emergency/locations')
 
     def Geofencing(self, location_id, active=True):
         """
@@ -1012,7 +1012,7 @@ class Arlo(object):
         NOTE: The Arlo API seems to disable geofencing mode when switching to other modes, if it's enabled.
         You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
         """
-        return self.request.put(f'https://{BASE_URL}/hmsweb/users/locations/'+location_id, {'geoEnabled':active})
+        return self.request.put(f'https://{self.BASE_URL}/hmsweb/users/locations/'+location_id, {'geoEnabled':active})
 
     def GetDevice(self, device_name):
         def is_device(device):
@@ -1025,7 +1025,7 @@ class Arlo(object):
         If you pass in a valid device type, as a string or a list, this method will return an array of just those devices that match that type. An example would be ['basestation', 'camera']
         To filter provisioned or unprovisioned devices pass in a True/False value for filter_provisioned. By default both types are returned.
         """
-        devices = self.request.get(f'https://{BASE_URL}/hmsweb/users/devices')
+        devices = self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices')
         if device_type:
             devices = [ device for device in devices if device['deviceType'] in device_type]
 
@@ -1083,7 +1083,7 @@ class Arlo(object):
           ]
         }
         """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/devicesupport')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/devicesupport')
 
     def GetDeviceSupportv2(self):
         """
@@ -1272,7 +1272,7 @@ class Arlo(object):
           "baseUrl": "https://vzs3-prod-common.s3.amazonaws.com/static/v2/html/en/"
         }
         """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/devicesupport/v2')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/devicesupport/v2')
 
     def GetDeviceSupportV3(self):
         """
@@ -1435,20 +1435,20 @@ class Arlo(object):
           "success":true
         }
         """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/devicesupport/v3')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/devicesupport/v3')
 
     def GetDeviceCapabilities(self, device):
         model = device.get('modelId').lower()
-        return self.request.get(f'https://{BASE_URL}/resources/capabilities/'+model+'/'+model+'_'+device.get('interfaceVersion')+'.json', raw=True)
+        return self.request.get(f'https://{self.BASE_URL}/resources/capabilities/'+model+'/'+model+'_'+device.get('interfaceVersion')+'.json', raw=True)
 
     def GetLibraryMetaData(self, from_date, to_date):
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/library/metadata', {'dateFrom':from_date, 'dateTo':to_date})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library/metadata', {'dateFrom':from_date, 'dateTo':to_date})
 
     def UpdateProfile(self, first_name, last_name):
-        return self.request.put(f'https://{BASE_URL}/hmsweb/users/profile', {'firstName': first_name, 'lastName': last_name})
+        return self.request.put(f'https://{self.BASE_URL}/hmsweb/users/profile', {'firstName': first_name, 'lastName': last_name})
 
     def UpdatePassword(self, password):
-        r = self.request.post(f'https://{BASE_URL}/hmsweb/users/changePassword', {'currentPassword':self.password,'newPassword':password})
+        r = self.request.post(f'https://{self.BASE_URL}/hmsweb/users/changePassword', {'currentPassword':self.password,'newPassword':password})
         self.password = password
         return r
 
@@ -1469,7 +1469,7 @@ class Arlo(object):
           "id":"XXX-XXXXXXX"
         }
         """
-        return self.request.put(f'https://{BASE_URL}/hmsweb/users/friends', body)
+        return self.request.put(f'https://{self.BASE_URL}/hmsweb/users/friends', body)
 
     def RemoveFriend(self, email):
         """
@@ -1477,7 +1477,7 @@ class Arlo(object):
 
         email: email of user you want to revoke access from.
         """
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/friends/remove', {"email":email})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/friends/remove', {"email":email})
 
     def AddFriend(self, firstname, lastname, email, devices={}, admin=False):
         """
@@ -1486,17 +1486,17 @@ class Arlo(object):
 
         {adminUser:false,firstName:John,lastName:Doe,email:john.doe@example.com,devices:{XXX-XXXXXXX_XXXXXXXXXXXX:Camera1,XXX-XXXXXXX_XXXXXXXXXXXX:Camera2}}
         """
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/friends', {"adminUser":admin,"firstName":firstname,"lastName":lastname,"email":email,"devices":devices})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/friends', {"adminUser":admin,"firstName":firstname,"lastName":lastname,"email":email,"devices":devices})
 
     def ResendFriendInvite(self, friend):
         """
         This API will resend an invitation email to a user that you've AddFriend'd. You will need to get the friend object by calling GetFriend() because it includes a token that must be passed to this API.
         friend: {"ownerId":"XXX-XXXXXXX","token":"really long string that you get from the GetFriends() API","firstName":"John","lastName":"Doe","devices":{"XXX-XXXXXXX_XXXXXXXXXXXX":"Camera1","XXX-XXXXXXX_XXXXXXXXXXXX":"Camera2"},"lastModified":1548470485419,"adminUser":false,"email":"john.doe@example.com"}
         """
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/friends', friend)
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/friends', friend)
 
     def UpdateDeviceName(self, device, name):
-        return self.request.put(f'https://{BASE_URL}/hmsweb/users/devices/renameDevice', {'deviceId':device.get('deviceId'), 'deviceName':name, 'parentId':device.get('parentId')})
+        return self.request.put(f'https://{self.BASE_URL}/hmsweb/users/devices/renameDevice', {'deviceId':device.get('deviceId'), 'deviceName':name, 'parentId':device.get('parentId')})
 
     def UpdateDisplayOrder(self, body):
         """
@@ -1511,7 +1511,7 @@ class Arlo(object):
           }
         }
         """
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/displayOrder', body)
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/displayOrder', body)
 
     def GetLibrary(self, from_date, to_date):
         """
@@ -1540,14 +1540,14 @@ class Arlo(object):
           }
         ]
         """
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/library', {'dateFrom':from_date, 'dateTo':to_date})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library', {'dateFrom':from_date, 'dateTo':to_date})
 
     def DeleteRecording(self, recording):
         """
         Delete a single video recording from Arlo.
         All of the date info and device id you need to pass into this method are given in the results of the GetLibrary() call.
         """
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/library/recycle', {'data':[{'createdDate':recording.get('createdDate'),'utcCreatedDate':recording.get('createdDate'),'deviceId':recording.get('deviceId')}]})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library/recycle', {'data':[{'createdDate':recording.get('createdDate'),'utcCreatedDate':recording.get('createdDate'),'deviceId':recording.get('deviceId')}]})
 
     def BatchDeleteRecordings(self, recordings):
         """
@@ -1570,7 +1570,7 @@ class Arlo(object):
         ]
         """
         if recordings:
-            return self.request.post(f'https://{BASE_URL}/hmsweb/users/library/recycle', {'data':recordings})
+            return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library/recycle', {'data':recordings})
 
     def GetRecording(self, url, chunk_size=4096):
         """ Returns the whole video from the presignedContentUrl. """
@@ -1631,7 +1631,7 @@ class Arlo(object):
             stream_url_dict = None
 
         def trigger(self):
-            nl.stream_url_dict = self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
+            nl.stream_url_dict = self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
 
         def callback(self, event):
             if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
@@ -1648,7 +1648,7 @@ class Arlo(object):
             stream_url_dict = None
 
         def trigger(self):
-            self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/stopStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.         get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"stopUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId": camera.get('xCloudId')})
+            self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/stopStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.         get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"stopUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId": camera.get('xCloudId')})
 
         def callback(self, event):
             if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
@@ -1670,7 +1670,7 @@ class Arlo(object):
         NOTE: Use DownloadSnapshot() to download the actual image file.
         """
         def trigger(self):
-            self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/takeSnapshot', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
+            self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/takeSnapshot', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
 
         def callback(self, event):
             if event.get("deviceId") == camera.get("deviceId") and event.get("resource") == "mediaUploadNotification":
@@ -1704,7 +1704,7 @@ class Arlo(object):
         You can get the timezone from GetDevices().
         """
         stream_url = self.StartStream(basestation, camera)
-        self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/startRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
+        self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/startRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
         return stream_url
 
     def StopRecording(self, camera):
@@ -1712,8 +1712,8 @@ class Arlo(object):
         This function causes the camera to stop recording.
         You can get the timezone from GetDevices().
         """
-        return self.request.post(f'https://{BASE_URL}/hmsweb/users/devices/stopRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/stopRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
 
     def GetCvrPlaylist(self, camera, fromDate, toDate):
         """ This function downloads a Cvr Playlist file for the period fromDate to toDate. """
-        return self.request.get(f'https://{BASE_URL}/hmsweb/users/devices/'+camera.get('deviceId')+'/playlist?fromDate='+fromDate+'&toDate='+toDate)
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('deviceId')+'/playlist?fromDate='+fromDate+'&toDate='+toDate)
