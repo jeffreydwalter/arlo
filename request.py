@@ -17,6 +17,11 @@
 import requests
 from requests.exceptions import HTTPError
 
+#from requests_toolbelt.utils import dump
+#def print_raw_http(response):
+#    data = dump.dump_all(response, request_prefix=b'', response_prefix=b'')
+#    print('\n' * 2 + data.decode('utf-8'))
+
 class Request(object):
     """HTTP helper class"""
 
@@ -47,7 +52,7 @@ class Request(object):
             r = self.session.post(url, json=params, headers=headers)
             r.raise_for_status()
         elif method == 'OPTIONS':
-            r = self.session.options(url, json=params, headers=headers)
+            r = self.session.options(url, headers=headers)
             r.raise_for_status()
             return
 
@@ -71,5 +76,5 @@ class Request(object):
     def post(self, url, params={}, headers={}, raw=False):
         return self._request(url, 'POST', params=params, headers=headers, raw=raw)
 
-    def options(self, url, params={}, headers={}, raw=False):
-        return self._request(url, 'OPTIONS', params, headers, raw)
+    def options(self, url, headers={}, raw=False):
+        return self._request(url, 'OPTIONS', headers=headers, raw=raw)
