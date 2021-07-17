@@ -263,7 +263,7 @@ class Arlo(object):
 
         # Update Authorization code with new code
         self.request.session.headers.update({'Authorization': base64.b64encode(finish_auth_body['data']['token'].encode('utf-8'))})
-
+        self.BASE_URL = 'myapi.arlo.com'
 
     def Logout(self):
         self.Unsubscribe()
