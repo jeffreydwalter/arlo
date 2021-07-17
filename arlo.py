@@ -208,7 +208,7 @@ class Arlo(object):
 
         # Retrieve email factor id
         factors_body = self.request.get(
-            f"{self.AUTH_URL}/api/getFactors",
+            f'https://{self.AUTH_URL}/api/getFactors',
             params={'data': auth_body['data']['issued']},
             headers=headers,
             raw=True
