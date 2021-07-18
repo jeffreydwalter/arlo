@@ -182,13 +182,15 @@ class Arlo(object):
         request_start_time = int(time.time())
 
         headers = {
-            'Accept': 'application/json, text/plain, */*',
+            'DNT': '1',
+            'schemaVersion': '1',
+            'Auth-Version': '2',
+            'Content-Type': 'application/json; charset=UTF-8',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
             'Origin': f'https://{self.BASE_URL}',
-            'Host': self.AUTH_URL,
             'Referer': f'https://{self.BASE_URL}/',
-            'source': 'arloCamWeb',
+            'Source': 'arloCamWeb',
             'TE': 'Trailers',
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:83.0) Gecko/20100101 Firefox/83.0'
         }
 
         # Authenticate
