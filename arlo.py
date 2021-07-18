@@ -252,6 +252,11 @@ class Arlo(object):
             code = search.group(0)
             break
 
+        """
+        code = input("Enter MFA code:\n")
+        print("CODE", factor_auth_code)
+        """
+
         # Complete auth
         finish_auth_body = self.request.post(
             f'https://{self.AUTH_URL}/api/finishAuth',
@@ -264,7 +269,12 @@ class Arlo(object):
         )
 
         # Update Authorization code with new code
-        self.request.session.headers.update({'Authorization': base64.b64encode(finish_auth_body['data']['token'].encode('utf-8'))})
+        headers = {
+            'Auth-Version': '2',
+            'Authorization': finish_auth_body['data']['token'].encode('utf-8'),
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
+        }
+        self.request.session.headers.update(headers)
         self.BASE_URL = 'myapi.arlo.com'
 
     def Logout(self):
@@ -973,6 +983,26 @@ class Arlo(object):
         }
         """
         return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/session')
+
+    def GetSessionV2(self):
+        """
+        Returns something like the following:
+        {
+          "userId": "XXX-XXXXXXX",
+          "email": "jeffreydwalter@gmail.com",
+          "token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+          "paymentId": "XXXXXXXX",
+          "accountStatus": "registered",
+          "serialNumber": "XXXXXXXXXXXXXX",
+          "countryCode": "US",
+          "tocUpdate": false,
+          "policyUpdate": false,
+          "validEmail": true,
+          "arlo": true,
+          "dateCreated": 1463975008658
+        }
+        """
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/session/v2')
 
     def GetFriends(self):
         return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/friends')
