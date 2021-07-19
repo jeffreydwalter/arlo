@@ -10,7 +10,7 @@ setup(
     name='arlo',
     py_modules=['arlo', 'request', 'eventstream'],
     version='1.2.50',
-    description='Python Arlo is a library written in Python 2.7/3x ' +
+    description='Python Arlo is a library written in Python 3x ' +
                 'which exposes the Netgear Arlo cameras via the apis that are consumed by their website.',
     long_description=readme(),
     long_description_content_type='text/markdown',
@@ -19,7 +19,7 @@ setup(
     url='https://github.com/jeffreydwalter/arlo',
     license='Apache Software License',
     include_package_data=True,
-    install_requires=['monotonic', 'requests', 'urllib3==1.24', 'sseclient==0.0.22', 'PySocks'],
+    install_requires=['monotonic', 'requests', 'urllib3==1.24', 'sseclient==0.0.22', 'PySocks', 'pickle-mixin', 'google-api-python-client', 'google-auth-oauthlib'],
     keywords=[
         'arlo',
         'camera',
@@ -34,11 +34,12 @@ setup(
 	'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
 )
