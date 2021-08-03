@@ -205,7 +205,7 @@ class Arlo(object):
             headers=headers,
             raw=True
         )
-        self.userId = auth_body['data']['userId']
+        self.user_id = auth_body['data']['userId']
         self.request.session.headers.update({'Authorization': base64.b64encode(auth_body['data']['token'].encode('utf-8'))})
 
         # Retrieve email factor id
