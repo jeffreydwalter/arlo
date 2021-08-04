@@ -16,9 +16,13 @@ the License.
 
 ## Classes
 
-` class Arlo (username, password) `
+` class Arlo (username, password, google_credential_file=None) `
 
 ### Class variables
+
+`var AUTH_URL`
+
+`var BASE_URL`
 
 `var TRANSID_PREFIX`
 
@@ -475,6 +479,15 @@ Returns something like the following: { "userId": "XXX-XXXXXXX", "email":
 "countryCode": "US", "tocUpdate": false, "policyUpdate": false, "validEmail":
 true, "arlo": true, "dateCreated": 1463975008658 }
 
+` def GetSessionV2(self) `
+
+Returns something like the following: { "userId": "XXX-XXXXXXX", "email":
+"jeffreydwalter@gmail.com", "token":
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "paymentId":
+"XXXXXXXX", "accountStatus": "registered", "serialNumber": "XXXXXXXXXXXXXX",
+"countryCode": "US", "tocUpdate": false, "policyUpdate": false, "validEmail":
+true, "arlo": true, "dateCreated": 1463975008658 }
+
 ` def GetSmartAlerts(self, camera) `
 
 ` def GetSmartFeatures(self) `
@@ -498,6 +511,8 @@ Wnt9F7D82uN1f4cXXXXX-FMUsWF_6tMBqwn6DpzOaIB7ciJrnr2QJyKewbQouGM6",
 "accountStatus":"registered", "serialNumber":"XXXXXXXXXXXXX",
 "countryCode":"US", "tocUpdate":false, "policyUpdate":false, "validEmail":true
 }
+
+` def LoginMFA(self, username, password, google_credential_file) `
 
 ` def Logout(self) `
 
@@ -670,7 +685,7 @@ mode: rainbow or rgb.
 
 ` def SetNightLightTimerOff(self, basestation, time=0, timediff=300) `
 
-` def SetNightLightTimerOn(self, basestation, time=1628114781, timediff=0) `
+` def SetNightLightTimerOn(self, basestation, time=1628115456, timediff=0) `
 
 ` def SetOCProfile(self, firstName, lastName, country='United States',
 language='en', spam_me=0) `
@@ -701,7 +716,7 @@ watch the schema that gets sent.
 
 ` def SetSleepTimerOff(self, basestation, time=0, timediff=300) `
 
-` def SetSleepTimerOn(self, basestation, time=1628114781, timediff=0) `
+` def SetSleepTimerOn(self, basestation, time=1628115456, timediff=0) `
 
 ` def SetTempAlertOff(self, basestation) `
 
@@ -860,10 +875,12 @@ This is an example of the json you would pass in the body: {
 
     * #### `Arlo`
 
+      * `AUTH_URL`
       * `AddFriend`
       * `AdjustBrightness`
       * `AlertNotificationMethods`
       * `Arm`
+      * `BASE_URL`
       * `BatchDeleteRecordings`
       * `Calendar`
       * `CustomMode`
@@ -911,11 +928,13 @@ This is an example of the json you would pass in the body: {
       * `GetServiceLevelV3`
       * `GetServiceLevelV4`
       * `GetSession`
+      * `GetSessionV2`
       * `GetSmartAlerts`
       * `GetSmartFeatures`
       * `GetUpdateFeatures`
       * `HandleEvents`
       * `Login`
+      * `LoginMFA`
       * `Logout`
       * `Notify`
       * `NotifyAndGetResponse`

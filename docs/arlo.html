@@ -44,12 +44,20 @@ limitations under the License.</p>
 <dl>
 <dt id="arlo.Arlo"><code class="flex name class">
 <span>class <span class="ident">Arlo</span></span>
-<span>(</span><span>username, password)</span>
+<span>(</span><span>username, password, google_credential_file=None)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
 <h3>Class variables</h3>
 <dl>
+<dt id="arlo.Arlo.AUTH_URL"><code class="name">var <span class="ident">AUTH_URL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="arlo.Arlo.BASE_URL"><code class="name">var <span class="ident">BASE_URL</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="arlo.Arlo.TRANSID_PREFIX"><code class="name">var <span class="ident">TRANSID_PREFIX</span></code></dt>
 <dd>
 <div class="desc"></div>
@@ -903,6 +911,26 @@ Set a schedule to be active: {"activeAutomations":[{"deviceId":"XXXXXXXXXXXXX","
 "dateCreated": 1463975008658
 }</p></div>
 </dd>
+<dt id="arlo.Arlo.GetSessionV2"><code class="name flex">
+<span>def <span class="ident">GetSessionV2</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns something like the following:
+{
+"userId": "XXX-XXXXXXX",
+"email": "jeffreydwalter@gmail.com",
+"token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"paymentId": "XXXXXXXX",
+"accountStatus": "registered",
+"serialNumber": "XXXXXXXXXXXXXX",
+"countryCode": "US",
+"tocUpdate": false,
+"policyUpdate": false,
+"validEmail": true,
+"arlo": true,
+"dateCreated": 1463975008658
+}</p></div>
+</dd>
 <dt id="arlo.Arlo.GetSmartAlerts"><code class="name flex">
 <span>def <span class="ident">GetSmartAlerts</span></span>(<span>self, camera)</span>
 </code></dt>
@@ -946,6 +974,12 @@ This function will allow you to potentially write a callback that can handle all
 "policyUpdate":false,
 "validEmail":true
 }</p></div>
+</dd>
+<dt id="arlo.Arlo.LoginMFA"><code class="name flex">
+<span>def <span class="ident">LoginMFA</span></span>(<span>self, username, password, google_credential_file)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.Logout"><code class="name flex">
 <span>def <span class="ident">Logout</span></span>(<span>self)</span>
@@ -1201,7 +1235,7 @@ color: 45136 - the color for your bounding box.</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetNightLightTimerOn"><code class="name flex">
-<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1628114781, timediff=0)</span>
+<span>def <span class="ident">SetNightLightTimerOn</span></span>(<span>self, basestation, time=1628115456, timediff=0)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1328,7 +1362,7 @@ color: 45136 - the color for your bounding box.</p></div>
 <div class="desc"></div>
 </dd>
 <dt id="arlo.Arlo.SetSleepTimerOn"><code class="name flex">
-<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1628114781, timediff=0)</span>
+<span>def <span class="ident">SetSleepTimerOn</span></span>(<span>self, basestation, time=1628115456, timediff=0)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1592,10 +1626,12 @@ Use TriggerFullFrameSnapshot() instead.</p>
 <li>
 <h4><code><a title="arlo.Arlo" href="#arlo.Arlo">Arlo</a></code></h4>
 <ul class="">
+<li><code><a title="arlo.Arlo.AUTH_URL" href="#arlo.Arlo.AUTH_URL">AUTH_URL</a></code></li>
 <li><code><a title="arlo.Arlo.AddFriend" href="#arlo.Arlo.AddFriend">AddFriend</a></code></li>
 <li><code><a title="arlo.Arlo.AdjustBrightness" href="#arlo.Arlo.AdjustBrightness">AdjustBrightness</a></code></li>
 <li><code><a title="arlo.Arlo.AlertNotificationMethods" href="#arlo.Arlo.AlertNotificationMethods">AlertNotificationMethods</a></code></li>
 <li><code><a title="arlo.Arlo.Arm" href="#arlo.Arlo.Arm">Arm</a></code></li>
+<li><code><a title="arlo.Arlo.BASE_URL" href="#arlo.Arlo.BASE_URL">BASE_URL</a></code></li>
 <li><code><a title="arlo.Arlo.BatchDeleteRecordings" href="#arlo.Arlo.BatchDeleteRecordings">BatchDeleteRecordings</a></code></li>
 <li><code><a title="arlo.Arlo.Calendar" href="#arlo.Arlo.Calendar">Calendar</a></code></li>
 <li><code><a title="arlo.Arlo.CustomMode" href="#arlo.Arlo.CustomMode">CustomMode</a></code></li>
@@ -1643,11 +1679,13 @@ Use TriggerFullFrameSnapshot() instead.</p>
 <li><code><a title="arlo.Arlo.GetServiceLevelV3" href="#arlo.Arlo.GetServiceLevelV3">GetServiceLevelV3</a></code></li>
 <li><code><a title="arlo.Arlo.GetServiceLevelV4" href="#arlo.Arlo.GetServiceLevelV4">GetServiceLevelV4</a></code></li>
 <li><code><a title="arlo.Arlo.GetSession" href="#arlo.Arlo.GetSession">GetSession</a></code></li>
+<li><code><a title="arlo.Arlo.GetSessionV2" href="#arlo.Arlo.GetSessionV2">GetSessionV2</a></code></li>
 <li><code><a title="arlo.Arlo.GetSmartAlerts" href="#arlo.Arlo.GetSmartAlerts">GetSmartAlerts</a></code></li>
 <li><code><a title="arlo.Arlo.GetSmartFeatures" href="#arlo.Arlo.GetSmartFeatures">GetSmartFeatures</a></code></li>
 <li><code><a title="arlo.Arlo.GetUpdateFeatures" href="#arlo.Arlo.GetUpdateFeatures">GetUpdateFeatures</a></code></li>
 <li><code><a title="arlo.Arlo.HandleEvents" href="#arlo.Arlo.HandleEvents">HandleEvents</a></code></li>
 <li><code><a title="arlo.Arlo.Login" href="#arlo.Arlo.Login">Login</a></code></li>
+<li><code><a title="arlo.Arlo.LoginMFA" href="#arlo.Arlo.LoginMFA">LoginMFA</a></code></li>
 <li><code><a title="arlo.Arlo.Logout" href="#arlo.Arlo.Logout">Logout</a></code></li>
 <li><code><a title="arlo.Arlo.Notify" href="#arlo.Arlo.Notify">Notify</a></code></li>
 <li><code><a title="arlo.Arlo.NotifyAndGetResponse" href="#arlo.Arlo.NotifyAndGetResponse">NotifyAndGetResponse</a></code></li>
