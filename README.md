@@ -1,7 +1,8 @@
 ![](logo.png)	
 # arlo ![](https://img.shields.io/badge/python-3+-blue.svg)
 > Python module for interacting with Netgear's Arlo camera system.
->
+>### Now supports MFA!
+>MFA using this library relies on using the Gmail API to retrieve MFA codes. Please see the [Wiki](https://github.com/jeffreydwalter/arlo/wiki/Configuring-MFA-via-Gmail) for detailed instructions for configuring MFA via Gmail.
 >### Now in Golang!
 >If you love the Go programming language, check out [arlo-golang](https://github.com/jeffreydwalter/arlo-golang).
 >My goal is to bring parity to the Python version asap. If you know what you're doing in Go, I would appreciate any feedback on the >general structure of the library, and contributions, etc.
