@@ -29,7 +29,21 @@ class Request(object):
         self.session = requests.Session()
 
     def _request(self, url, method='GET', params={}, headers={}, stream=False, raw=False):
+
+        ## uncomment for debug logging
+        """
+        import logging
+        import http.client
+        http.client.HTTPConnection.debuglevel = 1
+        logging.basicConfig()
+        logging.getLogger().setLevel(logging.DEBUG)
+        req_log = logging.getLogger('requests.packages.urllib3')
+        req_log.setLevel(logging.DEBUG)
+        req_log.propagate = True
+        """
+
         if method == 'GET':
+            #print('COOKIES: ', self.session.cookies.get_dict())
             r = self.session.get(url, params=params, headers=headers, stream=stream)
             r.raise_for_status()
             if stream is True:

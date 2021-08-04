@@ -19,7 +19,7 @@ setup(
     url='https://github.com/jeffreydwalter/arlo',
     license='Apache Software License',
     include_package_data=True,
-    install_requires=['monotonic', 'requests', 'urllib3==1.24', 'sseclient==0.0.22', 'PySocks'],
+    install_requires=['monotonic', 'requests', 'urllib3==1.24', 'sseclient==0.0.22', 'PySocks', 'pickle-mixin', 'google-api-python-client', 'google-auth-oauthlib'],
     keywords=[
         'arlo',
         'camera',
@@ -34,11 +34,12 @@ setup(
 	'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
 )

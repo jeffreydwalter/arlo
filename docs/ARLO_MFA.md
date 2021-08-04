@@ -57,4 +57,8 @@ When we initialize the Arlo class, the `LoginMFA` function:
   * Begins authentication with this factor
   * Waits 5 seconds
   * Checks your gmail account by searching for new emails (postmarked AFTER the beginning of authentication) with an arlo authentication code.
+<<<<<<< HEAD
   * Extract this code and complete the authentication process.
+=======
+  * Extract this code and complete the authentication process.
+>>>>>>> mfa-pr
