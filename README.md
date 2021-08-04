@@ -43,6 +43,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Generous Benefactors (Thank you!)
+* [sfederman](https://github.com/sfederman) - 🍺🍺🍺🍺
 * [apsteinmetz](https://github.com/apsteinmetz) - 🍺
 * [mhallikainen](https://github.com/mhallikainen) - 🍺🍺
 * [tinsheep](https://github.com/tinsheep) - 🍺🍺
@@ -54,6 +55,7 @@ This just a personal utility that I created out of necessity. It is by no means 
 
 ---
 ### Awesomely Smart Contributors (Thank you!)
+* [sfederman](https://github.com/sfederman) - Aug 3, 2021 - Helped to debug and fix EventStream in MFA branch.
 * [neilferreira](https://github.com/neilferreira) - Jun 4, 2021 - Pointed out missing schemaVersoin header.
 * [timgates42](https://github.com/timgates42) - Mar 3, 2021 - Fixed crappy spelling in README.
 * [Kerl1310](https://github.com/Kerl1310) - Jan 11, 2020 - Added automated unit tests. THANK YOU!
