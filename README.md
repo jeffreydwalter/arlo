@@ -1,5 +1,5 @@
 ![](logo.png)	
-# arlo ![](https://img.shields.io/badge/python-2.7%2C%203.7+-blue.svg)
+# arlo ![](https://img.shields.io/badge/python-3+-blue.svg)
 > Python module for interacting with Netgear's Arlo camera system.
 >
 >### Now in Golang!
