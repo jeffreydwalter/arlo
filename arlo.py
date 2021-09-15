@@ -235,7 +235,7 @@ class Arlo(object):
             time.sleep(5)
             messages = service.users().messages().list(
                 userId='me',
-                q=f'Arlo one-time authentication code after:{request_start_time}'
+                q=f'from:do_not_reply@arlo.com after:{request_start_time}'
             ).execute()
 
             if messages['resultSizeEstimate'] == 0:
