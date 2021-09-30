@@ -31,7 +31,7 @@ This process does not require external services or subscriptions and accesses th
    * Click on Create Credentials -> OAuth client id
    * Under Application type, select "Web application"
    * Name can be anything
-   * Under "Authorized redirect URIs", add "http://localhost:7788"
+   * Under "Authorized redirect URIs", add "http://localhost:7788/"
    * Click Create
    * Close the window with the credentials, we will save them in the next step.
 1. Save the OAuth client credential package
@@ -57,8 +57,11 @@ When we initialize the Arlo class, the `LoginMFA` function:
   * Begins authentication with this factor
   * Waits 5 seconds
   * Checks your gmail account by searching for new emails (postmarked AFTER the beginning of authentication) with an arlo authentication code.
-<<<<<<< HEAD
   * Extract this code and complete the authentication process.
-=======
-  * Extract this code and complete the authentication process.
->>>>>>> mfa-pr
+
+
+## Troubleshooting
+
+* `'ascii' codec can't decode byte 0xe5 in position 1: ordinal not in range(128)`
+  * Most likely you ran the `gmail_oauth.py` script with a different version of python than what you're running the arlo script as. The pickle formats of python2 and python3 are not compatible.
+  * Delete `gmail.credentials` and re-run `gmail_oauth.py` with python3.
