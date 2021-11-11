@@ -215,7 +215,7 @@ class Arlo(object):
             headers=headers,
             raw=True
         )
-        email_factor_id = next(i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL')['factorId']
+        email_factor_id = next(i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL' and i['factorRole'] == "PRIMARY")['factorId']
 
         # Start factor auth
         start_auth_body = self.request.post(
