@@ -16,7 +16,7 @@ the License.
 
 ## Classes
 
-` class Arlo (username, password, google_credential_file=None) `
+` class Arlo (username, password, google_credential_file=None, interactive=False) `
 
 ### Class variables
 
@@ -514,6 +514,13 @@ Wnt9F7D82uN1f4cXXXXX-FMUsWF_6tMBqwn6DpzOaIB7ciJrnr2QJyKewbQouGM6",
 
 ` def LoginMFA(self, username, password, google_credential_file) `
 
+` def LoginMFAInteractive(self, username, password) `
+
+This is an interactive MFA dialog to help you log in. Ideally, you should
+already have set up a primary device and maybe some secondary ones. You'll
+be prompted with a list of them, to which you can choose to send the MFA code
+to (EMAIL), or a push notification (PUSH) to accept or deny.
+
 ` def Logout(self) `
 
 ` def Notify(self, basestation, body) `
@@ -935,6 +942,7 @@ This is an example of the json you would pass in the body: {
       * `HandleEvents`
       * `Login`
       * `LoginMFA`
+      * `LoginMFAInteractive`
       * `Logout`
       * `Notify`
       * `NotifyAndGetResponse`

@@ -54,7 +54,7 @@ class Arlo(object):
     BASE_URL = 'my.arlo.com'
     AUTH_URL = 'ocapi-app.arlo.com'
     TRANSID_PREFIX = 'web'
-    def __init__(self, username, password, google_credential_file=None):
+    def __init__(self, username, password, google_credential_file=None, interactive=False):
 
         # signals only work in main thread
         try:
@@ -67,6 +67,8 @@ class Arlo(object):
 
         if google_credential_file:
           self.LoginMFA(username, password, google_credential_file)
+        elif interactive:
+            self.LoginMFAInteractive(username, password)
         else:
           self.Login(username, password)
 
@@ -276,6 +278,197 @@ class Arlo(object):
         }
         self.request.session.headers.update(headers)
         self.BASE_URL = 'myapi.arlo.com'
+
+    def LoginMFAInteractive(self, username, password):
+        """
+        This is an interactive MFA dialog to help you log in. Ideally, you should
+        already have set up a primary device and maybe some secondary ones. You'll
+        be prompted with a list of them, to which you can choose to send the MFA code
+        to (EMAIL), or a push notification (PUSH) to accept or deny.
+
+        Note: The logic follows the API calls from a Browser:
+        TODO: Update to follow a phone application API calls
+
+        1. auth - https://ocapi-app.arlo.com/api/auth
+        2. getFactorId - https://ocapi-app.arlo.com/api/getFactorId # check if trusted device, if trusted, skip to 4.
+        3. getFactors - https://ocapi-app.arlo.com/api/getFactors?data%20=%201640292757
+        4. startAuth - https://ocapi-app.arlo.com/api/getFactors?data%20=%201640292757 # if trusted, gives you token in response, skip to 6
+        5. finishAuth - https://ocapi-app.arlo.com/api/finishAuth # loops every 5 seconds
+            Awaits approval such like phone notification... or through email, in which case you need to provide the code that was sent
+        6. validateAccessToken - https://ocapi-app.arlo.com/api/validateAccessToken?data%20=%201640293737
+        7. startPairingFactor - https://ocapi-app.arlo.com/api/startPairingFactor # Optional, to trust the current device for future login (following the trusted logic)
+        """
+        self.username = username
+        self.password = password
+        self.request = Request()
+        trusted = False
+        continue_retry = True
+
+        headers = {
+            'DNT': '1',
+            'schemaVersion': '1',
+            'Auth-Version': '2',
+            'Content-Type': 'application/json; charset=UTF-8',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
+            'Origin': f'https://{self.BASE_URL}',
+            'Referer': f'https://{self.BASE_URL}/',
+            'Source': 'arloCamWeb',
+            'TE': 'Trailers',
+        }
+
+        auth_body = self.request.post(
+            f'https://{self.AUTH_URL}/api/auth',
+            params={
+                'email': self.username,
+                'password': str(base64.b64encode(self.password.encode('utf-8')), 'utf-8'),
+                'language': 'en',
+                'EnvSource': 'prod'
+            },
+            headers=headers,
+            raw=True
+        )
+        self.user_id = auth_body['data']['userId']
+        self.request.session.headers.update({'Authorization': base64.b64encode(auth_body['data']['token'].encode('utf-8'))})
+
+        # Check if device is trusted
+        # TODO: Change this to a phone device FactorType
+        factor_id_body = self.request.post(
+            f'https://{self.AUTH_URL}/api/getFactorId',
+            params={
+                "factorType": "BROWSER",
+                "factorData": "",
+                "userId": self.user_id,
+            },
+            headers=headers,
+            raw=True
+        )
+
+        if factor_id_body['meta']['code'] == 200:
+            trusted = True
+
+        token = None
+        while continue_retry:
+            if trusted:
+                # Browser trusted
+                chosen_factor_id = factor_id_body['data']['factorId']
+            else:
+                # Browser not trusted
+                # Retrieve factors
+                factors_body = self.request.get(
+                    f'https://{self.AUTH_URL}/api/getFactors',
+                    params={'data': auth_body['data']['issued']},
+                    headers=headers,
+                    raw=True
+                )
+                print(f'Interactive MFA initiated.')
+                for i, factors in enumerate(factors_body['data']['items']):
+                    print(f"{i}. {factors['displayName']}")
+                
+                chosen_factor = int(input('Choose a second factor to authenticate: '))
+
+                chosen_factor_id = factors_body['data']['items'][chosen_factor]['factorId']
+                chosen_factor_type = factors_body['data']['items'][chosen_factor]['factorType']
+
+            # Start factor auth
+            start_auth_body = self.request.post(
+                f'https://{self.AUTH_URL}/api/startAuth',
+                params={
+                    'factorId': chosen_factor_id,
+                    'factorType': '',
+                    'userId': self.user_id},
+                headers=headers,
+                raw=True
+            )
+            print(start_auth_body)
+
+            if trusted:
+                token = start_auth_body['data']['accessToken']['token']
+            else:
+                factor_auth_code = start_auth_body['data']['factorAuthCode']
+
+                if chosen_factor_type == 'EMAIL':
+                    #while not successful: within time limit
+                    code = input("Enter MFA code from email: ")
+
+                    # Complete auth
+                    finish_auth_body = self.request.post(
+                        f'https://{self.AUTH_URL}/api/finishAuth',
+                        {
+                            'factorAuthCode': factor_auth_code,
+                            'otp': code
+                        },
+                        headers=headers,
+                        raw=True
+                    )
+
+                    if finish_auth_body['meta']['code'] == 200:
+                        token = finish_auth_body['data']['token']
+
+                elif chosen_factor_type == 'PUSH':
+                    print("Waiting on Approval from phone...")
+
+                    attempt = 5
+
+                    while attempt > 0:
+                        time.sleep(5)
+                        finish_auth_body = self.request.post(
+                            f'https://{self.AUTH_URL}/api/finishAuth',
+                            {
+                                'factorAuthCode': factor_auth_code,
+                                'isBrowserTrusted': True,
+                            },
+                            headers=headers,
+                            raw=True
+                        )
+
+                        if finish_auth_body['meta']['code'] == 200:
+                            token = finish_auth_body['data']['token']
+                            break
+                        attempt-=1
+
+            if not token:
+                retry_response = input("Authentication Failed. (Did response time expire? 25 seconds) Do you want to retry interactive MFA? (Y/N): ").upper()
+                if retry_response == 'Y':
+                    continue_retry = True
+                else:
+                    continue_retry = False
+            else:
+                continue_retry = False
+
+        """
+        WIP: This currently does not work. Not sure why yet, I get the following for both:
+        {'meta': {'code': 400, 'error': 9276, 'message': 'Current authentication is not completed'}}
+
+        validate_access_token_body = self.request.get(
+            f'https://{self.AUTH_URL}/api/validateAccessToken',
+            params={'data': (finish_auth_body['data']['issued'])},
+            headers=headers,
+            raw=True
+        )
+
+        input("Do you want to trust this new device? (Y/N): ").upper()
+        if retry_response == 'Y':
+            start_pairing_factor_body = self.request.post(
+                f'https://{self.AUTH_URL}/api/startPairingFactor',
+                params={
+                    "factorType": "BROWSER",
+                    "factorData": "",
+                    "factorAuthCode": finish_auth_body['data']['browserAuthCode']
+                },
+                headers=headers,
+                raw=True
+            )
+        """
+
+        # Update Authorization code with new code
+        headers = {
+            'Auth-Version': '2',
+            'Authorization': token.encode('utf-8'),
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
+        }
+        self.request.session.headers.update(headers)
+        self.BASE_URL = 'myapi.arlo.com'
+        return self.request.session.headers
 
     def Logout(self):
         self.Unsubscribe()
