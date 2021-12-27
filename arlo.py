@@ -379,7 +379,6 @@ class Arlo(object):
                 headers=headers,
                 raw=True
             )
-            print(start_auth_body)
 
             if trusted:
                 token = start_auth_body['data']['accessToken']['token']
