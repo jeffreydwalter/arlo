@@ -17,8 +17,12 @@ Paste your ouptut here
 Paste your output here
 ```
 
-### Which Arlo hardware do you have (camera types - [Arlo, Pro, Q, etc.], basestation model, etc.)?
+### Which Arlo hardware are you having the issue with (camera types - [Arlo, Pro, Q, etc.], basestation model, etc.)?
 
+### Run this script and paste the output: 
+```
+Paste your output here
+```
 
 ### What did you do?
 
