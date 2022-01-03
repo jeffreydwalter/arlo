@@ -1,4 +1,4 @@
-Please answer these questions before submitting your issue. Thanks!
+You MUST answer these questions before submitting your issue. Failure to do so will result in a closed issue. Thanks!
 
 
 ### What version of Python are you using (`python -V`)?
