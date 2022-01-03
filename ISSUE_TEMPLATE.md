@@ -19,7 +19,42 @@ Paste your output here
 
 ### Which Arlo hardware are you having the issue with (camera types - [Arlo, Pro, Q, etc.], basestation model, etc.)?
 
-### Run this script and paste the output: 
+### Run this script:
+```
+from arlo import Arlo
+
+import json
+import re
+
+USERNAME = 'user@example.com'
+PASSWORD = 'supersecretpassword'
+
+def pp(data):
+    print(json.dumps(data, indent=4, sort_keys=True))
+
+try:
+    arlo = Arlo(USERNAME, PASSWORD)
+    
+    devices = arlo.GetDevices()
+    for i, device in enumerate(devices):
+        for key in ['deviceId', 'parentId', 'uniqueId', 'userId', 'xCloudId']:
+            if key in device:
+                device[key] = re.sub(r'[0-9A-Za-z]', r'X', device.get(key))
+
+        for key in ['deviceName', 'presignedFullFrameSnapshotUrl', 'presignedLastImageUrl', 'presignedSnapshotUrl']:
+            device[key] = ""
+
+        device['owner']['ownerId'] = re.sub(r'[0-9A-Za-z]', r'X', device['owner']['ownerId'])
+        device['owner']['firstName'] = ""
+        device['owner']['lastName'] = ""
+        
+        devices[i] = device
+
+    pp(devices)
+except Exception as e:
+    print(e)
+```
+
 ```
 Paste your output here
 ```
