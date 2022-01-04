@@ -529,12 +529,12 @@ class Arlo(object):
     def DeleteMode(self, device, mode):
         """ device can be any object that has parentId == deviceId. i.e., not a camera """
         parentId = device.get('parentId', None)
-        if device['deviceType'] == 'arlobridge':
+        if device.get('deviceType') == 'arlobridge':
             return self.request.delete(f'https://{self.BASE_URL}/hmsweb/users/locations/'+device.get('uniqueId')+'/modes/'+mode)
         elif not parentId or device.get('deviceId') == parentId:
             return self.NotifyAndGetResponse(device, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
         else:
-            raise Exception('Only parent device modes and schedules can be deleted.');
+            raise Exception('Only parent device modes and schedules can be deleted.')
 
     def GetModes(self, basestation):
         """ DEPRECATED: This is the older API for getting the "mode". It still works, but GetModesV2 is the way the Arlo software does it these days. """
@@ -550,10 +550,13 @@ class Arlo(object):
 
     def CustomMode(self, device, mode, schedules=[]):
         """ device can be any object that has parentId == deviceId. i.e., not a camera """
-        if(device["deviceType"].startswith("arloq")):
+        parentId = device.get('parentId', None)
+        if device.get('deviceType') == 'arlobridge':
+            return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
+        elif not parentId or device.get('deviceId') == parentId:
             return self.NotifyAndGetResponse(device, {"from":self.user_id+"_web", "to": device.get("parentId"), "action":"set","resource":"modes", "transId": self.genTransId(),"publishResponse":True,"properties":{"active":mode}})
         else:
-            return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
+            raise Exception('Only parent device modes and schedules can be modified.')
 
     def Arm(self, device):
         return self.CustomMode(device, "mode1")
@@ -1048,7 +1051,7 @@ class Arlo(object):
 
     def GetDevice(self, device_name):
         def is_device(device):
-            return device['deviceName'] == device_name
+            return device.get('deviceName') == device_name
         return list(filter(is_device, self.GetDevices()))[0]
 
     def GetDevices(self, device_type=None, filter_provisioned=None):
@@ -1059,7 +1062,7 @@ class Arlo(object):
         """
         devices = self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices')
         if device_type:
-            devices = [ device for device in devices if device['deviceType'] in device_type]
+            devices = [ device for device in devices if device.get('deviceType') in device_type]
 
         if filter_provisioned is not None:
             if filter_provisioned:
