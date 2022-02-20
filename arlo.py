@@ -139,6 +139,10 @@ class Arlo(object):
         self.request = Request()
 
         headers = {
+            'Access-Control-Request-Headers': 'content-type,source,x-user-device-id,x-user-device-name,x-user-device-type',
+            'Access-Control-Request-Method': 'POST',
+            'Origin': f'https://{self.BASE_URL}',
+            'Referer': f'https://{self.BASE_URL}/',
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
         }
         self.request.options(f'https://{self.AUTH_URL}/api/auth', headers=headers)
