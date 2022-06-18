@@ -2,9 +2,11 @@
 """Python Arlo setup script."""
 from setuptools import setup
 
+
 def readme():
     with open('README.md') as desc:
         return desc.read()
+
 
 setup(
     name='arlo',
@@ -19,7 +21,8 @@ setup(
     url='https://github.com/jeffreydwalter/arlo',
     license='Apache Software License',
     include_package_data=True,
-    install_requires=['monotonic', 'requests', 'urllib3==1.24', 'sseclient==0.0.22', 'PySocks', 'pickle-mixin', 'google-api-python-client', 'google-auth-oauthlib'],
+    install_requires=['monotonic', 'requests', 'urllib3==1.24', 'sseclient==0.0.22', 'PySocks', 'pickle-mixin',
+                      'google-api-python-client', 'google-auth-oauthlib'],
     keywords=[
         'arlo',
         'camera',
@@ -28,10 +31,10 @@ setup(
         'python',
         ],
     classifiers=[
-	'Development Status :: 5 - Production/Stable',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Other Environment',
         'Intended Audience :: Developers',
-	'License :: OSI Approved :: Apache Software License',
+        'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.4',
