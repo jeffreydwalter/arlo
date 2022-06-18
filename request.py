@@ -17,8 +17,9 @@
 import requests
 from requests.exceptions import HTTPError
 
-#from requests_toolbelt.utils import dump
-#def print_raw_http(response):
+
+# from requests_toolbelt.utils import dump
+# def print_raw_http(response):
 #    data = dump.dump_all(response, request_prefix=b'', response_prefix=b'')
 #    print('\n' * 2 + data.decode('utf-8'))
 
@@ -28,9 +29,9 @@ class Request(object):
     def __init__(self):
         self.session = requests.Session()
 
-    def _request(self, url, method='GET', params={}, headers={}, stream=False, raw=False):
+    def _request(self, url, method='GET', params=None, headers=None, stream=False, raw=False):
 
-        ## uncomment for debug logging
+        # uncomment for debug logging
         """
         import logging
         import http.client
@@ -42,8 +43,15 @@ class Request(object):
         req_log.propagate = True
         """
 
+        if params in None:
+            params = {}
+
+        if headers in None:
+            headers = {}
+
+        r = None
         if method == 'GET':
-            #print('COOKIES: ', self.session.cookies.get_dict())
+            # print('COOKIES: ', self.session.cookies.get_dict())
             r = self.session.get(url, params=params, headers=headers, stream=stream)
             r.raise_for_status()
             if stream is True:
@@ -64,20 +72,38 @@ class Request(object):
         if raw:
             return body
         else:
-            if ('success' in body and body['success'] == True) or ('meta' in body and body['meta']['code'] == 200):
+            if ('success' in body and body['success'] is True) or ('meta' in body and body['meta']['code'] == 200):
                 if 'data' in body:
                     return body['data']
             else:
                 raise HTTPError('Request ({0} {1}) failed: {2}'.format(method, url, r.json()), response=r)
 
-    def get(self, url, params={}, headers={}, stream=False, raw=False):
+    def get(self, url, params=None, headers=None, stream=False, raw=False):
+        if params is None:
+            params = {}
+
+        if headers is None:
+            headers = {}
+
         return self._request(url, 'GET', params=params, headers=headers, stream=stream, raw=raw)
 
-    def put(self, url, params={}, headers={}, raw=False):
+    def put(self, url, params=None, headers=None, raw=False):
+        if params is None:
+            params = {}
+
+        if headers is None:
+            headers = {}
+
         return self._request(url, 'PUT', params=params, headers=headers, raw=raw)
 
-    def post(self, url, params={}, headers={}, raw=False):
+    def post(self, url, params=None, headers=None, raw=False):
+        if params is None:
+            params = {}
+
+        if headers is None:
+            headers = {}
+
         return self._request(url, 'POST', params=params, headers=headers, raw=raw)
 
-    def options(self, url, headers={}, raw=False):
+    def options(self, url, headers=None, raw=False):
         return self._request(url, 'OPTIONS', headers=headers, raw=raw)
