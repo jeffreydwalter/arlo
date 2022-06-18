@@ -20,11 +20,14 @@ import threading
 import sys
 
 if sys.version[0] == '2':
-    import Queue as queue
+    # import Queue as queue
+    pass
 else:
     import queue as queue
 
-# TODO: There's a lot more refactoring that could/should be done to abstract out the arlo-specific implementation details.
+# TODO: There's a lot more refactoring that could/should be done to abstract out the arlo-specific implementation
+#  details.
+
 
 class EventStream(object):
     """This class provides a queue-based EventStream object."""
@@ -34,14 +37,16 @@ class EventStream(object):
         self.registered = False
         self.queue = queue.Queue()
         self.heartbeat_stop_event = threading.Event()
+        self.heartbeat_thread = None
+        self.event_stream_thread = None
         self.event_stream_stop_event = threading.Event()
         self.arlo = args[0]
         self.heartbeat_handler = heartbeat_handler
  
     def __del__(self):
-        self.Disconnect()
+        self.disconnect()
 
-    def Get(self, block=True, timeout=None):
+    def get(self, block=True, timeout=None):
         if sys.version[0] == '2' and block:
             if timeout:
                 timeout += monotonic.monotonic()
@@ -66,39 +71,45 @@ class EventStream(object):
                 self.queue.task_done()
                 return item
             except queue.Empty as e:
-                return None
+                with open("dump.txt", "a") as datadump:
+                    datadump.write("\n"+str(e))
             except Exception as e:
-                return None
+                with open("dump.txt", "a") as datadump:
+                    datadump.write("\n"+str(e))
 
-    def Start(self):
+    def start(self):
         try:
-            event_stream = sseclient.SSEClient('https://myapi.arlo.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get('Authorization').decode(), session=self.arlo.request.session)
-            self.event_stream_thread = threading.Thread(name="EventStream", target=self.event_handler, args=(self.arlo, event_stream, self.event_stream_stop_event, ))
+            event_stream = sseclient.SSEClient(
+                'https://myapi.arlo.com/hmsweb/client/subscribe?token='+self.arlo.request.session.headers.get(
+                    'Authorization').decode(), session=self.arlo.request.session)
+            self.event_stream_thread = threading.Thread(name="EventStream",
+                                                        target=self.event_handler,
+                                                        args=(self.arlo, event_stream, self.event_stream_stop_event, ))
             self.event_stream_thread.setDaemon(True)
             self.event_stream_thread.start()
         except Exception as e:
             raise Exception('Failed to start eventstream thread: {0}'.format(e))
 
-
         return self
 
-    def Connect(self):
+    def connect(self):
         self.connected = True
 
-    def Disconnect(self):
+    def disconnect(self):
         self.connected = False
-        self.Unregister()
+        self.unregister()
 
-    def Register(self):
+    def register(self):
         try:
-            self.heartbeat_thread = threading.Thread(name='HeartbeatThread', target=self.heartbeat_handler, args=(self.arlo, self.heartbeat_stop_event, ))
+            self.heartbeat_thread = threading.Thread(name='HeartbeatThread', target=self.heartbeat_handler,
+                                                     args=(self.arlo, self.heartbeat_stop_event, ))
             self.heartbeat_thread.setDaemon(True)
             self.heartbeat_thread.start()
             self.registered = True
         except Exception as e:
             raise Exception('Failed to start to heartbeat thread: {0}'.format(e))
 
-    def Unregister(self):
+    def unregister(self):
         self.registered = False
 
         if self.queue:
