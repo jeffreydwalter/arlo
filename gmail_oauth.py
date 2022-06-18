@@ -1,8 +1,7 @@
 import pickle
 
-import google.oauth2.credentials
+# import google.oauth2.credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
-
 
 FILENAME = 'gmail.credentials'
 PORT = 7788
@@ -18,9 +17,9 @@ authorization_url, state = flow.authorization_url(
     include_granted_scopes='true')
 
 credentials = flow.run_local_server(host='localhost',
-    port=PORT,
-    authorization_prompt_message='Please visit this URL: {}'.format(authorization_url),
-    success_message='The auth flow is complete; you may close this window.',
-    open_browser=True)
+                                    port=PORT,
+                                    authorization_prompt_message='Please visit this URL: {}'.format(authorization_url),
+                                    success_message='The auth flow is complete; you may close this window.',
+                                    open_browser=True)
 
 pickle.dump(credentials, open(FILENAME, 'wb'))
