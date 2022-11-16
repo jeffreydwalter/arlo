@@ -379,18 +379,19 @@ video in Amazon AWS. presignedThumbnailUrl is a link to the thumbnail .jpg of
 the actual video in Amazon AWS.
 
 [ { "mediaDurationSecond": 30, "contentType": "video/mp4", "name":
-"XXXXXXXXXXXXX", "presignedContentUrl": "https://arlos3-prod-z2.s3.amazonaws.c
-om/XXXXXXX_XXXX_XXXX_XXXX_XXXXXXXXXXXXX/XXX-XXXXXXX/XXXXXXXXXXXXX/recordings/X
-XXXXXXXXXXXX.mp4?AWSAccessKeyId=XXXXXXXXXXXXXXXXXXXX&Expires=1472968703&Signat
-ure=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "lastModified": 1472881430181,
-"localCreatedDate": XXXXXXXXXXXXX, "presignedThumbnailUrl": "https://arlos3-pr
-od-z2.s3.amazonaws.com/XXXXXXX_XXXX_XXXX_XXXX_XXXXXXXXXXXXX/XXX-XXXXXXX/XXXXXX
-XXXXXXX/recordings/XXXXXXXXXXXXX_thumb.jpg?AWSAccessKeyId=XXXXXXXXXXXXXXXXXXXX
-&Expires=1472968703&Signature=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-"reason": "motionRecord", "deviceId": "XXXXXXXXXXXXX", "createdBy":
-"XXXXXXXXXXXXX", "createdDate": "20160903", "timeZone": "America/Chicago",
-"ownerId": "XXX-XXXXXXX", "utcCreatedDate": XXXXXXXXXXXXX, "currentState":
-"new", "mediaDuration": "00:00:30" } ]
+"XXXXXXXXXXXXX", "presignedContentUrl": "https://arlos3-prod-
+z2.s3.amazonaws.com/XXXXXXX_XXXX_XXXX_XXXX_XXXXXXXXXXXXX/XXX-XXXXXXX/XXXXXXXXX
+XXXX/recordings/XXXXXXXXXXXXX.mp4?AWSAccessKeyId=XXXXXXXXXXXXXXXXXXXX&Expires=
+1472968703&Signature=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "lastModified":
+1472881430181, "localCreatedDate": XXXXXXXXXXXXX, "presignedThumbnailUrl": "ht
+tps://arlos3-prod-
+z2.s3.amazonaws.com/XXXXXXX_XXXX_XXXX_XXXX_XXXXXXXXXXXXX/XXX-XXXXXXX/XXXXXXXXX
+XXXX/recordings/XXXXXXXXXXXXX_thumb.jpg?AWSAccessKeyId=XXXXXXXXXXXXXXXXXXXX&Ex
+pires=1472968703&Signature=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "reason":
+"motionRecord", "deviceId": "XXXXXXXXXXXXX", "createdBy": "XXXXXXXXXXXXX",
+"createdDate": "20160903", "timeZone": "America/Chicago", "ownerId": "XXX-
+XXXXXXX", "utcCreatedDate": XXXXXXXXXXXXX, "currentState": "new",
+"mediaDuration": "00:00:30" } ]
 
 ` def GetLibraryMetaData(self, from_date, to_date) `
 
@@ -685,7 +686,7 @@ mode: rainbow or rgb.
 
 ` def SetNightLightTimerOff(self, basestation, time=0, timediff=300) `
 
-` def SetNightLightTimerOn(self, basestation, time=1645391682, timediff=0) `
+` def SetNightLightTimerOn(self, basestation, time=1668638688, timediff=0) `
 
 ` def SetOCProfile(self, firstName, lastName, country='United States',
 language='en', spam_me=0) `
@@ -716,7 +717,7 @@ watch the schema that gets sent.
 
 ` def SetSleepTimerOff(self, basestation, time=0, timediff=300) `
 
-` def SetSleepTimerOn(self, basestation, time=1645391682, timediff=0) `
+` def SetSleepTimerOn(self, basestation, time=1668638688, timediff=0) `
 
 ` def SetTempAlertOff(self, basestation) `
 
