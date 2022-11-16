@@ -24,8 +24,8 @@ try:
 except ImportError:
     import queue as queue
 
-from . import Request as request
-from . import EventStream as eventstream
+from request import Request
+from eventstream import EventStream
     
 # Import all of the other stuff.
 from six import string_types, text_type
