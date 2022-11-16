@@ -57,15 +57,19 @@ requests==2.25.1
     #   arlo (setup.py)
     #   google-api-core
     #   requests-oauthlib
+    #   responses
     #   sseclient
 requests-oauthlib==1.3.1
     # via google-auth-oauthlib
+responses==0.10.15
+    # via arlo (setup.py)
 rsa==4.9
     # via google-auth
 six==1.13.0
     # via
     #   google-auth
     #   google-auth-httplib2
+    #   responses
     #   sseclient
 sseclient==0.0.22
     # via arlo (setup.py)
