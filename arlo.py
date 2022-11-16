@@ -231,7 +231,7 @@ class Arlo(object):
         factor_auth_code = start_auth_body['data']['factorAuthCode']
 
         # search for MFA token in latest emails
-        pattern = '\d{6}'
+        pattern = r'\d{6}'
         code = None
         service = build('gmail', 'v1', credentials = self.google_credentials)
 
@@ -1755,4 +1755,4 @@ class Arlo(object):
 
     def GetCvrPlaylist(self, camera, fromDate, toDate):
         """ This function downloads a Cvr Playlist file for the period fromDate to toDate. """
-        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('deviceId')+'/playlist?fromDate='+fromDate+'&toDate='+toDate)
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/playlist?fromDate='+fromDate+'&toDate='+toDate)
