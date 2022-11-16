@@ -18,6 +18,7 @@ class TestArlo(unittest.TestCase):
     def setUp(self):
         """
         """
+        """
         mocked_login_url = "https://my.arlo.com/hmsweb/login/v2"
 
         responses.add(
@@ -26,7 +27,21 @@ class TestArlo(unittest.TestCase):
             json = LOGIN_JSON,
             status = 200
         )
-    
+        """
+        mocked_auth_url = "https://ocapi-app.arlo.com/api/auth"
+        responses.add(
+            method = responses.OPTIONS,
+            url = mocked_auth_url,
+            json = LOGIN_JSON,
+            status = 200
+        )
+        responses.add(
+            method = responses.POST,
+            url = mocked_auth_url,
+            json = LOGIN_JSON,
+            status = 200
+        )   
+
     @responses.activate
     def test_login(self):
         """
