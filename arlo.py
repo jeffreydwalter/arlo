@@ -231,7 +231,7 @@ class Arlo(object):
         factor_auth_code = start_auth_body['data']['factorAuthCode']
 
         # search for MFA token in latest emails
-        pattern = 'r\d{6}'
+        pattern = r'\d{6}'
         code = None
         service = build('gmail', 'v1', credentials = self.google_credentials)
 
