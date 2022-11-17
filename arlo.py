@@ -158,8 +158,8 @@ class Arlo(object):
             'Source': 'arloCamWeb',
         }
 
-        #body = self.request.post(f'https://{self.BASE_URL}/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
-        body = self.request.post(
+        #auth_body = self.request.post(f'https://{self.BASE_URL}/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
+        auth_body = self.request.post(
                 f'https://{self.AUTH_URL}/api/auth',
             params={
                 'email': self.username,
@@ -169,12 +169,10 @@ class Arlo(object):
             },
             headers=headers
         )
-        headers['Authorization'] = body['token']
+        self.user_id = auth_body['userId']
+        self.request.session.headers.update({'Authorization': base64.b64encode(auth_body['token'].encode('utf-8'))})
 
-        self.request.session.headers.update(headers)
-
-        self.user_id = body['userId']
-        return body
+        return auth_body
 
     def LoginMFA(self, username, password, google_credential_file):
         self.username = username
@@ -273,12 +271,7 @@ class Arlo(object):
         )
 
         # Update Authorization code with new code
-        headers = {
-            'Auth-Version': '2',
-            'Authorization': finish_auth_body['data']['token'].encode('utf-8'),
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
-        }
-        self.request.session.headers.update(headers)
+        self.request.session.headers.update({'Authorization': base64.b64encode(finish_auth_body['data']['token'].encode('utf-8'))})
         self.BASE_URL = 'myapi.arlo.com'
 
     def Logout(self):
@@ -533,10 +526,8 @@ class Arlo(object):
     def DeleteMode(self, device, mode):
         """ device can be any object that has parentId == deviceId. i.e., not a camera """
         parentId = device.get('parentId', None)
-        if device.get('deviceType') == 'arlobridge':
+        if device.get('deviceType') == 'arlobridge' or (not parentId or device.get('deviceId') == parentId):
             return self.request.delete(f'https://{self.BASE_URL}/hmsweb/users/locations/'+device.get('uniqueId')+'/modes/'+mode)
-        elif not parentId or device.get('deviceId') == parentId:
-            return self.NotifyAndGetResponse(device, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
         else:
             raise Exception('Only parent device modes and schedules can be deleted.')
 
@@ -555,10 +546,8 @@ class Arlo(object):
     def CustomMode(self, device, mode, schedules=[]):
         """ device can be any object that has parentId == deviceId. i.e., not a camera """
         parentId = device.get('parentId', None)
-        if device.get('deviceType') == 'arlobridge':
+        if device.get('deviceType') == 'arlobridge' or (not parentId or device.get('deviceId') == parentId):
             return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
-        elif not parentId or device.get('deviceId') == parentId:
-            return self.NotifyAndGetResponse(device, {"from":self.user_id+"_web", "to": device.get("parentId"), "action":"set","resource":"modes", "transId": self.genTransId(),"publishResponse":True,"properties":{"active":mode}})
         else:
             raise Exception('Only parent device modes and schedules can be modified.')
 
