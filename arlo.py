@@ -220,6 +220,8 @@ class Arlo(object):
             raw=True
         )
         email_factor_id = next(i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL' and i['factorRole'] == "PRIMARY")['factorId']
+        if email_factor_id is None:
+            email_factor_id = next(i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL' and i['factorRole'] == "SECONDARY")['factorId']
 
         # Start factor auth
         start_auth_body = self.request.post(
