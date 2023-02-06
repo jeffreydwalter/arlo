@@ -26,7 +26,7 @@ except ImportError:
 
 from request import Request
 from eventstream import EventStream
-
+    
 # Import all of the other stuff.
 from six import string_types, text_type
 from datetime import datetime
@@ -50,12 +50,10 @@ from googleapiclient.discovery import build
 
 #logging.basicConfig(level=logging.DEBUG,format='[%(levelname)s] (%(threadName)-10s) %(message)s',)
 
-
 class Arlo(object):
     BASE_URL = 'my.arlo.com'
     AUTH_URL = 'ocapi-app.arlo.com'
     TRANSID_PREFIX = 'web'
-
     def __init__(self, username, password, google_credential_file=None):
 
         # signals only work in main thread
@@ -68,9 +66,9 @@ class Arlo(object):
         self.request = None
 
         if google_credential_file:
-            self.LoginMFA(username, password, google_credential_file)
+          self.LoginMFA(username, password, google_credential_file)
         else:
-            self.Login(username, password)
+          self.Login(username, password)
 
     def interrupt_handler(self, signum, frame):
         print("Caught Ctrl-C, exiting.")
@@ -90,22 +88,17 @@ class Arlo(object):
             d = f % 1
 
             # Do the whole:
-            if w == 0:
-                result = '0'
-            else:
-                result = ''
+            if w == 0: result = '0'
+            else: result = ''
             while w:
                 w, r = divmod(w, 16)
                 r = int(r)
-                if r > 9:
-                    r = chr(r + 55)
-                else:
-                    r = str(r)
-                result = r + result
+                if r > 9: r = chr(r+55)
+                else: r = str(r)
+                result =  r + result
 
             # And now the part:
-            if d == 0:
-                return result
+            if d == 0: return result
 
             result += '.'
             count = 0
@@ -113,19 +106,16 @@ class Arlo(object):
                 d = d * 16
                 w, d = divmod(d, 1)
                 w = int(w)
-                if w > 9:
-                    w = chr(w + 55)
-                else:
-                    w = str(w)
-                result += w
+                if w > 9: w = chr(w+55)
+                else: w = str(w)
+                result +=  w
                 count += 1
-                if count > MAXHEXADECIMALS:
-                    break
+                if count > MAXHEXADECIMALS: break
 
             return result
 
         now = datetime.today()
-        return trans_type + "!" + float2hex(random.random() * math.pow(2, 32)).lower() + "!" + str(int((time.mktime(now.timetuple()) * 1e3 + now.microsecond / 1e3)))
+        return trans_type+"!" + float2hex(random.random() * math.pow(2, 32)).lower() + "!" + str(int((time.mktime(now.timetuple())*1e3 + now.microsecond/1e3)))
 
     def Login(self, username, password):
         """
@@ -156,7 +146,7 @@ class Arlo(object):
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
         }
         self.request.options(f'https://{self.AUTH_URL}/api/auth', headers=headers)
-
+        
         headers = {
             'DNT': '1',
             'schemaVersion': '1',
@@ -168,9 +158,9 @@ class Arlo(object):
             'Source': 'arloCamWeb',
         }
 
-        # body = self.request.post(f'https://{self.BASE_URL}/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
+        #body = self.request.post(f'https://{self.BASE_URL}/hmsweb/login/v2', {'email': self.username, 'password': self.password}, headers=headers)
         body = self.request.post(
-            f'https://{self.AUTH_URL}/api/auth',
+                f'https://{self.AUTH_URL}/api/auth',
             params={
                 'email': self.username,
                 'password': str(base64.b64encode(self.password.encode('utf-8')), 'utf-8'),
@@ -209,7 +199,7 @@ class Arlo(object):
 
         # Authenticate
         auth_body = self.request.post(
-            f'https://{self.AUTH_URL}/api/auth',
+                f'https://{self.AUTH_URL}/api/auth',
             params={
                 'email': self.username,
                 'password': str(base64.b64encode(self.password.encode('utf-8')), 'utf-8'),
@@ -229,7 +219,6 @@ class Arlo(object):
             headers=headers,
             raw=True
         )
-
         email_factor = next((i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL' and i['factorRole'] == "PRIMARY"), None)
         if email_factor is None:
             email_factor = next((i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL' and i['factorRole'] == "SECONDARY"), None)
@@ -251,7 +240,7 @@ class Arlo(object):
         # search for MFA token in latest emails
         pattern = r'\d{6}'
         code = None
-        service = build('gmail', 'v1', credentials=self.google_credentials)
+        service = build('gmail', 'v1', credentials = self.google_credentials)
 
         for i in range(0, 10):
             time.sleep(5)
@@ -323,7 +312,7 @@ class Arlo(object):
 
         def Register(self):
             if self.event_stream and self.event_stream.connected and not self.event_stream.registered:
-                self.Notify(basestation, {"action": "set", "resource": "subscriptions/" + self.user_id + "_web", "publishResponse": False, "properties": {"devices": [basestation_id]}})
+                self.Notify(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
                 event = self.event_stream.Get()
                 if event is None or self.event_stream.event_stream_stop_event.is_set():
                     return None
@@ -413,10 +402,10 @@ class Arlo(object):
         basestation_id = basestation.get('deviceId')
 
         body['transId'] = self.genTransId()
-        body['from'] = self.user_id + '_web'
+        body['from'] = self.user_id+'_web'
         body['to'] = basestation_id
 
-        self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/notify/' + body['to'], body, headers={"xcloudId": basestation.get('xCloudId')})
+        self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/notify/'+body['to'], body, headers={"xcloudId":basestation.get('xCloudId')})
         return body.get('transId')
 
     def NotifyAndGetResponse(self, basestation, body, timeout=120):
@@ -440,14 +429,13 @@ class Arlo(object):
                     event = self.event_stream.Get(timeout=timeout)
                     if event is None or self.event_stream.event_stream_stop_event.is_set():
                         return None
-                else:
-                    break
+                else: break
 
             return event
 
     def Ping(self, basestation):
         basestation_id = basestation.get('deviceId')
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "subscriptions/" + self.user_id + "_web", "publishResponse": False, "properties": {"devices": [basestation_id]}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"subscriptions/"+self.user_id+"_web","publishResponse":False,"properties":{"devices":[basestation_id]}})
 
     def SubscribeToMotionEvents(self, basestation, callback, timeout=120):
         """
@@ -459,7 +447,6 @@ class Arlo(object):
         This is an example of handling a specific event, in reality, you'd probably want to write a callback for HandleEvents()
         that has a big switch statement in it to handle all the various events Arlo produces.
         """
-
         def callbackwrapper(self, event):
             if event.get('properties', {}).get('motionDetected'):
                 callback(self, event)
@@ -513,25 +500,25 @@ class Arlo(object):
         return self.HandleEvents(basestation, callback, timeout)
 
     def GetBaseStationState(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "get", "resource": "basestation", "publishResponse": False})
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"basestation","publishResponse":False})
 
     def GetCameraState(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "get", "resource": "cameras", "publishResponse": False})
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras","publishResponse":False})
 
     def GetRules(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "get", "resource": "rules", "publishResponse": False})
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"rules","publishResponse":False})
 
     def GetSmartFeatures(self):
         return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/subscription/smart/features')
 
     def GetSmartAlerts(self, camera):
-        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/' + camera.get('uniqueId') + '/smartalerts')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/smartalerts')
 
     def GetAutomationActivityZones(self, camera):
-        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/' + camera.get('uniqueId') + '/activityzones')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/activityzones')
 
     def RestartBasestation(self, basestation):
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/restart', {"deviceId": basestation.get('deviceId')})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/restart', {"deviceId":basestation.get('deviceId')})
 
     def SetAutomationActivityZones(self, camera, zone, coords, color):
         """
@@ -542,27 +529,27 @@ class Arlo(object):
         coords: [{"x":0.37946943483275664,"y":0.3790983606557377},{"x":0.8685121107266436,"y":0.3790983606557377},{"x":0.8685121107266436,"y":1},{"x":0.37946943483275664,"y":1}] - these coordinates are the bonding box for the activity zone.
         color: 45136 - the color for your bounding box.
         """
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/' + camera.get('uniqueId') + '/activityzones', {"name": zone, "coords": coords, "color": color})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/activityzones', {"name": zone,"coords": coords, "color": color})
 
     def GetAutomationDefinitions(self):
-        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/automation/definitions', {'uniqueIds': 'all'})
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/automation/definitions', {'uniqueIds':'all'})
 
     def GetCalendar(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "get", "resource": "schedule", "publishResponse": False})
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"schedule","publishResponse":False})
 
     def DeleteMode(self, device, mode):
         """ device can be any object that has parentId == deviceId. i.e., not a camera """
         parentId = device.get('parentId', None)
         if device.get('deviceType') == 'arlobridge':
-            return self.request.delete(f'https://{self.BASE_URL}/hmsweb/users/locations/' + device.get('uniqueId') + '/modes/' + mode)
+            return self.request.delete(f'https://{self.BASE_URL}/hmsweb/users/locations/'+device.get('uniqueId')+'/modes/'+mode)
         elif not parentId or device.get('deviceId') == parentId:
-            return self.NotifyAndGetResponse(device, {"action": "delete", "resource": "modes/" + mode, "publishResponse": True})
+            return self.NotifyAndGetResponse(device, {"action":"delete","resource":"modes/"+mode,"publishResponse":True})
         else:
             raise Exception('Only parent device modes and schedules can be deleted.')
 
     def GetModes(self, basestation):
         """ DEPRECATED: This is the older API for getting the "mode". It still works, but GetModesV2 is the way the Arlo software does it these days. """
-        return self.NotifyAndGetResponse(basestation, {"action": "get", "resource": "modes", "publishResponse": False})
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"modes","publishResponse":False})
 
     def GetModesV2(self):
         """
@@ -576,9 +563,9 @@ class Arlo(object):
         """ device can be any object that has parentId == deviceId. i.e., not a camera """
         parentId = device.get('parentId', None)
         if device.get('deviceType') == 'arlobridge':
-            return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/automation/active', {'activeAutomations': [{'deviceId': device.get('deviceId'), 'timestamp': self.to_timestamp(datetime.now()), 'activeModes': [mode], 'activeSchedules':schedules}]})
+            return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
         elif not parentId or device.get('deviceId') == parentId:
-            return self.NotifyAndGetResponse(device, {"from": self.user_id + "_web", "to": device.get("parentId"), "action": "set", "resource": "modes", "transId": self.genTransId(), "publishResponse": True, "properties": {"active": mode}})
+            return self.NotifyAndGetResponse(device, {"from":self.user_id+"_web", "to": device.get("parentId"), "action":"set","resource":"modes", "transId": self.genTransId(),"publishResponse":True,"properties":{"active":mode}})
         else:
             raise Exception('Only parent device modes and schedules can be modified.')
 
@@ -595,7 +582,7 @@ class Arlo(object):
         NOTE: The Arlo API seems to disable calendar mode when switching to other modes, if it's enabled.
         You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
         """
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "schedule", "publishResponse": True, "properties": {"active": active}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"schedule","publishResponse":True,"properties":{"active":active}})
 
     def SetSchedule(self, basestation, schedule):
         """
@@ -693,7 +680,7 @@ class Arlo(object):
           "enabled": true
         }
         """
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/locations/' + basestation.get('uniqueId') + '/schedules', )
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/locations/'+basestation.get('uniqueId')+'/schedules', )
 
     def AdjustBrightness(self, basestation, camera, brightness=0):
         """
@@ -712,172 +699,167 @@ class Arlo(object):
           "transId": "web!XXXXXXXX.389518!1514956240683"
         }
         """
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + camera.get('deviceId'), "publishResponse": True, "properties": {"brightness": brightness}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"brightness":brightness}})
 
     def ToggleCamera(self, basestation, camera, active=True):
         """
         active: True - Camera is off.
         active: False - Camera is on.
         """
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + camera.get('deviceId'), "publishResponse": True, "properties": {"privacyActive": active}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+camera.get('deviceId'),"publishResponse":True,"properties":{"privacyActive":active}})
 
     def PushToTalk(self, camera):
-        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/' + camera.get('uniqueId') + '/pushtotalk')
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/pushtotalk')
 
     """ General alert toggles """
-
     def SetMotionAlertsOn(self, basestation, sensitivity=5):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"motionDetection": {"armed": True, "sensitivity": sensitivity, "zones": []}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"motionDetection":{"armed":True,"sensitivity":sensitivity,"zones":[]}}})
 
     def SetMotionAlertsOff(self, basestation, sensitivity=5):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"motionDetection": {"armed": False, "sensitivity": sensitivity, "zones": []}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"motionDetection":{"armed":False,"sensitivity":sensitivity,"zones":[]}}})
 
     def SetAudioAlertsOn(self, basestation, sensitivity=3):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"audioDetection": {"armed": True, "sensitivity": sensitivity}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"audioDetection":{"armed":True,"sensitivity":sensitivity}}})
 
     def SetAudioAlertsOff(self, basestation, sensitivity=3):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"audioDetection": {"armed": False, "sensitivity": sensitivity}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"audioDetection":{"armed":False,"sensitivity":sensitivity}}})
 
     def AlertNotificationMethods(self, basestation, action="disabled", email=False, push=False):
         """ action : disabled OR recordSnapshot OR recordVideo """
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"eventAction": {"actionType": action,
-                                                                                                                                                                                      "stopType": "timeout", "timeout": 15, "emailNotification": {"enabled": email, "emailList": ["__OWNER_EMAIL__"]}, "pushNotification": push}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"eventAction":{"actionType":action,"stopType":"timeout","timeout":15,"emailNotification":{"enabled":email,"emailList":["__OWNER_EMAIL__"]},"pushNotification":push}}})
 
     """ Arlo Baby Audio Control """
-
     def GetAudioPlayback(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "get", "resource": "audioPlayback", "publishResponse": False})
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"audioPlayback","publishResponse":False})
 
     def PlayTrack(self, basestation, track_id="2391d620-e491-4412-99f6-e9a40d6046ed", position=0):
         """
         Defaulting to 'hugh little baby', which is a supplied track. I hope the ID is the same for all
         """
-        return self.Notify(basestation, {"action": "playTrack", "resource": "audioPlayback/player", "properties": {"trackId": track_id, "position": position}})
+        return self.Notify(basestation, {"action":"playTrack","resource":"audioPlayback/player","properties":{"trackId":track_id,"position":position}})
 
     def PauseTrack(self, basestation):
-        return self.Notify(basestation, {"action": "pause", "resource": "audioPlayback/player"})
+        return self.Notify(basestation, {"action":"pause","resource":"audioPlayback/player"})
 
     def UnPauseTrack(self, basestation):
-        return self.Notify(basestation, {"action": "play", "resource": "audioPlayback/player"})
+        return self.Notify(basestation, {"action":"play","resource":"audioPlayback/player"})
 
     def SkipTrack(self, basestation):
-        return self.Notify(basestation, {"action": "nextTrack", "resource": "audioPlayback/player"})
+        return self.Notify(basestation, {"action":"nextTrack","resource":"audioPlayback/player"})
 
     def SetSleepTimerOn(self, basestation, time=calendar.timegm(time.gmtime()) + 300, timediff=0):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "audioPlayback/config", "publishResponse": True, "properties": {"config": {"sleepTime": time, "sleepTimeRel": timediff}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"sleepTime":time,"sleepTimeRel":timediff}}})
 
     def SetSleepTimerOff(self, basestation, time=0, timediff=300):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "audioPlayback/config", "publishResponse": True, "properties": {"config": {"sleepTime": time, "sleepTimeRel": timediff}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"sleepTime": time,"sleepTimeRel":timediff}}})
 
     def SetLoopBackModeContinuous(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "audioPlayback/config", "publishResponse": True, "properties": {"config": {"loopbackMode": "continuous"}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"loopbackMode":"continuous"}}})
 
     def SetLoopBackModeSingleTrack(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "audioPlayback/config", "publishResponse": True, "properties": {"config": {"loopbackMode": "singleTrack"}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"loopbackMode":"singleTrack"}}})
 
     def SetShuffleOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "audioPlayback/config", "publishResponse": True, "properties": {"config": {"shuffleActive": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"shuffleActive":True}}})
 
     def SetShuffleOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "audioPlayback/config", "publishResponse": True, "properties": {"config": {"shuffleActive": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"audioPlayback/config","publishResponse":True,"properties":{"config":{"shuffleActive":False}}})
 
     def SetVolume(self, basestation, mute=False, volume=50):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"speaker": {"mute": mute, "volume": volume}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"speaker":{"mute":mute,"volume":volume}}})
 
     """  Baby Arlo Nightlight, (current state is in the arlo.GetCameraState(cameras[0]["properties"][0]["nightLight"]) """
-
     def SetNightLightOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"nightLight": {"enabled": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"enabled":True}}})
 
     def SetNightLightOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"nightLight": {"enabled": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"enabled":False}}})
 
     def SetNightLightBrightness(self, basestation, level=200):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"nightLight": {"brightness": level}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"brightness":level}}})
 
     def SetNightLightMode(self, basestation, mode="rainbow"):
         """ mode: rainbow or rgb. """
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"nightLight": {"mode": mode}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"mode":mode}}})
 
     def SetNightLightColor(self, basestation, red=255, green=255, blue=255):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"nightLight": {"rgb": {"blue": blue, "green": green, "red": red}}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"rgb":{"blue":blue,"green":green,"red":red}}}})
 
     def SetNightLightTimerOn(self, basestation, time=calendar.timegm(time.gmtime()) + 300, timediff=0):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"nightLight": {"sleepTime": time, "sleepTimeRel": timediff}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"sleepTime":time,"sleepTimeRel":timediff}}})
 
     def SetNightLightTimerOff(self, basestation, time=0, timediff=300):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId'), "publishResponse": True, "properties": {"nightLight": {"sleepTime": time, "sleepTimeRel": timediff}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId'),"publishResponse":True,"properties":{"nightLight":{"sleepTime":time,"sleepTimeRel":timediff}}})
 
     """ Baby Arlo Sensors """
-
     def GetCameraTempReading(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "get", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/history", "publishResponse": False})
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/history","publishResponse":False})
 
     def GetSensorConfig(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "get", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": False})
+        return self.NotifyAndGetResponse(basestation, {"action":"get","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":False})
 
     def SetAirQualityAlertOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"airQuality": {"alertsEnabled": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"alertsEnabled":True}}})
 
     def SetAirQualityAlertOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"airQuality": {"alertsEnabled": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"alertsEnabled":False}}})
 
     def SetAirQualityAlertThresholdMin(self, basestation, number=400):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"airQuality": {"minThreshold": number}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"minThreshold":number}}})
 
     def SetAirQualityAlertThresholdMax(self, basestation, number=700):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"airQuality": {"maxThreshold": number}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"maxThreshold":number}}})
 
     def SetAirQualityRecordingOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"airQuality": {"recordingEnabled": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"recordingEnabled":True}}})
 
     def SetAirQualityRecordingOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"airQuality": {"recordingEnabled": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"airQuality":{"recordingEnabled":False}}})
 
     def SetHumidityAlertOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"humidity": {"alertsEnabled": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"alertsEnabled":True}}})
 
     def SetHumidityAlertOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"humidity": {"alertsEnabled": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"alertsEnabled":False}}})
 
     def SetHumidityAlertThresholdMin(self, basestation, number=400):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"humidity": {"minThreshold": number}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"minThreshold":number}}})
 
     def SetHumidityAlertThresholdMax(self, basestation, number=800):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"humidity": {"maxThreshold": number}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"maxThreshold":number}}})
 
     def SetHumidityRecordingOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"humidity": {"recordingEnabled": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"recordingEnabled":True}}})
 
     def SetHumidityRecordingOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"humidity": {"recordingEnabled": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"humidity":{"recordingEnabled":False}}})
 
     def SetTempAlertOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"temperature": {"alertsEnabled": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":True}}})
 
     def SetTempAlertOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"temperature": {"alertsEnabled": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"alertsEnabled":False}}})
 
     def SetTempAlertThresholdMin(self, basestation, number=200):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"temperature": {"minThreshold": number}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"minThreshold":number}}})
 
     def SetTempAlertThresholdMax(self, basestation, number=240):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"temperature": {"maxThreshold": number}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"maxThreshold":number}}})
 
     def SetTempRecordingOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"temperature": {"recordingEnabled": True}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"recordingEnabled":True}}})
 
     def SetTempRecordingOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "cameras/" + basestation.get('deviceId') + "/ambientSensors/config", "publishResponse": True, "properties": {"temperature": {"recordingEnabled": False}}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"cameras/"+basestation.get('deviceId')+"/ambientSensors/config","publishResponse":True,"properties":{"temperature":{"recordingEnabled":False}}})
 
     def SetTempUnit(self, uniqueId, unit="C"):
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/' + uniqueId + '/tempUnit', {"tempUnit": unit})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/'+uniqueId+'/tempUnit', {"tempUnit":unit})
 
     def SirenOn(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "siren", "publishResponse": True, "properties": {"sirenState": "on", "duration": 300, "volume": 8, "pattern": "alarm"}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"siren","publishResponse":True,"properties":{"sirenState":"on","duration":300,"volume":8,"pattern":"alarm"}})
 
     def SirenOff(self, basestation):
-        return self.NotifyAndGetResponse(basestation, {"action": "set", "resource": "siren", "publishResponse": True, "properties": {"sirenState": "off", "duration": 300, "volume": 8, "pattern": "alarm"}})
+        return self.NotifyAndGetResponse(basestation, {"action":"set","resource":"siren","publishResponse":True,"properties":{"sirenState":"off","duration":300,"volume":8,"pattern":"alarm"}})
 
     def Reset(self):
         return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/library/reset')
@@ -903,7 +885,7 @@ class Arlo(object):
         return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/updateFeatures/feature')
 
     def GetPaymentBilling(self):
-        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/payment/billing/' + self.user_id)
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/payment/billing/'+self.user_id)
 
     def GetPaymentOffers(self):
         """ DEPRECATED: This API still works, but I don't see it being called in the web UI anymore. """
@@ -921,7 +903,7 @@ class Arlo(object):
         return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/payment/offers/v4')
 
     def SetOCProfile(self, firstName, lastName, country='United States', language='en', spam_me=0):
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/ocprofile', {"firstName": "Jeffrey", "lastName": "Walter", "country": country, "language": language, "mailProgram": spam_me})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/ocprofile', {"firstName":"Jeffrey","lastName":"Walter","country":country,"language":language,"mailProgram":spam_me})
 
     def GetOCProfile(self):
         return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/ocprofile')
@@ -1076,7 +1058,7 @@ class Arlo(object):
         NOTE: The Arlo API seems to disable geofencing mode when switching to other modes, if it's enabled.
         You should probably do the same, although, the UI reflects the switch from calendar mode to say armed mode without explicitly setting calendar mode to inactive.
         """
-        return self.request.put(f'https://{self.BASE_URL}/hmsweb/users/locations/' + location_id, {'geoEnabled': active})
+        return self.request.put(f'https://{self.BASE_URL}/hmsweb/users/locations/'+location_id, {'geoEnabled':active})
 
     def GetDevice(self, device_name):
         def is_device(device):
@@ -1091,13 +1073,13 @@ class Arlo(object):
         """
         devices = self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices')
         if device_type:
-            devices = [device for device in devices if device.get('deviceType') in device_type]
+            devices = [ device for device in devices if device.get('deviceType') in device_type]
 
         if filter_provisioned is not None:
             if filter_provisioned:
-                devices = [device for device in devices if device.get("state") == 'provisioned']
+                devices = [ device for device in devices if device.get("state") == 'provisioned']
             else:
-                devices = [device for device in devices if device.get("state") != 'provisioned']
+                devices = [ device for device in devices if device.get("state") != 'provisioned']
 
         return devices
 
@@ -1503,16 +1485,16 @@ class Arlo(object):
 
     def GetDeviceCapabilities(self, device):
         model = device.get('modelId').lower()
-        return self.request.get(f'https://{self.BASE_URL}/resources/capabilities/' + model + '/' + model + '_' + device.get('interfaceVersion') + '.json', raw=True)
+        return self.request.get(f'https://{self.BASE_URL}/resources/capabilities/'+model+'/'+model+'_'+device.get('interfaceVersion')+'.json', raw=True)
 
     def GetLibraryMetaData(self, from_date, to_date):
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library/metadata', {'dateFrom': from_date, 'dateTo': to_date})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library/metadata', {'dateFrom':from_date, 'dateTo':to_date})
 
     def UpdateProfile(self, first_name, last_name):
         return self.request.put(f'https://{self.BASE_URL}/hmsweb/users/profile', {'firstName': first_name, 'lastName': last_name})
 
     def UpdatePassword(self, password):
-        r = self.request.post(f'https://{self.BASE_URL}/hmsweb/users/changePassword', {'currentPassword': self.password, 'newPassword': password})
+        r = self.request.post(f'https://{self.BASE_URL}/hmsweb/users/changePassword', {'currentPassword':self.password,'newPassword':password})
         self.password = password
         return r
 
@@ -1541,7 +1523,7 @@ class Arlo(object):
 
         email: email of user you want to revoke access from.
         """
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/friends/remove', {"email": email})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/friends/remove', {"email":email})
 
     def AddFriend(self, firstname, lastname, email, devices={}, admin=False):
         """
@@ -1550,7 +1532,7 @@ class Arlo(object):
 
         {adminUser:false,firstName:John,lastName:Doe,email:john.doe@example.com,devices:{XXX-XXXXXXX_XXXXXXXXXXXX:Camera1,XXX-XXXXXXX_XXXXXXXXXXXX:Camera2}}
         """
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/friends', {"adminUser": admin, "firstName": firstname, "lastName": lastname, "email": email, "devices": devices})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/friends', {"adminUser":admin,"firstName":firstname,"lastName":lastname,"email":email,"devices":devices})
 
     def ResendFriendInvite(self, friend):
         """
@@ -1560,7 +1542,7 @@ class Arlo(object):
         return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/friends', friend)
 
     def UpdateDeviceName(self, device, name):
-        return self.request.put(f'https://{self.BASE_URL}/hmsweb/users/devices/renameDevice', {'deviceId': device.get('deviceId'), 'deviceName': name, 'parentId': device.get('parentId')})
+        return self.request.put(f'https://{self.BASE_URL}/hmsweb/users/devices/renameDevice', {'deviceId':device.get('deviceId'), 'deviceName':name, 'parentId':device.get('parentId')})
 
     def UpdateDisplayOrder(self, body):
         """
@@ -1604,14 +1586,14 @@ class Arlo(object):
           }
         ]
         """
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library', {'dateFrom': from_date, 'dateTo': to_date})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library', {'dateFrom':from_date, 'dateTo':to_date})
 
     def DeleteRecording(self, recording):
         """
         Delete a single video recording from Arlo.
         All of the date info and device id you need to pass into this method are given in the results of the GetLibrary() call.
         """
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library/recycle', {'data': [{'createdDate': recording.get('createdDate'), 'utcCreatedDate': recording.get('createdDate'), 'deviceId': recording.get('deviceId')}]})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library/recycle', {'data':[{'createdDate':recording.get('createdDate'),'utcCreatedDate':recording.get('createdDate'),'deviceId':recording.get('deviceId')}]})
 
     def BatchDeleteRecordings(self, recordings):
         """
@@ -1634,7 +1616,7 @@ class Arlo(object):
         ]
         """
         if recordings:
-            return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library/recycle', {'data': recordings})
+            return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/library/recycle', {'data':recordings})
 
     def GetRecording(self, url, chunk_size=4096):
         """ Returns the whole video from the presignedContentUrl. """
@@ -1643,8 +1625,7 @@ class Arlo(object):
         r.raise_for_status()
 
         for chunk in r.iter_content(chunk_size):
-            if chunk:
-                video += chunk
+            if chunk: video += chunk
         return video
 
     def StreamRecording(self, url, chunk_size=4096):
@@ -1696,10 +1677,10 @@ class Arlo(object):
             stream_url_dict = None
 
         def trigger(self):
-            nl.stream_url_dict = self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/startStream', {"to": camera.get('parentId'), "from": self.user_id + "_web", "resource": "cameras/" + camera.get('deviceId'), "action": "set", "responseUrl": "", "publishResponse": True, "transId": self.genTransId(), "properties": {"activityState": "startUserStream", "cameraId": camera.get('deviceId')}}, headers={"xcloudId": camera.get('xCloudId')})
+            nl.stream_url_dict = self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/startStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"startUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId":camera.get('xCloudId')})
 
         def callback(self, event):
-            if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/" + camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
+            if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
                 return nl.stream_url_dict['url'].replace("rtsp://", "rtsps://")
 
             return None
@@ -1713,10 +1694,10 @@ class Arlo(object):
             stream_url_dict = None
 
         def trigger(self):
-            self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/stopStream', {"to": camera.get('parentId'), "from": self.user_id + "_web", "resource": "cameras/" + camera.         get('deviceId'), "action": "set", "responseUrl": "", "publishResponse": True, "transId": self.genTransId(), "properties": {"activityState": "stopUserStream", "cameraId": camera.get('deviceId')}}, headers={"xcloudId": camera.get('xCloudId')})
+            self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/stopStream', {"to":camera.get('parentId'),"from":self.user_id+"_web","resource":"cameras/"+camera.         get('deviceId'),"action":"set","responseUrl":"", "publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"stopUserStream","cameraId":camera.get('deviceId')}}, headers={"xcloudId": camera.get('xCloudId')})
 
         def callback(self, event):
-            if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/" + camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
+            if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("properties", {}).get("activityState") == "userStreamActive":
                 return nl.stream_url_dict['url'].replace("rtsp://", "rtsps://")
             return None
 
@@ -1734,9 +1715,8 @@ class Arlo(object):
 
         NOTE: Use DownloadSnapshot() to download the actual image file.
         """
-
         def trigger(self):
-            self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/takeSnapshot', {'xcloudId': camera.get('xCloudId'), 'parentId': camera.get('parentId'), 'deviceId': camera.get('deviceId'), 'olsonTimeZone': camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId": camera.get('xCloudId')})
+            self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/takeSnapshot', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
 
         def callback(self, event):
             if event.get("deviceId") == camera.get("deviceId") and event.get("resource") == "mediaUploadNotification":
@@ -1754,20 +1734,11 @@ class Arlo(object):
         The presignedFullFrameSnapshotUrl url is returned.
         Use DownloadSnapshot() to download the actual image file.
         """
-
         def trigger(self):
-            self.request.post("https://my.arlo.com/hmsweb/users/devices/fullFrameSnapshot",
-                              {"to": camera.get("parentId"),
-                               "from": self.user_id + "_web",
-                               "resource": "cameras/" + camera.get("deviceId"),
-                               "action": "set",
-                               "publishResponse": True,
-                               "transId": self.genTransId(),
-                               "properties": {"activityState": "fullFrameSnapshot"}},
-                              headers={"xcloudId": camera.get("xCloudId")})
+            self.request.post("https://my.arlo.com/hmsweb/users/devices/fullFrameSnapshot", {"to":camera.get("parentId"),"from":self.user_id+"_web","resource":"cameras/"+camera.get("deviceId"),"action":"set","publishResponse":True,"transId":self.genTransId(),"properties":{"activityState":"fullFrameSnapshot"}}, headers={"xcloudId":camera.get("xCloudId")})
 
         def callback(self, event):
-            if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/" + camera.get("deviceId") and event.get("action") == "fullFrameSnapshotAvailable":
+            if event.get("from") == basestation.get("deviceId") and event.get("resource") == "cameras/"+camera.get("deviceId") and event.get("action") == "fullFrameSnapshotAvailable":
                 return event.get("properties", {}).get("presignedFullFrameSnapshotUrl")
             return None
 
@@ -1779,7 +1750,7 @@ class Arlo(object):
         You can get the timezone from GetDevices().
         """
         stream_url = self.StartStream(basestation, camera)
-        self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/startRecord', {'xcloudId': camera.get('xCloudId'), 'parentId': camera.get('parentId'), 'deviceId': camera.get('deviceId'), 'olsonTimeZone': camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId": camera.get('xCloudId')})
+        self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/startRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
         return stream_url
 
     def StopRecording(self, camera):
@@ -1787,8 +1758,8 @@ class Arlo(object):
         This function causes the camera to stop recording.
         You can get the timezone from GetDevices().
         """
-        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/stopRecord', {'xcloudId': camera.get('xCloudId'), 'parentId': camera.get('parentId'), 'deviceId': camera.get('deviceId'), 'olsonTimeZone': camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId": camera.get('xCloudId')})
+        return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/stopRecord', {'xcloudId':camera.get('xCloudId'),'parentId':camera.get('parentId'),'deviceId':camera.get('deviceId'),'olsonTimeZone':camera.get('properties', {}).get('olsonTimeZone')}, headers={"xcloudId":camera.get('xCloudId')})
 
     def GetCvrPlaylist(self, camera, fromDate, toDate):
         """ This function downloads a Cvr Playlist file for the period fromDate to toDate. """
-        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/' + camera.get('uniqueId') + '/playlist?fromDate=' + fromDate + '&toDate=' + toDate)
+        return self.request.get(f'https://{self.BASE_URL}/hmsweb/users/devices/'+camera.get('uniqueId')+'/playlist?fromDate='+fromDate+'&toDate='+toDate)
