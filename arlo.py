@@ -219,9 +219,14 @@ class Arlo(object):
             headers=headers,
             raw=True
         )
-        email_factor_id = next(i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL' and i['factorRole'] == "PRIMARY")['factorId']
-        if email_factor_id is None:
-            email_factor_id = next(i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL' and i['factorRole'] == "SECONDARY")['factorId']
+        email_factor = next((i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL' and i['factorRole'] == "PRIMARY"), None)
+        if email_factor is None:
+            email_factor = next((i for i in factors_body['data']['items'] if i['factorType'] == 'EMAIL' and i['factorRole'] == "SECONDARY"), None)
+
+        if email_factor is None:
+            raise Exception('No EMAIL MFA method registered with the account.')
+
+        email_factor_id = email_factor['factorId']
 
         # Start factor auth
         start_auth_body = self.request.post(
