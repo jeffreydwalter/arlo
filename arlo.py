@@ -565,7 +565,8 @@ class Arlo(object):
         if device.get('deviceType') == 'arlobridge':
             return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
         elif not parentId or device.get('deviceId') == parentId:
-            return self.NotifyAndGetResponse(device, {"from":self.user_id+"_web", "to": device.get("parentId"), "action":"set","resource":"modes", "transId": self.genTransId(),"publishResponse":True,"properties":{"active":mode}})
+            self.request.session.headers["schemaVersion"] = "1"
+            return self.request.post(f'https://{self.BASE_URL}/hmsweb/users/devices/automation/active', {'activeAutomations':[{'deviceId':device.get('deviceId'),'timestamp':self.to_timestamp(datetime.now()),'activeModes':[mode],'activeSchedules':schedules}]})
         else:
             raise Exception('Only parent device modes and schedules can be modified.')
 
