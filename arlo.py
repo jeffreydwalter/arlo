@@ -26,7 +26,7 @@ except ImportError:
 
 from request import Request
 from eventstream import EventStream
-    
+
 # Import all of the other stuff.
 from six import string_types, text_type
 from datetime import datetime
@@ -136,7 +136,9 @@ class Arlo(object):
         """
         self.username = username
         self.password = password
-        self.request = Request()
+
+        # start login with curl_cffi to address cloudflare client fingerprinting
+        self.request = Request(impersonate=True)
 
         headers = {
             'Access-Control-Request-Headers': 'content-type,source,x-user-device-id,x-user-device-name,x-user-device-type',
@@ -146,7 +148,7 @@ class Arlo(object):
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
         }
         self.request.options(f'https://{self.AUTH_URL}/api/auth', headers=headers)
-        
+
         headers = {
             'DNT': '1',
             'schemaVersion': '1',
@@ -171,6 +173,8 @@ class Arlo(object):
         )
         headers['Authorization'] = body['token']
 
+        # create a new Request object with a session that can be used with sseclient
+        self.request = Request(impersonate=False)
         self.request.session.headers.update(headers)
 
         self.user_id = body['userId']
@@ -180,7 +184,9 @@ class Arlo(object):
         self.username = username
         self.password = password
         self.google_credentials = pickle.load(open(google_credential_file, 'rb'))
-        self.request = Request()
+
+        # start login with curl_cffi to address cloudflare client fingerprinting
+        self.request = Request(impersonate=True)
 
         # request MFA token
         request_start_time = int(time.time())
@@ -285,6 +291,8 @@ class Arlo(object):
             'Authorization': finish_auth_body['data']['token'].encode('utf-8'),
             'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_1_2 like Mac OS X) AppleWebKit/604.3.5 (KHTML, like Gecko) Mobile/15B202 NETGEAR/v1 (iOS Vuezone)',
         }
+        # create a new Request object with a session that can be used with sseclient
+        self.request = Request(impersonate=False)
         self.request.session.headers.update(headers)
         self.BASE_URL = 'myapi.arlo.com'
 

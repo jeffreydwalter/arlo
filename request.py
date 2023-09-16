@@ -16,6 +16,7 @@
 
 import requests
 from requests.exceptions import HTTPError
+from curl_cffi import requests as curl_cffi_requests
 
 #from requests_toolbelt.utils import dump
 #def print_raw_http(response):
@@ -25,8 +26,15 @@ from requests.exceptions import HTTPError
 class Request(object):
     """HTTP helper class"""
 
-    def __init__(self):
-        self.session = requests.Session()
+    def __init__(self, impersonate=False):
+        # we create different sessions based on different technical needs:
+        # - curl_cffi is used to impersonate a browser and bypass client fingerprinting
+        # - requests is used to produce a feature-filled Session that can be compatible with sseclient
+        self.impersonate = impersonate
+        if impersonate:
+            self.session = curl_cffi_requests.Session(impersonate="chrome110")
+        else:
+            self.session = requests.Session()
 
     def _request(self, url, method='GET', params={}, headers={}, stream=False, raw=False):
 
@@ -44,7 +52,11 @@ class Request(object):
 
         if method == 'GET':
             #print('COOKIES: ', self.session.cookies.get_dict())
-            r = self.session.get(url, params=params, headers=headers, stream=stream)
+            if self.impersonate:
+                # curl_cffi does no suppot the stream keyword
+                r = self.session.get(url, params=params, headers=headers)
+            else:
+                r = self.session.get(url, params=params, headers=headers, stream=stream)
             r.raise_for_status()
             if stream is True:
                 return r
